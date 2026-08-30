@@ -5,13 +5,26 @@ import os
 from aiogram import Bot, Dispatcher
 from aiogram.types import FSInputFile
 from aiogram.fsm.storage.redis import RedisStorage
+from aiohttp import web
 from config import BOT_TOKEN, ADMIN_ID
 from handlers import router
 import database as db
 
 logging.basicConfig(level=logging.INFO)
 
-# --- HAR 24 SOATDA AVTOMATIK ZAXIRA XABARI ---
+async def handle_ping(request):
+    return web.Response(text="Bot is running and healthy!")
+
+async def start_web_server():
+    app = web.Application()
+    app.add_routes([web.get('/', handle_ping), web.get('/ping', handle_ping)])
+    port = int(os.getenv("PORT", 8080))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"[+] Web-server {port}-portda ishga tushdi.")
+
 async def daily_backup_worker(bot: Bot):
     while True:
         await asyncio.sleep(86400)
@@ -37,7 +50,6 @@ async def daily_backup_worker(bot: Bot):
         except Exception as e:
             logging.error(f"Avto-zaxira tizimida xatolik: {e}")
 
-# --- REJALASHTIRILGAN KUNLIK AVTO-XABARLAR (SCHEDULER) ---
 async def scheduled_notifications_worker(bot: Bot):
     while True:
         now = datetime.datetime.now()
@@ -60,7 +72,6 @@ async def scheduled_notifications_worker(bot: Bot):
 async def main():
     await db.init_db()
 
-    # Redis FSM Storage (Millionlab foydalanuvchilar uchun operativ xotirani boshqarish)
     redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     storage = RedisStorage.from_url(redis_url)
 
@@ -70,6 +81,7 @@ async def main():
 
     await bot.delete_webhook(drop_pending_updates=True)
 
+    asyncio.create_task(start_web_server())
     asyncio.create_task(daily_backup_worker(bot))
     asyncio.create_task(scheduled_notifications_worker(bot))
 
