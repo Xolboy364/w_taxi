@@ -1,13 +1,15 @@
+import os
 import asyncpg
 import datetime
 
-DB_NAME = "w_taxi_db"
 pool = None
 
 async def init_db():
     global pool
+    database_url = os.getenv("DATABASE_URL")
+    
     pool = await asyncpg.create_pool(
-        database=DB_NAME,
+        dsn=database_url,
         min_size=5,
         max_size=30,
         command_timeout=60
