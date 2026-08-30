@@ -1,0 +1,4627 @@
+[
+  {
+    "from": "Amudaryo",
+    "to": "Beruniy",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Bo‘zatov",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Chimboy",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Ellikqal’a",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Kegeyli",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Mo‘ynoq",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Amudaryo",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Bo‘zatov",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Chimboy",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Ellikqal’a",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Kegeyli",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Mo‘ynoq",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Beruniy",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Chimboy",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Ellikqal’a",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Kegeyli",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Mo‘ynoq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Bo‘zatov",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Ellikqal’a",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Kegeyli",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Mo‘ynoq",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Chimboy",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Kegeyli",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Mo‘ynoq",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Ellikqal’a",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Mo‘ynoq",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Kegeyli",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Nukus tumani",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Mo‘ynoq",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "Qanliko‘l",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Nukus tumani",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Qanliko‘l",
+    "to": "Qo‘ng‘irot",
+    "type": 3
+  },
+  {
+    "from": "Qanliko‘l",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Qanliko‘l",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Qanliko‘l",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Qanliko‘l",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Qanliko‘l",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Qo‘ng‘irot",
+    "to": "Qorao‘zak",
+    "type": 3
+  },
+  {
+    "from": "Qo‘ng‘irot",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Qo‘ng‘irot",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Qo‘ng‘irot",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Qo‘ng‘irot",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Qorao‘zak",
+    "to": "Shumanay",
+    "type": 3
+  },
+  {
+    "from": "Qorao‘zak",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Qorao‘zak",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Qorao‘zak",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Shumanay",
+    "to": "Taxtako‘pir",
+    "type": 3
+  },
+  {
+    "from": "Shumanay",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Shumanay",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Taxtako‘pir",
+    "to": "To‘rtko‘l",
+    "type": 3
+  },
+  {
+    "from": "Taxtako‘pir",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "To‘rtko‘l",
+    "to": "Xo‘jayli",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Asaka",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Baliqchi",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Bo‘ston",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Buloqboshi",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Izboskan",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Jalaquduq",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Andijon tumani",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Baliqchi",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Bo‘ston",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Buloqboshi",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Izboskan",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Jalaquduq",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Asaka",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Bo‘ston",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Buloqboshi",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Izboskan",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Jalaquduq",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Baliqchi",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Buloqboshi",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Izboskan",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Jalaquduq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ston",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Izboskan",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Jalaquduq",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Buloqboshi",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Jalaquduq",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Izboskan",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Xo‘jaobod",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Jalaquduq",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Xo‘jaobod",
+    "to": "Marhamat",
+    "type": 3
+  },
+  {
+    "from": "Xo‘jaobod",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Xo‘jaobod",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Xo‘jaobod",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Xo‘jaobod",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Xo‘jaobod",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Marhamat",
+    "to": "Oltinko‘l",
+    "type": 3
+  },
+  {
+    "from": "Marhamat",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Marhamat",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Marhamat",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Marhamat",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Oltinko‘l",
+    "to": "Paxtaobod",
+    "type": 3
+  },
+  {
+    "from": "Oltinko‘l",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Oltinko‘l",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Oltinko‘l",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Paxtaobod",
+    "to": "Qo‘rg‘ontepa",
+    "type": 3
+  },
+  {
+    "from": "Paxtaobod",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Paxtaobod",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Qo‘rg‘ontepa",
+    "to": "Shahrixon",
+    "type": 3
+  },
+  {
+    "from": "Qo‘rg‘ontepa",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Shahrixon",
+    "to": "Ulug‘nor",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Buxoro tumani",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "G‘ijduvon",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Jondor",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Kogon",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Qorako‘l",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Qorovulbozor",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Olot",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "G‘ijduvon",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Jondor",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Kogon",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Qorako‘l",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Qorovulbozor",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Buxoro tumani",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Jondor",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Kogon",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Qorako‘l",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Qorovulbozor",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "G‘ijduvon",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Kogon",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Qorako‘l",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Qorovulbozor",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Jondor",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Kogon",
+    "to": "Qorako‘l",
+    "type": 3
+  },
+  {
+    "from": "Kogon",
+    "to": "Qorovulbozor",
+    "type": 3
+  },
+  {
+    "from": "Kogon",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "Kogon",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Kogon",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Kogon",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Qorako‘l",
+    "to": "Qorovulbozor",
+    "type": 3
+  },
+  {
+    "from": "Qorako‘l",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "Qorako‘l",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Qorako‘l",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Qorako‘l",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Qorovulbozor",
+    "to": "Peshku",
+    "type": 3
+  },
+  {
+    "from": "Qorovulbozor",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Qorovulbozor",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Qorovulbozor",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Peshku",
+    "to": "Romitan",
+    "type": 3
+  },
+  {
+    "from": "Peshku",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Peshku",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Romitan",
+    "to": "Shofirkon",
+    "type": 3
+  },
+  {
+    "from": "Romitan",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Shofirkon",
+    "to": "Vobkent",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Beshariq",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Buvayda",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Dang‘ara",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Farg‘ona tumani",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Furqat",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Oltiariq",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Bag‘dod",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Buvayda",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Dang‘ara",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Farg‘ona tumani",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Furqat",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Oltiariq",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Beshariq",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Dang‘ara",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Farg‘ona tumani",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Furqat",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Oltiariq",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Buvayda",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Farg‘ona tumani",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Furqat",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Oltiariq",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Dang‘ara",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Furqat",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Oltiariq",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Farg‘ona tumani",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Oltiariq",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Furqat",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Quva",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Oltiariq",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "Qo‘shtepa",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Quva",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shtepa",
+    "to": "Rishton",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shtepa",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shtepa",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shtepa",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shtepa",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shtepa",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Rishton",
+    "to": "So‘x",
+    "type": 3
+  },
+  {
+    "from": "Rishton",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "Rishton",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Rishton",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Rishton",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "So‘x",
+    "to": "Toshloq",
+    "type": 3
+  },
+  {
+    "from": "So‘x",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "So‘x",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "So‘x",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Toshloq",
+    "to": "Uchko‘prik",
+    "type": 3
+  },
+  {
+    "from": "Toshloq",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Toshloq",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Uchko‘prik",
+    "to": "Uzbekistan",
+    "type": 3
+  },
+  {
+    "from": "Uchko‘prik",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Uzbekistan",
+    "to": "Yozyovon",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Baxmal",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Do‘stlik",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Forish",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Jizzax tumani",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Mirzacho‘l",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Paxtakor",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Arnasoy",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Do‘stlik",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Forish",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Jizzax tumani",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Mirzacho‘l",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Paxtakor",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Baxmal",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Forish",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Jizzax tumani",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Mirzacho‘l",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Paxtakor",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Do‘stlik",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Forish",
+    "to": "Jizzax tumani",
+    "type": 3
+  },
+  {
+    "from": "Forish",
+    "to": "Mirzacho‘l",
+    "type": 3
+  },
+  {
+    "from": "Forish",
+    "to": "Paxtakor",
+    "type": 3
+  },
+  {
+    "from": "Forish",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Forish",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Forish",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Jizzax tumani",
+    "to": "Mirzacho‘l",
+    "type": 3
+  },
+  {
+    "from": "Jizzax tumani",
+    "to": "Paxtakor",
+    "type": 3
+  },
+  {
+    "from": "Jizzax tumani",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Jizzax tumani",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Jizzax tumani",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Mirzacho‘l",
+    "to": "Paxtakor",
+    "type": 3
+  },
+  {
+    "from": "Mirzacho‘l",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Mirzacho‘l",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Mirzacho‘l",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Paxtakor",
+    "to": "Yangiobod",
+    "type": 3
+  },
+  {
+    "from": "Paxtakor",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Paxtakor",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Yangiobod",
+    "to": "Zafarobod",
+    "type": 3
+  },
+  {
+    "from": "Yangiobod",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Zafarobod",
+    "to": "Zarbdor",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Dehqonobod",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "G‘uzor",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Kasbi",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Kitob",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Koson",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Mirishkor",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Chiroqchi",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "G‘uzor",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Kasbi",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Kitob",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Koson",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Mirishkor",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Dehqonobod",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Kasbi",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Kitob",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Koson",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Mirishkor",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "G‘uzor",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Kitob",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Koson",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Mirishkor",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Kasbi",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Koson",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Mirishkor",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Kitob",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Mirishkor",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Koson",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Mirishkor",
+    "to": "Muborak",
+    "type": 3
+  },
+  {
+    "from": "Mirishkor",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Mirishkor",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Mirishkor",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Mirishkor",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Mirishkor",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Muborak",
+    "to": "Nishon",
+    "type": 3
+  },
+  {
+    "from": "Muborak",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Muborak",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Muborak",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Muborak",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Nishon",
+    "to": "Qamashi",
+    "type": 3
+  },
+  {
+    "from": "Nishon",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Nishon",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Nishon",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Qamashi",
+    "to": "Qarshi tumani",
+    "type": 3
+  },
+  {
+    "from": "Qamashi",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Qamashi",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Qarshi tumani",
+    "to": "Shahrisabz",
+    "type": 3
+  },
+  {
+    "from": "Qarshi tumani",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Shahrisabz",
+    "to": "Yakkabog‘",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Karman",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Navoiy tumani",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Nurota",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Qiziltepa",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Tomdi",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Uchquduq",
+    "type": 3
+  },
+  {
+    "from": "Kanimex",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Karman",
+    "to": "Navoiy tumani",
+    "type": 3
+  },
+  {
+    "from": "Karman",
+    "to": "Nurota",
+    "type": 3
+  },
+  {
+    "from": "Karman",
+    "to": "Qiziltepa",
+    "type": 3
+  },
+  {
+    "from": "Karman",
+    "to": "Tomdi",
+    "type": 3
+  },
+  {
+    "from": "Karman",
+    "to": "Uchquduq",
+    "type": 3
+  },
+  {
+    "from": "Karman",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Navoiy tumani",
+    "to": "Nurota",
+    "type": 3
+  },
+  {
+    "from": "Navoiy tumani",
+    "to": "Qiziltepa",
+    "type": 3
+  },
+  {
+    "from": "Navoiy tumani",
+    "to": "Tomdi",
+    "type": 3
+  },
+  {
+    "from": "Navoiy tumani",
+    "to": "Uchquduq",
+    "type": 3
+  },
+  {
+    "from": "Navoiy tumani",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Nurota",
+    "to": "Qiziltepa",
+    "type": 3
+  },
+  {
+    "from": "Nurota",
+    "to": "Tomdi",
+    "type": 3
+  },
+  {
+    "from": "Nurota",
+    "to": "Uchquduq",
+    "type": 3
+  },
+  {
+    "from": "Nurota",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Qiziltepa",
+    "to": "Tomdi",
+    "type": 3
+  },
+  {
+    "from": "Qiziltepa",
+    "to": "Uchquduq",
+    "type": 3
+  },
+  {
+    "from": "Qiziltepa",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Tomdi",
+    "to": "Uchquduq",
+    "type": 3
+  },
+  {
+    "from": "Tomdi",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Uchquduq",
+    "to": "Xatirchi",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Chust",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Kosonsoy",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Mingbuloq",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Namangan tumani",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Norin",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Pop",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Chortoq",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Kosonsoy",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Mingbuloq",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Namangan tumani",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Norin",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Pop",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Chust",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Mingbuloq",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Namangan tumani",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Norin",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Pop",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Kosonsoy",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "Namangan tumani",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "Norin",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "Pop",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Mingbuloq",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Namangan tumani",
+    "to": "Norin",
+    "type": 3
+  },
+  {
+    "from": "Namangan tumani",
+    "to": "Pop",
+    "type": 3
+  },
+  {
+    "from": "Namangan tumani",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Namangan tumani",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Namangan tumani",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Namangan tumani",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Norin",
+    "to": "Pop",
+    "type": 3
+  },
+  {
+    "from": "Norin",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Norin",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Norin",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Norin",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Pop",
+    "to": "To‘raqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Pop",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Pop",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Pop",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "To‘raqo‘rg‘on",
+    "to": "Uchqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "To‘raqo‘rg‘on",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "To‘raqo‘rg‘on",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Uchqo‘rg‘on",
+    "to": "Uychi",
+    "type": 3
+  },
+  {
+    "from": "Uchqo‘rg‘on",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Uychi",
+    "to": "Yangiqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Ishtixon",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Jomboy",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Kattaqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Narpay",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Nurobod",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Oqdaryo",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Bulung‘ur",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Jomboy",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Kattaqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Narpay",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Nurobod",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Oqdaryo",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Ishtixon",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Kattaqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Narpay",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Nurobod",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Oqdaryo",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Jomboy",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Narpay",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Nurobod",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Oqdaryo",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Kattaqo‘rg‘on",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Nurobod",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Oqdaryo",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Narpay",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Oqdaryo",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Nurobod",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Paxtachi",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Oqdaryo",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Paxtachi",
+    "to": "Payariq",
+    "type": 3
+  },
+  {
+    "from": "Paxtachi",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Paxtachi",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Paxtachi",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Paxtachi",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Paxtachi",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Payariq",
+    "to": "Pastdarg‘om",
+    "type": 3
+  },
+  {
+    "from": "Payariq",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Payariq",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Payariq",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Payariq",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Pastdarg‘om",
+    "to": "Qo‘shrabot",
+    "type": 3
+  },
+  {
+    "from": "Pastdarg‘om",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Pastdarg‘om",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Pastdarg‘om",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shrabot",
+    "to": "Samarqand tumani",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shrabot",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shrabot",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Samarqand tumani",
+    "to": "Toyloq",
+    "type": 3
+  },
+  {
+    "from": "Samarqand tumani",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Toyloq",
+    "to": "Urgut",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Bandixon",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Boysun",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Denov",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Jarqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Muzrabot",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Oltinsoy",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Angor",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Boysun",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Denov",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Jarqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Muzrabot",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Oltinsoy",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Bandixon",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Denov",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Jarqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Muzrabot",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Oltinsoy",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Boysun",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Jarqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Muzrabot",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Oltinsoy",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Denov",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Muzrabot",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Oltinsoy",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Jarqo‘rg‘on",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Oltinsoy",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Muzrabot",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Qiziriq",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Oltinsoy",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Qiziriq",
+    "to": "Qumqo‘rg‘on",
+    "type": 3
+  },
+  {
+    "from": "Qiziriq",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Qiziriq",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Qiziriq",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Qiziriq",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Qiziriq",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Qumqo‘rg‘on",
+    "to": "Sariosiyo",
+    "type": 3
+  },
+  {
+    "from": "Qumqo‘rg‘on",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Qumqo‘rg‘on",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Qumqo‘rg‘on",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Qumqo‘rg‘on",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Sariosiyo",
+    "to": "Sherobod",
+    "type": 3
+  },
+  {
+    "from": "Sariosiyo",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Sariosiyo",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Sariosiyo",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Sherobod",
+    "to": "Sho‘rchi",
+    "type": 3
+  },
+  {
+    "from": "Sherobod",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Sherobod",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Sho‘rchi",
+    "to": "Termiz tumani",
+    "type": 3
+  },
+  {
+    "from": "Sho‘rchi",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Termiz tumani",
+    "to": "Uzun",
+    "type": 3
+  },
+  {
+    "from": "Boyovut",
+    "to": "Guliston tumani",
+    "type": 3
+  },
+  {
+    "from": "Boyovut",
+    "to": "Mirzaobod",
+    "type": 3
+  },
+  {
+    "from": "Boyovut",
+    "to": "Oqoltin",
+    "type": 3
+  },
+  {
+    "from": "Boyovut",
+    "to": "Sayxunobod",
+    "type": 3
+  },
+  {
+    "from": "Boyovut",
+    "to": "Sirdaryo",
+    "type": 3
+  },
+  {
+    "from": "Boyovut",
+    "to": "Xovos",
+    "type": 3
+  },
+  {
+    "from": "Guliston tumani",
+    "to": "Mirzaobod",
+    "type": 3
+  },
+  {
+    "from": "Guliston tumani",
+    "to": "Oqoltin",
+    "type": 3
+  },
+  {
+    "from": "Guliston tumani",
+    "to": "Sayxunobod",
+    "type": 3
+  },
+  {
+    "from": "Guliston tumani",
+    "to": "Sirdaryo",
+    "type": 3
+  },
+  {
+    "from": "Guliston tumani",
+    "to": "Xovos",
+    "type": 3
+  },
+  {
+    "from": "Mirzaobod",
+    "to": "Oqoltin",
+    "type": 3
+  },
+  {
+    "from": "Mirzaobod",
+    "to": "Sayxunobod",
+    "type": 3
+  },
+  {
+    "from": "Mirzaobod",
+    "to": "Sirdaryo",
+    "type": 3
+  },
+  {
+    "from": "Mirzaobod",
+    "to": "Xovos",
+    "type": 3
+  },
+  {
+    "from": "Oqoltin",
+    "to": "Sayxunobod",
+    "type": 3
+  },
+  {
+    "from": "Oqoltin",
+    "to": "Sirdaryo",
+    "type": 3
+  },
+  {
+    "from": "Oqoltin",
+    "to": "Xovos",
+    "type": 3
+  },
+  {
+    "from": "Sayxunobod",
+    "to": "Sirdaryo",
+    "type": 3
+  },
+  {
+    "from": "Sayxunobod",
+    "to": "Xovos",
+    "type": 3
+  },
+  {
+    "from": "Sirdaryo",
+    "to": "Xovos",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Bekobod",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Bo‘ka",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Bo‘stonliq",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Chinoz",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Keles",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Qibray",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Angren",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Bo‘ka",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Bo‘stonliq",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Chinoz",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Keles",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Qibray",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bekobod",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Bo‘stonliq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Chinoz",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Keles",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Qibray",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘ka",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Chinoz",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Keles",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Qibray",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Bo‘stonliq",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Keles",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Qibray",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Chinoz",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Qibray",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Keles",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "O‘rta Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Qibray",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Parkent",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "O‘rta Chirchiq",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Parkent",
+    "to": "Piskent",
+    "type": 3
+  },
+  {
+    "from": "Parkent",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Parkent",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Parkent",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Parkent",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Parkent",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Piskent",
+    "to": "Quyi Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Piskent",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Piskent",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Piskent",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Piskent",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Quyi Chirchiq",
+    "to": "Toshkent tumani",
+    "type": 3
+  },
+  {
+    "from": "Quyi Chirchiq",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Quyi Chirchiq",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Quyi Chirchiq",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Toshkent tumani",
+    "to": "Yangiyo‘l",
+    "type": 3
+  },
+  {
+    "from": "Toshkent tumani",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Toshkent tumani",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Yangiyo‘l",
+    "to": "Yuqori Chirchiq",
+    "type": 3
+  },
+  {
+    "from": "Yangiyo‘l",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Yuqori Chirchiq",
+    "to": "Zangiota",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Gurlan",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Hazorasp",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Qo‘shko‘pir",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Shovot",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Tuproqqal’a",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Urganch tumani",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Bog‘ot",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Hazorasp",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Qo‘shko‘pir",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Shovot",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Tuproqqal’a",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Urganch tumani",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Gurlan",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Qo‘shko‘pir",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Shovot",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Tuproqqal’a",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Urganch tumani",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Hazorasp",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Shovot",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Tuproqqal’a",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Urganch tumani",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Qo‘shko‘pir",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Shovot",
+    "to": "Tuproqqal’a",
+    "type": 3
+  },
+  {
+    "from": "Shovot",
+    "to": "Urganch tumani",
+    "type": 3
+  },
+  {
+    "from": "Shovot",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Shovot",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Shovot",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Shovot",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Tuproqqal’a",
+    "to": "Urganch tumani",
+    "type": 3
+  },
+  {
+    "from": "Tuproqqal’a",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Tuproqqal’a",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Tuproqqal’a",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Tuproqqal’a",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Urganch tumani",
+    "to": "Xiva",
+    "type": 3
+  },
+  {
+    "from": "Urganch tumani",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Urganch tumani",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Urganch tumani",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Xiva",
+    "to": "Xonqa",
+    "type": 3
+  },
+  {
+    "from": "Xiva",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Xiva",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Xonqa",
+    "to": "Yangiariq",
+    "type": 3
+  },
+  {
+    "from": "Xonqa",
+    "to": "Yangibozor",
+    "type": 3
+  },
+  {
+    "from": "Yangiariq",
+    "to": "Yangibozor",
+    "type": 3
+  }
+]

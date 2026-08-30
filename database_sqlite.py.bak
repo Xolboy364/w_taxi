@@ -1,0 +1,464 @@
+import asyncpg
+import datetime
+import logging
+from typing import Optional, List, Dict, Any
+from contextlib import asynccontextmanager
+from config import DATABASE_URL, DB_POOL_MIN_SIZE, DB_POOL_MAX_SIZE
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class Database:
+    """PostgreSQL database manager with connection pooling"""
+    
+    def __init__(self):
+        self.pool = None
+        self._initialized = False
+    
+    async def init_db(self):
+        """Initialize database connection pool and create tables"""
+        if self._initialized:
+            return
+            
+        try:
+            self.pool = await asyncpg.create_pool(
+                DATABASE_URL,
+                min_size=DB_POOL_MIN_SIZE,
+                max_size=DB_POOL_MAX_SIZE,
+                command_timeout=60,
+                max_inactive_connection_lifetime=300
+            )
+            
+            async with self.pool.acquire() as conn:
+                await conn.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
+                await self._create_tables(conn)
+                await self._create_indexes(conn)
+                await self._init_settings(conn)
+                
+            self._initialized = True
+            logger.info("✅ PostgreSQL database initialized successfully")
+            
+        except Exception as e:
+            logger.error(f"❌ Database initialization failed: {e}")
+            raise
+    
+    async def _create_tables(self, conn):
+        """Create all tables"""
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                telegram_id BIGINT PRIMARY KEY,
+                full_name TEXT,
+                phone VARCHAR(20),
+                is_banned BOOLEAN DEFAULT FALSE,
+                ban_until TIMESTAMP,
+                ban_reason TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS drivers (
+                telegram_id BIGINT PRIMARY KEY REFERENCES users(telegram_id) ON DELETE CASCADE,
+                full_name TEXT,
+                phone VARCHAR(20),
+                service_type VARCHAR(20),
+                car_model TEXT,
+                car_number VARCHAR(20),
+                photo_id TEXT,
+                status VARCHAR(20) DEFAULT 'waiting',
+                subscription_until TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                is_active BOOLEAN DEFAULT TRUE
+            );
+        """)
+        
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS driver_routes (
+                id SERIAL PRIMARY KEY,
+                telegram_id BIGINT REFERENCES drivers(telegram_id) ON DELETE CASCADE,
+                from_loc TEXT NOT NULL,
+                to_loc TEXT NOT NULL,
+                route_category VARCHAR(20) DEFAULT 'intercity',
+                seats INTEGER DEFAULT 4,
+                accepts_post BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS passenger_orders (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT REFERENCES users(telegram_id) ON DELETE SET NULL,
+                full_name TEXT,
+                phone VARCHAR(20),
+                from_loc TEXT,
+                to_loc TEXT,
+                seats_needed INTEGER DEFAULT 1,
+                target_driver_id BIGINT REFERENCES drivers(telegram_id) ON DELETE SET NULL,
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS activity_logs (
+                id SERIAL PRIMARY KEY,
+                telegram_id BIGINT,
+                user_name TEXT,
+                action_type TEXT,
+                details TEXT,
+                is_temp_admin BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS admins (
+                telegram_id BIGINT PRIMARY KEY,
+                full_name TEXT,
+                added_by BIGINT,
+                receive_backups BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS system_settings (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        
+        logger.info("✅ All tables created successfully")
+    
+    async def _create_indexes(self, conn):
+        """Create indexes for better performance"""
+        await conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_routes_lookup ON driver_routes(from_loc, to_loc);
+            CREATE INDEX IF NOT EXISTS idx_orders_time ON passenger_orders(created_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_logs_time ON activity_logs(created_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
+            CREATE INDEX IF NOT EXISTS idx_drivers_status ON drivers(status) WHERE is_active = TRUE;
+            CREATE INDEX IF NOT EXISTS idx_drivers_subscription ON drivers(subscription_until) WHERE subscription_until IS NOT NULL;
+            CREATE INDEX IF NOT EXISTS idx_orders_user ON passenger_orders(user_id) WHERE is_active = TRUE;
+            CREATE INDEX IF NOT EXISTS idx_routes_telegram ON driver_routes(telegram_id);
+        """)
+        logger.info("✅ All indexes created successfully")
+    
+    async def _init_settings(self, conn):
+        """Initialize default settings"""
+        default_settings = [
+            ('super_admin_password', 'admin777'),
+            ('maintenance_mode', '0'),
+            ('monetization_active', '0'),
+            ('p2p_card_number', '8600123456789012'),
+            ('version', '2.0.0'),
+            ('last_backup', ''),
+        ]
+        
+        for key, value in default_settings:
+            await conn.execute("""
+                INSERT INTO system_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING
+            """, key, value)
+        
+        logger.info("✅ Default settings initialized")
+    
+    @asynccontextmanager
+    async def get_connection(self):
+        """Get connection from pool with context manager"""
+        if not self._initialized:
+            await self.init_db()
+        
+        async with self.pool.acquire() as conn:
+            yield conn
+    
+    async def get_setting(self, key: str, default: str = "") -> str:
+        """Get a system setting"""
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT value FROM system_settings WHERE key = $1", key)
+            return row['value'] if row else default
+    
+    async def set_setting(self, key: str, value: str):
+        """Set a system setting"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO system_settings (key, value, updated_at) VALUES ($1, $2, CURRENT_TIMESTAMP)
+                ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP
+            """, key, value)
+    
+    async def is_user_banned(self, telegram_id: int) -> tuple[bool, str]:
+        """Check if user is banned"""
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("""
+                SELECT is_banned, ban_until, ban_reason FROM users WHERE telegram_id = $1
+            """, telegram_id)
+            
+            if not row or not row['is_banned']:
+                return False, ""
+            
+            if row['ban_until']:
+                if datetime.datetime.now() > row['ban_until']:
+                    await conn.execute("""
+                        UPDATE users SET is_banned = FALSE, ban_until = NULL, ban_reason = NULL WHERE telegram_id = $1
+                    """, telegram_id)
+                    return False, ""
+            
+            return True, row['ban_reason'] or "Qoidalarni buzganlik uchun"
+    
+    async def ban_user(self, telegram_id: int, reason: str, duration_hours: int = None):
+        """Ban a user"""
+        ban_until = None
+        if duration_hours:
+            ban_until = datetime.datetime.now() + datetime.timedelta(hours=duration_hours)
+        
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                UPDATE users SET is_banned = TRUE, ban_until = $1, ban_reason = $2 WHERE telegram_id = $3
+            """, ban_until, reason, telegram_id)
+    
+    async def unban_user(self, telegram_id: int):
+        """Unban a user"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                UPDATE users SET is_banned = FALSE, ban_until = NULL, ban_reason = NULL WHERE telegram_id = $1
+            """, telegram_id)
+    
+    async def save_user_phone(self, telegram_id: int, full_name: str, phone: str):
+        """Save or update user phone"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO users (telegram_id, full_name, phone) VALUES ($1, $2, $3)
+                ON CONFLICT (telegram_id) DO UPDATE SET full_name = EXCLUDED.full_name, phone = EXCLUDED.phone
+            """, telegram_id, full_name, phone)
+    
+    async def get_user_phone(self, telegram_id: int) -> Optional[str]:
+        """Get user phone number"""
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT phone FROM users WHERE telegram_id = $1", telegram_id)
+            return row['phone'] if row else None
+    
+    async def is_driver_subscribed(self, telegram_id: int) -> bool:
+        """Check if driver has active subscription"""
+        monetization = await self.get_setting("monetization_active", "0")
+        if monetization != "1":
+            return True
+        
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT subscription_until FROM drivers WHERE telegram_id = $1", telegram_id)
+            if not row or not row['subscription_until']:
+                return False
+            return datetime.datetime.now() < row['subscription_until']
+    
+    async def extend_driver_subscription(self, telegram_id: int, days: int = 30):
+        """Extend driver subscription"""
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT subscription_until FROM drivers WHERE telegram_id = $1", telegram_id)
+            current_end = datetime.datetime.now()
+            if row and row['subscription_until'] and row['subscription_until'] > current_end:
+                current_end = row['subscription_until']
+            
+            new_end = current_end + datetime.timedelta(days=days)
+            await conn.execute("UPDATE drivers SET subscription_until = $1 WHERE telegram_id = $2", new_end, telegram_id)
+    
+    async def get_driver(self, telegram_id: int) -> Optional[Dict[str, Any]]:
+        """Get driver by ID"""
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT * FROM drivers WHERE telegram_id = $1", telegram_id)
+            return dict(row) if row else None
+    
+    async def save_driver(self, data: dict):
+        """Save or update driver"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO drivers (telegram_id, full_name, phone, service_type, car_model, car_number, photo_id, status, is_active)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, 'waiting', TRUE)
+                ON CONFLICT (telegram_id) DO UPDATE SET
+                    full_name = EXCLUDED.full_name, phone = EXCLUDED.phone,
+                    service_type = EXCLUDED.service_type, car_model = EXCLUDED.car_model,
+                    car_number = EXCLUDED.car_number, photo_id = EXCLUDED.photo_id,
+                    updated_at = CURRENT_TIMESTAMP
+            """, data["telegram_id"], data["full_name"], data["phone"],
+                data["service_type"], data["car_model"], data["car_number"], data["photo_id"])
+    
+    async def set_driver_status(self, telegram_id: int, status: str):
+        """Update driver status"""
+        async with self.get_connection() as conn:
+            await conn.execute("UPDATE drivers SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE telegram_id = $2", status, telegram_id)
+    
+    async def get_all_drivers(self, limit: int = 20) -> List[Dict[str, Any]]:
+        """Get all drivers"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("SELECT * FROM drivers ORDER BY telegram_id DESC LIMIT $1", limit)
+            return [dict(row) for row in rows]
+    
+    async def get_all_driver_ids(self) -> List[int]:
+        """Get all active driver IDs"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("SELECT telegram_id FROM drivers WHERE is_active = TRUE")
+            return [row['telegram_id'] for row in rows]
+    
+    async def clear_driver_routes(self, telegram_id: int):
+        """Clear all routes for a driver"""
+        async with self.get_connection() as conn:
+            await conn.execute("DELETE FROM driver_routes WHERE telegram_id = $1", telegram_id)
+    
+    async def add_driver_multi_routes(self, telegram_id: int, from_list: list, to_list: list, route_category: str = 'intercity'):
+        """Add multiple routes for driver"""
+        async with self.get_connection() as conn:
+            async with conn.transaction():
+                for f in from_list:
+                    for t in to_list:
+                        await conn.execute("""
+                            INSERT INTO driver_routes (telegram_id, from_loc, to_loc, route_category, seats, accepts_post)
+                            VALUES ($1, $2, $3, $4, 4, TRUE)
+                        """, telegram_id, f, t, route_category)
+                
+                await conn.execute("UPDATE drivers SET status = 'waiting', updated_at = CURRENT_TIMESTAMP WHERE telegram_id = $1", telegram_id)
+    
+    async def add_driver_single_route(self, telegram_id: int, from_loc: str, to_loc: str, route_category: str = 'local'):
+        """Add single route for driver"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO driver_routes (telegram_id, from_loc, to_loc, route_category, seats, accepts_post)
+                VALUES ($1, $2, $3, $4, 4, TRUE)
+            """, telegram_id, from_loc, to_loc, route_category)
+            await conn.execute("UPDATE drivers SET status = 'waiting', updated_at = CURRENT_TIMESTAMP WHERE telegram_id = $1", telegram_id)
+    
+    async def get_driver_routes_count(self, telegram_id: int) -> int:
+        """Get count of driver routes"""
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT COUNT(*) as count FROM driver_routes WHERE telegram_id = $1", telegram_id)
+            return row['count'] if row else 0
+    
+    async def search_drivers(self, from_loc: str, to_loc: str) -> List[Dict[str, Any]]:
+        """Search for drivers by route"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("""
+                SELECT DISTINCT d.telegram_id, d.full_name, d.phone, d.car_model, d.car_number, d.photo_id, d.status, r.seats, r.accepts_post
+                FROM driver_routes r JOIN drivers d ON r.telegram_id = d.telegram_id
+                WHERE r.from_loc = $1 AND r.to_loc = $2 AND d.is_active = TRUE AND d.status = 'waiting'
+                ORDER BY d.telegram_id
+            """, from_loc, to_loc)
+            return [dict(row) for row in rows]
+    
+    async def get_matching_driver_ids(self, from_loc: str, to_loc: str) -> List[int]:
+        """Get matching driver IDs for route"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("""
+                SELECT DISTINCT d.telegram_id
+                FROM driver_routes r JOIN drivers d ON r.telegram_id = d.telegram_id
+                WHERE r.from_loc = $1 AND r.to_loc = $2 AND d.status = 'waiting' AND d.is_active = TRUE
+            """, from_loc, to_loc)
+            return [row['telegram_id'] for row in rows]
+    
+    async def add_passenger_order(self, user_id: int, full_name: str, phone: str, from_loc: str, to_loc: str, seats: int = 1, target_driver_id: int = 0):
+        """Add a passenger order"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO passenger_orders (user_id, full_name, phone, from_loc, to_loc, seats_needed, target_driver_id, is_active)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)
+            """, user_id, full_name, phone, from_loc, to_loc, seats, target_driver_id if target_driver_id > 0 else None)
+    
+    async def get_passenger_orders_for_driver(self, telegram_id: int) -> List[Dict[str, Any]]:
+        """Get passenger orders for a driver"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("""
+                SELECT DISTINCT p.id, p.full_name, p.phone, p.from_loc, p.to_loc, p.seats_needed, p.created_at, p.target_driver_id
+                FROM passenger_orders p JOIN driver_routes r ON p.from_loc = r.from_loc AND p.to_loc = r.to_loc
+                WHERE r.telegram_id = $1 AND p.is_active = TRUE AND (p.target_driver_id IS NULL OR p.target_driver_id = $1)
+                ORDER BY p.id DESC LIMIT 15
+            """, telegram_id)
+            return [dict(row) for row in rows]
+    
+    async def is_admin(self, telegram_id: int, super_admin_id: int) -> bool:
+        """Check if user is admin"""
+        if telegram_id == super_admin_id:
+            return True
+        async with self.get_connection() as conn:
+            row = await conn.fetchrow("SELECT 1 FROM admins WHERE telegram_id = $1", telegram_id)
+            return bool(row)
+    
+    async def add_admin(self, telegram_id: int, full_name: str, added_by: int):
+        """Add a new admin"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO admins (telegram_id, full_name, added_by, receive_backups) VALUES ($1, $2, $3, TRUE)
+                ON CONFLICT (telegram_id) DO UPDATE SET full_name = EXCLUDED.full_name, added_by = EXCLUDED.added_by, receive_backups = TRUE
+            """, telegram_id, full_name, added_by)
+    
+    async def remove_admin(self, telegram_id: int):
+        """Remove an admin"""
+        async with self.get_connection() as conn:
+            await conn.execute("DELETE FROM admins WHERE telegram_id = $1", telegram_id)
+    
+    async def get_all_admins(self) -> List[Dict[str, Any]]:
+        """Get all admins"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("SELECT * FROM admins ORDER BY created_at DESC")
+            return [dict(row) for row in rows]
+    
+    async def get_backup_recipients(self, super_admin_id: int) -> List[int]:
+        """Get all backup recipients"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("SELECT telegram_id FROM admins WHERE receive_backups = TRUE")
+            recipients = {super_admin_id}
+            for row in rows:
+                recipients.add(row['telegram_id'])
+            return list(recipients)
+    
+    async def log_activity(self, telegram_id: int, user_name: str, action_type: str, details: str = "", is_temp_admin: bool = False):
+        """Log user activity"""
+        async with self.get_connection() as conn:
+            await conn.execute("""
+                INSERT INTO activity_logs (telegram_id, user_name, action_type, details, is_temp_admin)
+                VALUES ($1, $2, $3, $4, $5)
+            """, telegram_id, user_name, action_type, details, is_temp_admin)
+    
+    async def get_recent_admin_logs(self, limit: int = 20) -> List[Dict[str, Any]]:
+        """Get recent admin logs"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("""
+                SELECT * FROM activity_logs
+                WHERE is_temp_admin = TRUE OR action_type LIKE 'ADMIN_%' 
+                   OR action_type IN ('BAN_USER', 'UNBAN_USER', 'KILL_SWITCH', 'START_SWITCH', 'ADD_ADMIN', 'REMOVE_ADMIN', 'MONETIZATION_TOGGLE', 'APPROVE_PAYMENT')
+                ORDER BY id DESC LIMIT $1
+            """, limit)
+            return [dict(row) for row in rows]
+    
+    async def get_stats(self) -> Dict[str, int]:
+        """Get bot statistics"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("""
+                SELECT 
+                    (SELECT COUNT(*) FROM drivers) as drivers,
+                    (SELECT COUNT(*) FROM driver_routes) as routes,
+                    (SELECT COUNT(*) FROM passenger_orders) as orders,
+                    (SELECT COUNT(*) FROM activity_logs) as logs,
+                    (SELECT COUNT(*) FROM admins) as admins,
+                    (SELECT COUNT(*) FROM users WHERE is_banned = TRUE) as banned
+            """)
+            row = rows[0]
+            return {
+                'drivers': row['drivers'],
+                'routes': row['routes'],
+                'orders': row['orders'],
+                'logs': row['logs'],
+                'admins': row['admins'],
+                'banned': row['banned']
+            }
+    
+    async def get_all_user_ids(self) -> List[int]:
+        """Get all user IDs"""
+        async with self.get_connection() as conn:
+            rows = await conn.fetch("SELECT telegram_id FROM users UNION SELECT telegram_id FROM drivers")
+            return [row['telegram_id'] for row in rows]
+    
+    async def close(self):
+        """Close database connection pool"""
+        if self.pool:
+            await self.pool.close()
+            self._initialized = False
+            logger.info("✅ Database connection closed")
+
+db = Database()
