@@ -643,6 +643,11 @@ async def roadside_services_menu(message: Message, state: FSMContext):
 
 @router.message(F.location, F.text.in_(["⛽️ Zapravka", "🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis"]))
 async def process_roadside_service_search(message: Message):
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
     text_map = {
         "⛽️ Zapravka": "gas",
         "🍽 Ovqatlanish": "food",
