@@ -37,7 +37,7 @@ async def daily_backup_worker(bot: Bot):
                 f"🛡 <b>24 Soatlik Tizim Statistikasi va Zaxirasi</b>\n"
                 f"📅 Sana: <code>{now_str}</code>\n\n"
                 f"👥 Haydovchilar: {stats['drivers']} ta\n"
-                f"🛣 Yo'nalishlar: {stats['routes']} ta\n"
+                f"🛣 Yo‘nalishlar: {stats['routes']} ta\n"
                 f"🙋‍♂️ Buyurtmalar: {stats['orders']} ta\n"
                 f"📝 Audit loglari: {stats['logs']} ta"
             )
@@ -61,7 +61,7 @@ async def scheduled_notifications_worker(bot: Bot):
                     try:
                         await bot.send_message(
                             chat_id=d["telegram_id"],
-                            text="☀️ <b>Xayrli tong!</b>\nBugun yo'lga chiqasizmi? Marshrutlaringizni tekshirib, faol holatga keltirib qo'ying.",
+                            text="☀️ <b>Xayrli tong!</b>\nBugun yo‘lga chiqasizmi? Marshrutlaringizni tekshirib, faol holatga keltirib qo‘ying.",
                             parse_mode="HTML"
                         )
                     except Exception:
@@ -78,10 +78,6 @@ async def main():
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher(storage=storage)
     dp.include_router(router)
-
-    # Service AD router
-    from service_ad import router as service_ad_router
-    dp.include_router(service_ad_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
 

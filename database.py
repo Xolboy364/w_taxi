@@ -110,37 +110,6 @@ async def init_db():
             )
         """)
 
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS service_ads (
-                id SERIAL PRIMARY KEY,
-                user_id BIGINT,
-                service_type TEXT,
-                name TEXT,
-                latitude DOUBLE PRECISION,
-                longitude DOUBLE PRECISION,
-                phone TEXT,
-                description TEXT,
-                photo_id TEXT,
-                is_active INT DEFAULT 0,
-                start_date TIMESTAMP,
-                end_date TIMESTAMP,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS service_payments (
-                id SERIAL PRIMARY KEY,
-                ad_id INT,
-                user_id BIGINT,
-                amount INT,
-                receipt_photo_id TEXT,
-                status INT DEFAULT 0,
-                confirmed_by BIGINT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('super_admin_password', 'admin777') ON CONFLICT (key) DO NOTHING")
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('maintenance_mode', '0') ON CONFLICT (key) DO NOTHING")
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('monetization_active', '0') ON CONFLICT (key) DO NOTHING")
@@ -449,52 +418,3 @@ async def get_stats():
 async def get_all_drivers():
     async with pool.acquire() as db:
         return await db.fetch("SELECT * FROM drivers ORDER BY telegram_id DESC LIMIT 20")
-
-# ============ SERVICE ADS FUNCTIONS ============
-
-async def save_service_ad(data: dict) -> int:
-    async with pool.acquire() as db:
-        row = await db.fetchrow("""
-            INSERT INTO service_ads 
-            (user_id, service_type, name, latitude, longitude, phone, description, photo_id, is_active)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0)
-            RETURNING id
-        """, data.get('telegram_id'), data.get('service_type'), data.get('name'), 
-            data.get('latitude'), data.get('longitude'), data.get('phone'), 
-            data.get('description'), data.get('photo_id'))
-        return row['id'] if row else None
-
-async def save_service_payment(ad_id: int, user_id: int, amount: int, photo_id: str):
-    async with pool.acquire() as db:
-        await db.execute("""
-            INSERT INTO service_payments (ad_id, user_id, amount, receipt_photo_id, status)
-            VALUES ($1, $2, $3, $4, 0)
-        """, ad_id, user_id, amount, photo_id)
-
-async def activate_service_ad(ad_id: int, days: int = 30):
-    async with pool.acquire() as db:
-        now = datetime.datetime.now()
-        end = now + datetime.timedelta(days=days)
-        await db.execute("""
-            UPDATE service_ads 
-            SET is_active = 1, start_date = $1, end_date = $2
-            WHERE id = $3
-        """, now, end, ad_id)
-        return await db.fetchrow("SELECT * FROM service_ads WHERE id = $1", ad_id)
-
-async def reject_service_ad(ad_id: int):
-    async with pool.acquire() as db:
-        await db.execute("UPDATE service_ads SET is_active = 2 WHERE id = $1", ad_id)
-        return await db.fetchrow("SELECT * FROM service_ads WHERE id = $1", ad_id)
-
-async def get_service_ad(ad_id: int):
-    async with pool.acquire() as db:
-        return await db.fetchrow("SELECT * FROM service_ads WHERE id = $1", ad_id)
-
-async def get_active_service_ads():
-    async with pool.acquire() as db:
-        return await db.fetch("""
-            SELECT * FROM service_ads 
-            WHERE is_active = 1 AND end_date > NOW()
-            ORDER BY created_at DESC
-        """)
