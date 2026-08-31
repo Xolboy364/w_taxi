@@ -38,6 +38,7 @@ def get_roadside_services_kb() -> ReplyKeyboardMarkup:
         keyboard=[
             [KeyboardButton(text="⛽️ Zapravka", request_location=True), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
             [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
+            [KeyboardButton(text="📢 E'lon joylashtirish")],
             [KeyboardButton(text="🔙 Bosh menyu")]
         ],
         resize_keyboard=True
@@ -72,14 +73,16 @@ def get_super_admin_kb(maintenance_on: bool = False, monetization_on: bool = Fal
     if is_temp_session:
         keyboard.append([KeyboardButton(text="🔒 Sessiyani yopish (Chiqish)")])
     else:
-        keyboard.append([KeyboardButton(text="🔙 Bosh menyu")])
+        keyboard.append([KeyboardButton(text="📢 E'lon joylashtirish")],
+            [KeyboardButton(text="🔙 Bosh menyu")])
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 sub_admin_kb = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📊 Bot Statistikasi"), KeyboardButton(text="👥 Haydovchilar ro‘yxati")],
         [KeyboardButton(text="🚫 Qora ro‘yxat (Ban)"), KeyboardButton(text="💾 Baza zaxirasini yuklash (.db)")],
-        [KeyboardButton(text="🔙 Bosh menyu")]
+        [KeyboardButton(text="📢 E'lon joylashtirish")],
+            [KeyboardButton(text="🔙 Bosh menyu")]
     ],
     resize_keyboard=True
 )
@@ -165,7 +168,8 @@ def get_route_scope_kb(prefix: str) -> InlineKeyboardMarkup:
 phone_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📱 Kontaktni ulashish", request_contact=True)],
-        [KeyboardButton(text="🔙 Bosh menyu")]
+        [KeyboardButton(text="📢 E'lon joylashtirish")],
+            [KeyboardButton(text="🔙 Bosh menyu")]
     ],
     resize_keyboard=True
 )
