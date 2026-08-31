@@ -41,6 +41,7 @@ def clean_phone(phone_raw: str) -> str | None:
     return None
 
 def is_super_admin(user_id: int) -> bool:
+    print(f"is_super_admin: user_id={user_id}, ADMIN_ID={ADMIN_ID}")
     if user_id == ADMIN_ID:
         return True
     if user_id in TEMP_SESSIONS:
