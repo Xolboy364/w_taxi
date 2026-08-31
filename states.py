@@ -52,3 +52,6 @@ class BanUserManage(StatesGroup):
 
 class DriverPaymentState(StatesGroup):
     waiting_receipt = State()
+
+class RoadsideServiceState(StatesGroup):
+    waiting_location = State()
