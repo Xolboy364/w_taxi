@@ -1,4 +1,3 @@
-# handlers.py
 import re
 import os
 import time
@@ -754,7 +753,7 @@ async def drv_local_to_picked(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     region = data['local_region']
     from_dist = data.get('from_dist')
-    
+
     if from_dist == to_dist:
         await callback.answer("⚠️ Chiqish tumani va borish tumani bir xil bo‘lishi mumkin emas!", show_alert=True)
         return
@@ -897,7 +896,7 @@ async def mto_finish(callback: CallbackQuery, state: FSMContext):
     if not tl:
         await callback.answer("Kamida 1 ta borish tumani yoki Toshkent shahrini tanlang!", show_alert=True)
         return
-    
+
     valid_tl = [t for t in tl if t not in fl]
     if not valid_tl:
         await callback.answer("⚠️ Chiqish va borish manzillari bir xil bo‘lishi mumkin emas!", show_alert=True)
