@@ -55,13 +55,3 @@ class DriverPaymentState(StatesGroup):
 
 class RoadsideServiceState(StatesGroup):
     waiting_location = State()
-
-class ServiceAdStates(StatesGroup):
-    choose_type = State()
-    enter_name = State()
-    enter_location = State()
-    enter_phone = State()
-    enter_description = State()
-    enter_photo = State()
-    waiting_payment = State()
-    receipt_photo = State()
