@@ -77,7 +77,6 @@ async def init_db():
         """)
         await db.execute("ALTER TABLE passenger_orders ADD COLUMN IF NOT EXISTS service_type TEXT DEFAULT 'passenger';")
 
-        # Yo'l bo'yi xizmatlari jadvali (Monetizatsiya va GPS uchun)
         await db.execute("""
             CREATE TABLE IF NOT EXISTS roadside_services (
                 id SERIAL PRIMARY KEY,
@@ -107,6 +106,37 @@ async def init_db():
                 full_name TEXT,
                 added_by BIGINT,
                 receive_backups INT DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS service_ads (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT,
+                service_type TEXT,
+                name TEXT,
+                latitude DOUBLE PRECISION,
+                longitude DOUBLE PRECISION,
+                phone TEXT,
+                description TEXT,
+                photo_id TEXT,
+                is_active INT DEFAULT 0,
+                start_date TIMESTAMP,
+                end_date TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS service_payments (
+                id SERIAL PRIMARY KEY,
+                ad_id INT,
+                user_id BIGINT,
+                amount INT,
+                receipt_photo_id TEXT,
+                status INT DEFAULT 0,
+                confirmed_by BIGINT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -387,8 +417,8 @@ async def get_nearest_services(lat: float, lon: float, service_type: str, limit:
             SELECT name, phone, description, latitude, longitude,
             (
                 6371 * acos(
-                    cos(radians($1)) * cos(radians(latitude)) * 
-                    cos(radians(longitude) - radians($2)) + 
+                    cos(radians($1)) * cos(radians(latitude)) *
+                    cos(radians(longitude) - radians($2)) +
                     sin(radians($1)) * sin(radians(latitude))
                 )
             ) AS distance

@@ -41,7 +41,6 @@ def clean_phone(phone_raw: str) -> str | None:
     return None
 
 def is_super_admin(user_id: int) -> bool:
-    print(f"is_super_admin: user_id={user_id}, ADMIN_ID={ADMIN_ID}")
     if user_id == ADMIN_ID:
         return True
     if user_id in TEMP_SESSIONS:
@@ -70,7 +69,7 @@ async def check_access(message_or_callback) -> bool:
     if maint == "1" and not is_super_admin(user_id):
         maint_text = (
             "🛠 <b>Botda yangilanish va texnik xizmat olib borilayapti.</b>\n\n"
-            "Bot faoliyatida uzulish va to‘xtatilishlar kuzatilishi mumkin. Yangilanish bu yangi imkoniyatlar."
+            "Bot faoliyatida uzulish va to'xtatilishlar kuzatilishi mumkin. Yangilanish bu yangi imkoniyatlar."
         )
         if isinstance(message_or_callback, Message):
             await message_or_callback.answer(maint_text, parse_mode="HTML")
@@ -117,7 +116,7 @@ async def secret_admin_password_check(message: Message, state: FSMContext):
         )
     else:
         await state.clear()
-        await message.answer("❌ Noto‘g‘ri parol!")
+        await message.answer("❌ Noto'g'ri parol!")
 
 @router.message(F.text == "🔒 Sessiyani yopish (Chiqish)")
 async def close_temp_session(message: Message, state: FSMContext):
@@ -134,7 +133,7 @@ async def cmd_start(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     menu = await render_user_menu(message.from_user.id)
-    greeting = "👑 Hurmatli Super Admin, xush kelibsiz!" if is_super_admin(message.from_user.id) else "Assalomu alaykum! Kerakli bo‘limni tanlang:"
+    greeting = "👑 Hurmatli Super Admin, xush kelibsiz!" if is_super_admin(message.from_user.id) else "Assalomu alaykum! Kerakli bo'limni tanlang:"
     await message.answer(greeting, reply_markup=menu)
 
 @router.message(F.text == "👑 Super Admin Panel")
@@ -162,23 +161,23 @@ async def admin_stats(message: Message, state: FSMContext):
     monet = (await db.get_setting("monetization_active", "0")) == "1"
     text = (
         "📊 <b>Bot Statistikasi:</b>\n\n"
-        f"👥 Ro‘yxatdagi haydovchilar: <b>{stats['drivers']} ta</b>\n"
-        f"🛣 Faol yo‘nalishlar: <b>{stats['routes']} ta</b>\n"
+        f"👥 Ro'yxatdagi haydovchilar: <b>{stats['drivers']} ta</b>\n"
+        f"🛣 Faol yo'nalishlar: <b>{stats['routes']} ta</b>\n"
         f"🙋‍♂️ Buyurtmalar arxivi: <b>{stats['orders']} ta</b>\n"
         f"📝 Barcha audit loglari: <b>{stats['logs']} ta</b>\n"
         f"🛡 Tayinlangan adminlar: <b>{stats['admins']} ta</b>\n"
-        f"⛔️ Qora ro‘yxatdagilar: <b>{stats['banned']} ta</b>\n"
-        f"💎 Monetizatsiya holati: <b>{'Faol 🟢' if monet else 'O‘chiq 🔴'}</b>"
+        f"⛔️ Qora ro'yxatdagilar: <b>{stats['banned']} ta</b>\n"
+        f"💎 Monetizatsiya holati: <b>{'Faol 🟢' if monet else 'O'chiq 🔴'}</b>"
     )
     await message.answer(text, parse_mode="HTML")
 
-@router.message(F.text == "💳 To‘lov kartasini sozlash", StateFilter("*"))
+@router.message(F.text == "💳 To'lov kartasini sozlash", StateFilter("*"))
 async def change_card_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
     await state.clear()
     curr_card = await db.get_setting("p2p_card_number", "8600123456789012")
     await message.answer(
-        f"💳 <b>Hozirgi to‘lov qabul qiluvchi karta:</b>\n<code>{curr_card}</code>\n\n"
+        f"💳 <b>Hozirgi to'lov qabul qiluvchi karta:</b>\n<code>{curr_card}</code>\n\n"
         "Yangi 16 xonali karta raqamini kiriting (Masalan: <code>8600123456789012</code>):",
         parse_mode="HTML"
     )
@@ -188,19 +187,19 @@ async def change_card_start(message: Message, state: FSMContext):
 async def change_card_save(message: Message, state: FSMContext):
     clean_card = re.sub(r"\D", "", message.text.strip())
     if len(clean_card) != 16:
-        await message.answer("Karta raqami 16 ta raqamdan iborat bo‘lishi kerak. Qayta kiriting:")
+        await message.answer("Karta raqami 16 ta raqamdan iborat bo'lishi kerak. Qayta kiriting:")
         return
     await db.set_setting("p2p_card_number", clean_card)
     await db.log_activity(message.from_user.id, message.from_user.full_name, "ADMIN_CHANGE_CARD", f"Yangi karta: {clean_card}", is_temp_admin=int(is_temp_admin_user(message.from_user.id)))
     await state.clear()
-    await message.answer(f"✅ <b>To‘lov kartasi yangilandi:</b>\n<code>{clean_card}</code>\n\nEndi barcha Click to‘lovlari shu kartaga yo‘naltiriladi.", parse_mode="HTML")
+    await message.answer(f"✅ <b>To'lov kartasi yangilandi:</b>\n<code>{clean_card}</code>\n\nEndi barcha Click to'lovlari shu kartaga yo'naltiriladi.", parse_mode="HTML")
 
 @router.message(F.text == "💎 Monetizatsiyani boshlash")
 async def monetization_start_init(message: Message):
     if not is_super_admin(message.from_user.id): return
     await message.answer(
         "💎 <b>MONETIZATSIYANI BOSHLASH (1-BOSQICH):</b>\n\n"
-        "Rostdan ham haydovchilar uchun oylik obuna (30 000 so‘m/oy) tizimini yoqmoqchimisiz?",
+        "Rostdan ham haydovchilar uchun oylik obuna (30 000 so'm/oy) tizimini yoqmoqchimisiz?",
         reply_markup=monetization_start_1_kb,
         parse_mode="HTML"
     )
@@ -213,8 +212,8 @@ async def mon_cancel_cb(callback: CallbackQuery):
 async def mon_start_1_cb(callback: CallbackQuery):
     if not is_super_admin(callback.from_user.id): return
     await callback.message.edit_text(
-        "💎 <b>MONETIZATSIYANI BOSHLASH (2-BOSQICH QAT’IY TASDIQ):</b>\n\n"
-        "Tugma bosilishi bilan barcha ro‘yxatdagi haydovchilarga obuna shartlari haqida avtomatik xabar yuboriladi va tizim pullik rejimga o‘tadi. Rozimisiz?",
+        "💎 <b>MONETIZATSIYANI BOSHLASH (2-BOSQICH QAT'IY TASDIQ):</b>\n\n"
+        "Tugma bosilishi bilan barcha ro'yxatdagi haydovchilarga obuna shartlari haqida avtomatik xabar yuboriladi va tizim pullik rejimga o'tadi. Rozimisiz?",
         reply_markup=monetization_start_2_kb,
         parse_mode="HTML"
     )
@@ -229,7 +228,7 @@ async def mon_start_2_cb(callback: CallbackQuery, bot: Bot):
 
     driver_msg = (
         "🌟 <b>Hurmatli haydovchilar!</b>\n\n"
-        "Botimizning sifatini oshirish, xizmatni yanada tezkor, barqaror va uzluksiz ishlashini ta’minlash hamda yo‘lovchilar bazasini kengaytirish maqsadida tizimimizda oylik obuna rejimi ishga tushirildi.\n\n"
+        "Botimizning sifatini oshirish, xizmatni yanada tezkor, barqaror va uzluksiz ishlashini ta'minlash hamda yo'lovchilar bazasini kengaytirish maqsadida tizimimizda oylik obuna rejimi ishga tushirildi.\n\n"
         "Doimiy va ishonchli xizmatdan foydalanishda davom etish uchun kabinetingizdagi <b>[ 🌟 Tarif va Obuna ]</b> tugmasi orqali obunangizni faollashtirishingiz mumkin.\n\n"
         "<i>Bizni tanlaganingiz uchun rahmat! Jamoamiz Sizga barakali qatnovlar tilaydi.</i>\n\n"
         "🔗 @w_taxi_bot"
@@ -246,12 +245,12 @@ async def mon_start_2_cb(callback: CallbackQuery, bot: Bot):
     is_temp = is_temp_admin_user(callback.from_user.id)
     await callback.message.answer("✅ Barcha haydovchilar ogohlantirildi va monetizatsiya ishga tushdi.", reply_markup=get_super_admin_kb(maintenance_on=maint, monetization_on=True, is_temp_session=is_temp))
 
-@router.message(F.text == "🛑 Monetizatsiyani to‘xtatish")
+@router.message(F.text == "🛑 Monetizatsiyani to'xtatish")
 async def monetization_stop_init(message: Message):
     if not is_super_admin(message.from_user.id): return
     await message.answer(
-        "🛑 <b>MONETIZATSIYANI TO‘XTATISH (1-BOSQICH):</b>\n\n"
-        "Rostdan ham obuna tizimini to‘xtatib, barcha haydovchilar uchun botni vaqtincha bepul rejimga o‘tkazmoqchimisiz?",
+        "🛑 <b>MONETIZATSIYANI TO'XTATISH (1-BOSQICH):</b>\n\n"
+        "Rostdan ham obuna tizimini to'xtatib, barcha haydovchilar uchun botni vaqtincha bepul rejimga o'tkazmoqchimisiz?",
         reply_markup=monetization_stop_1_kb,
         parse_mode="HTML"
     )
@@ -260,8 +259,8 @@ async def monetization_stop_init(message: Message):
 async def mon_stop_1_cb(callback: CallbackQuery):
     if not is_super_admin(callback.from_user.id): return
     await callback.message.edit_text(
-        "🛑 <b>MONETIZATSIYANI TO‘XTATISH (2-BOSQICH QAT’IY TASDIQ):</b>\n\n"
-        "Obuna rejimi butunlay o‘chiriladi va barcha haydovchilar bepul xizmatdan foydalana boshlaydi. Tasdiqlaysizmi?",
+        "🛑 <b>MONETIZATSIYANI TO'XTATISH (2-BOSQICH QAT'IY TASDIQ):</b>\n\n"
+        "Obuna rejimi butunlay o'chiriladi va barcha haydovchilar bepul xizmatdan foydalana boshlaydi. Tasdiqlaysizmi?",
         reply_markup=monetization_stop_2_kb,
         parse_mode="HTML"
     )
@@ -272,7 +271,7 @@ async def mon_stop_2_cb(callback: CallbackQuery, bot: Bot):
     await db.set_setting("monetization_active", "0")
     await db.log_activity(callback.from_user.id, callback.from_user.full_name, "MONETIZATION_TOGGLE", "Monetizatsiya to'xtatildi", is_temp_admin=int(is_temp_admin_user(callback.from_user.id)))
 
-    await callback.message.edit_text("🛑 <b>Monetizatsiya to‘xtatildi. Bot yana to‘liq bepul rejimga o‘tkazildi.</b>", parse_mode="HTML")
+    await callback.message.edit_text("🛑 <b>Monetizatsiya to'xtatildi. Bot yana to'liq bepul rejimga o'tkazildi.</b>", parse_mode="HTML")
 
     maint = (await db.get_setting("maintenance_mode", "0")) == "1"
     is_temp = is_temp_admin_user(callback.from_user.id)
@@ -285,7 +284,7 @@ async def driver_subscription_menu(message: Message, state: FSMContext):
 
     driver = await db.get_driver(message.from_user.id)
     if not driver:
-        await message.answer("Siz haydovchi sifatida ro‘yxatdan o‘tmagansiz.")
+        await message.answer("Siz haydovchi sifatida ro'yxatdan o'tmagansiz.")
         return
 
     is_sub = await db.is_driver_subscribed(message.from_user.id)
@@ -293,18 +292,18 @@ async def driver_subscription_menu(message: Message, state: FSMContext):
     amount = 30000
 
     click_url = f"https://my.click.uz/clickp2p/?recipient={card_num}&amount={amount}"
-    sub_status_text = "🟢 <b>Faol (Obuna muddati yetarli)</b>" if is_sub else "🔴 <b>Muddati tugagan yoki to‘lanmagan</b>"
+    sub_status_text = "🟢 <b>Faol (Obuna muddati yetarli)</b>" if is_sub else "🔴 <b>Muddati tugagan yoki to'lanmagan</b>"
 
     text = (
         f"🌟 <b>Haydovchi obuna va tarif markazi</b>\n\n"
         f"📶 Sizning holatingiz: {sub_status_text}\n"
-        f"💳 <b>Oylik obuna narxi:</b> 30 000 so‘m / 30 kun\n\n"
-        f"To‘lovni amalga oshirish uchun quyidagi tugmani bosing va o‘tkazma qilingach, <b>to‘lov cheki (skrinshot)ni shu yerga rasm ko‘rinishida yuboring</b>:"
+        f"💳 <b>Oylik obuna narxi:</b> 30 000 so'm / 30 kun\n\n"
+        f"To'lovni amalga oshirish uchun quyidagi tugmani bosing va o'tkazma qilingach, <b>to'lov cheki (skrinshot)ni shu yerga rasm ko'rinishida yuboring</b>:"
     )
 
     kb = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="💳 Click orqali to‘lash (30 000 so‘m)", url=click_url)],
+            [InlineKeyboardButton(text="💳 Click orqali to'lash (30 000 so'm)", url=click_url)],
             [InlineKeyboardButton(text="📸 Chekni yuborish", callback_data="drv_send_receipt")]
         ]
     )
@@ -312,7 +311,7 @@ async def driver_subscription_menu(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == "drv_send_receipt")
 async def driver_send_receipt_callback(callback: CallbackQuery, state: FSMContext):
-    await callback.message.answer("Iltimos, amalga oshirilgan to‘lov chekining skrinshotini (rasmini) yuboring:")
+    await callback.message.answer("Iltimos, amalga oshirilgan to'lov chekining skrinshotini (rasmini) yuboring:")
     await state.set_state(DriverPaymentState.waiting_receipt)
     await callback.answer()
 
@@ -330,7 +329,7 @@ async def driver_receipt_received(message: Message, state: FSMContext, bot: Bot)
         ]
     )
     caption = (
-        f"🔔 <b>Yangi to‘lov cheki tushdi!</b>\n\n"
+        f"🔔 <b>Yangi to'lov cheki tushdi!</b>\n\n"
         f"👤 Haydovchi: {message.from_user.full_name}\n"
         f"🆔 ID: <code>{message.from_user.id}</code>\n"
         f"📞 Username: @{message.from_user.username or 'yoq'}"
@@ -345,7 +344,7 @@ async def driver_receipt_received(message: Message, state: FSMContext, bot: Bot)
 @router.callback_query(F.data.startswith("app_sub_"))
 async def admin_approve_subscription(callback: CallbackQuery, bot: Bot):
     if not (is_super_admin(callback.from_user.id) or await db.is_admin(callback.from_user.id, ADMIN_ID)):
-        await callback.answer("Huquqingiz yo‘q!", show_alert=True)
+        await callback.answer("Huquqingiz yo'q!", show_alert=True)
         return
 
     target_id = int(callback.data.replace("app_sub_", ""))
@@ -357,7 +356,7 @@ async def admin_approve_subscription(callback: CallbackQuery, bot: Bot):
     try:
         await bot.send_message(
             chat_id=target_id,
-            text="🎉 <b>Tabriklaymiz! To‘lovingiz tasdiqlandi.</b>\nObunangiz yana 30 kunga uzaytirildi va barcha imkoniyatlar ochildi! 🚀\n\n🔗 @w_taxi_bot",
+            text="🎉 <b>Tabriklaymiz! To'lovingiz tasdiqlandi.</b>\nObunangiz yana 30 kunga uzaytirildi va barcha imkoniyatlar ochildi! 🚀\n\n🔗 @w_taxi_bot",
             parse_mode="HTML"
         )
     except Exception:
@@ -365,7 +364,7 @@ async def admin_approve_subscription(callback: CallbackQuery, bot: Bot):
 
     await callback.answer("Obuna muvaffaqiyatli tasdiqlandi!")
 
-@router.message(F.text == "🔑 Parolni o‘zgartirish", StateFilter("*"))
+@router.message(F.text == "🔑 Parolni o'zgartirish", StateFilter("*"))
 async def change_password_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
     await state.clear()
@@ -376,19 +375,19 @@ async def change_password_start(message: Message, state: FSMContext):
 async def change_password_save(message: Message, state: FSMContext):
     new_p = message.text.strip()
     if len(new_p) < 4:
-        await message.answer("Parol kamida 4 ta belgidan iborat bo‘lishi kerak.")
+        await message.answer("Parol kamida 4 ta belgidan iborat bo'lishi kerak.")
         return
     await db.set_setting("super_admin_password", new_p)
     await db.log_activity(message.from_user.id, message.from_user.full_name, "ADMIN_CHANGE_PASSWORD", "Parol o'zgartirildi", is_temp_admin=int(is_temp_admin_user(message.from_user.id)))
     await state.clear()
-    await message.answer(f"✅ Yangi parol o‘rnatildi: <code>{new_p}</code>", parse_mode="HTML")
+    await message.answer(f"✅ Yangi parol o'rnatildi: <code>{new_p}</code>", parse_mode="HTML")
 
 @router.message(F.text.startswith("📝 Adminlar faoliyati"))
 async def admin_audit_view(message: Message):
     if not is_super_admin(message.from_user.id): return
     logs = await db.get_recent_admin_logs(20)
     if not logs:
-        await message.answer("Hozircha audit loglari yo‘q.")
+        await message.answer("Hozircha audit loglari yo'q.")
         return
 
     text = "📝 <b>Oxirgi Adminlar Harakati Jurnali:</b>\n\n"
@@ -406,7 +405,7 @@ async def admin_audit_view(message: Message):
 @router.message(F.text == "📢 Ommaviy xabar yuborish")
 async def broadcast_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
-    await message.answer("Barcha foydalanuvchilarga yubormoqchi bo‘lgan xabaringizni yozing:")
+    await message.answer("Barcha foydalanuvchilarga yubormoqchi bo'lgan xabaringizni yozing:")
     await state.set_state(BroadcastState.message_content)
 
 @router.message(BroadcastState.message_content)
@@ -425,10 +424,10 @@ async def broadcast_send(message: Message, state: FSMContext, bot: Bot):
             pass
     await message.answer(f"✅ Xabar {success} ta foydalanuvchiga yetkazildi!")
 
-@router.message(F.text == "🔴 Favqulodda to‘xtatish")
+@router.message(F.text == "🔴 Favqulodda to'xtatish")
 async def kill_switch_init(message: Message):
     if not is_super_admin(message.from_user.id): return
-    await message.answer("⚠️ <b>1-BOSQICH OGOHLANTIRISH!</b>\n\nBot faoliyatini to‘xtatmoqchimisiz?", reply_markup=kill_confirm_1_kb, parse_mode="HTML")
+    await message.answer("⚠️ <b>1-BOSQICH OGOHLANTIRISH!</b>\n\nBot faoliyatini to'xtatmoqchimisiz?", reply_markup=kill_confirm_1_kb, parse_mode="HTML")
 
 @router.callback_query(F.data == "kill_cancel")
 @router.callback_query(F.data == "start_cancel")
@@ -438,7 +437,7 @@ async def kill_cancel_cb(callback: CallbackQuery):
 @router.callback_query(F.data == "kill_step_1_ok")
 async def kill_step_1_callback(callback: CallbackQuery):
     if not is_super_admin(callback.from_user.id): return
-    await callback.message.edit_text("⚠️ <b>2-BOSQICH QAT’IY TASDIQLASH:</b>\n\nBot barcha foydalanuvchilar uchun yopiladi. Rozimisiz?", reply_markup=kill_confirm_2_kb, parse_mode="HTML")
+    await callback.message.edit_text("⚠️ <b>2-BOSQICH QAT'IY TASDIQLASH:</b>\n\nBot barcha foydalanuvchilar uchun yopiladi. Rozimisiz?", reply_markup=kill_confirm_2_kb, parse_mode="HTML")
 
 @router.callback_query(F.data == "kill_step_2_confirm")
 async def kill_step_2_callback(callback: CallbackQuery, bot: Bot):
@@ -446,10 +445,10 @@ async def kill_step_2_callback(callback: CallbackQuery, bot: Bot):
     await db.set_setting("maintenance_mode", "1")
     await db.log_activity(callback.from_user.id, callback.from_user.full_name, "KILL_SWITCH", "Bot to'xtatildi", is_temp_admin=int(is_temp_admin_user(callback.from_user.id)))
 
-    await callback.message.edit_text("🔴 <b>Bot to‘xtatildi!</b>", parse_mode="HTML")
+    await callback.message.edit_text("🔴 <b>Bot to'xtatildi!</b>", parse_mode="HTML")
     maint_msg = (
         "🛠 <b>Botda yangilanish va texnik xizmat olib borilayapti.</b>\n\n"
-        "Bot faoliyatida uzulish va to‘xtatilishlar kuzatilishi mumkin. Yangilanish bu yangi imkoniyatlar.\n\n"
+        "Bot faoliyatida uzulish va to'xtatilishlar kuzatilishi mumkin. Yangilanish bu yangi imkoniyatlar.\n\n"
         "🔗 @w_taxi_bot"
     )
     for uid in await db.get_all_user_ids():
@@ -471,7 +470,7 @@ async def start_switch_init(message: Message):
 @router.callback_query(F.data == "start_step_1_ok")
 async def start_step_1_callback(callback: CallbackQuery):
     if not is_super_admin(callback.from_user.id): return
-    await callback.message.edit_text("🍏 <b>2-BOSQICH QAT’IY TASDIQLASH:</b>\n\nBot ochilsinmi?", reply_markup=start_confirm_2_kb, parse_mode="HTML")
+    await callback.message.edit_text("🍏 <b>2-BOSQICH QAT'IY TASDIQLASH:</b>\n\nBot ochilsinmi?", reply_markup=start_confirm_2_kb, parse_mode="HTML")
 
 @router.callback_query(F.data == "start_step_2_confirm")
 async def start_step_2_callback(callback: CallbackQuery, bot: Bot):
@@ -482,8 +481,8 @@ async def start_step_2_callback(callback: CallbackQuery, bot: Bot):
     await callback.message.edit_text("🍏 <b>Bot qayta ishga tushirildi!</b>", parse_mode="HTML")
 
     welcome_back_msg = (
-        "🎉 <b>Botimiz yana o‘z faoliyatiga to‘liq qaytdi!</b>\n\n"
-        "Botimizda foydalanuvchilar soni ko‘payganligi sababli ba'zi o‘zgarishlarni kiritdik. "
+        "🎉 <b>Botimiz yana o'z faoliyatiga to'liq qaytdi!</b>\n\n"
+        "Botimizda foydalanuvchilar soni ko'payganligi sababli ba'zi o'zgarishlarni kiritdik. "
         "Sizlar bizning botimizni sabr bilan kutib sodiq qolganingiz uchun jamoamiz nomidan rahmat aytamiz.\n\n"
         "🔗 @w_taxi_bot"
     )
@@ -500,14 +499,14 @@ async def start_step_2_callback(callback: CallbackQuery, bot: Bot):
     is_temp = is_temp_admin_user(callback.from_user.id)
     await callback.message.answer("✅ Bot faol holatda.", reply_markup=get_super_admin_kb(maintenance_on=maint, monetization_on=monet, is_temp_session=is_temp))
 
-@router.message(F.text.startswith("🚫 Qora ro‘yxat"))
+@router.message(F.text.startswith("🚫 Qora ro'yxat"))
 async def ban_menu(message: Message):
     if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): return
-    await message.answer("Qora ro‘yxat boshqaruvi:", reply_markup=ban_management_kb)
+    await message.answer("Qora ro'yxat boshqaruvi:", reply_markup=ban_management_kb)
 
 @router.callback_query(F.data == "ban_action_block")
 async def ban_user_start(callback: CallbackQuery, state: FSMContext):
-    await callback.message.answer("Bloklamoqchi bo‘lgan Telegram ID ni kiriting:")
+    await callback.message.answer("Bloklamoqchi bo'lgan Telegram ID ni kiriting:")
     await state.set_state(BanUserManage.enter_user_id)
     await callback.answer()
 
@@ -585,7 +584,7 @@ async def admin_list_show(message: Message, state: FSMContext):
     await state.clear()
     admins = await db.get_all_admins()
     if not admins:
-        await message.answer("Adminlar yo‘q.")
+        await message.answer("Adminlar yo'q.")
         return
     text = "📋 <b>Adminlar:</b>\n\n"
     for a in admins:
@@ -596,7 +595,7 @@ async def admin_list_show(message: Message, state: FSMContext):
 async def admin_remove_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
     await state.clear()
-    await message.answer("O‘chiriladigan admin ID sini kiriting:")
+    await message.answer("O'chiriladigan admin ID sini kiriting:")
     await state.set_state(AdminManage.remove_admin_id)
 
 @router.message(AdminManage.remove_admin_id)
@@ -608,7 +607,7 @@ async def admin_remove_process(message: Message, state: FSMContext):
     await db.remove_admin(tid)
     await db.log_activity(message.from_user.id, message.from_user.full_name, "REMOVE_ADMIN", f"Admin o'chirildi: {tid}", is_temp_admin=int(is_temp_admin_user(message.from_user.id)))
     await state.clear()
-    await message.answer(f"✅ Admin o‘chirildi.")
+    await message.answer(f"✅ Admin o'chirildi.")
 
 @router.message(F.text.startswith("💾 Baza"))
 async def admin_manual_backup(message: Message, state: FSMContext):
@@ -623,7 +622,7 @@ async def admin_drivers_list(message: Message, state: FSMContext):
     await state.clear()
     drivers = await db.get_all_drivers()
     if not drivers:
-        await message.answer("Haydovchilar yo‘q.")
+        await message.answer("Haydovchilar yo'q.")
         return
     text = "📋 <b>Haydovchilar:</b>\n\n"
     for d in drivers:
@@ -631,13 +630,13 @@ async def admin_drivers_list(message: Message, state: FSMContext):
         text += f"👤 {d['full_name']} | <code>{d['telegram_id']}</code> | {sub_ok}\n"
     await message.answer(text, parse_mode="HTML")
 
-@router.message(F.text == "🗺 Yo‘l bo‘yi xizmatlari")
+@router.message(F.text == "🗺 Yo'l bo'yi xizmatlari")
 async def roadside_services_menu(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     await message.answer(
-        "🗺 <b>Yo‘l bo‘yi xizmatlari markazi</b>\n\n"
-        "O‘zingizga kerakli xizmat turini tanlang:",
+        "🗺 <b>Yo'l bo'yi xizmatlari markazi</b>\n\n"
+        "O'zingizga kerakli xizmat turini tanlang:",
         reply_markup=get_roadside_services_kb(),
         parse_mode="HTML"
     )
@@ -676,9 +675,9 @@ async def process_roadside_service_search(message: Message):
 
         response_text += (
             f"<b>{i}. {s['name']}</b>\n"
-            f"📏 Masofa: <b>~{dist} km</b> | 📞 Tel: {s['phone'] or 'Yo‘q'}\n"
+            f"📏 Masofa: <b>~{dist} km</b> | 📞 Tel: {s['phone'] or 'Yo'q'}\n"
             f"📝 Izoh: {s['description'] or '-'}\n"
-            f"🗺 <a href='{maps_url}'>Yo‘lni ko‘rsatish (Google Maps)</a>\n"
+            f"🗺 <a href='{maps_url}'>Yo'lni ko'rsatish (Google Maps)</a>\n"
             f"━━━━━━━━━━━━━━━━━━\n"
         )
 
@@ -692,7 +691,7 @@ async def driver_start(message: Message, state: FSMContext):
     if driver:
         is_sub = await db.is_driver_subscribed(message.from_user.id)
         count = await db.get_driver_routes_count(message.from_user.id)
-        status_text = "🟢 Mijoz kutmoqda (Bo‘sh)" if driver['status'] == 'waiting' else "🟡 Yo‘lda (Harakatda)"
+        status_text = "🟢 Mijoz kutmoqda (Bo'sh)" if driver['status'] == 'waiting' else "🟡 Yo'lda (Harakatda)"
         vip_text = "🌟 <b>VIP Obunachi</b>" if is_sub else "⚪️ <b>Standart (Bepul)</b>"
 
         await message.answer(
@@ -700,12 +699,12 @@ async def driver_start(message: Message, state: FSMContext):
             f"🚘 Avtomobil: <b>{driver['car_model']}</b> ({driver['car_number']})\n"
             f"📶 Holat: <b>{status_text}</b>\n"
             f"💎 Tarif: {vip_text}\n"
-            f"🛣 Faol yo‘nalishlar: <b>{count} ta</b>",
+            f"🛣 Faol yo'nalishlar: <b>{count} ta</b>",
             reply_markup=get_driver_cabinet_kb(driver['status'], is_subscribed=is_sub),
             parse_mode="HTML"
         )
     else:
-        await message.answer("Haydovchi sifatida ro‘yxatdan o‘tish.\nXizmat turini tanlang:", reply_markup=driver_type_kb)
+        await message.answer("Haydovchi sifatida ro'yxatdan o'tish.\nXizmat turini tanlang:", reply_markup=driver_type_kb)
         await state.set_state(DriverReg.service_type)
 
 @router.callback_query(F.data.startswith("drvtype_"))
@@ -751,7 +750,7 @@ async def process_phone_contact(message: Message, state: FSMContext):
 async def process_phone_text(message: Message, state: FSMContext):
     clean = clean_phone(message.text)
     if not clean:
-        await message.answer("Telefon raqam noto‘g‘ri:")
+        await message.answer("Telefon raqam noto'g'ri:")
         return
     await state.update_data(phone=clean)
     await db.save_user_phone(message.from_user.id, message.from_user.full_name, clean)
@@ -770,7 +769,7 @@ async def process_photo(message: Message, state: FSMContext):
     await db.extend_driver_subscription(message.from_user.id, days=30)
     await db.log_activity(message.from_user.id, message.from_user.full_name, "DRIVER_REGISTER", f"{data['car_model']}")
     await state.clear()
-    await message.answer("✅ Ro‘yxatdan o‘tdingiz! Dastlabki 30 kun VIP obuna sovg‘a qilindi.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=True))
+    await message.answer("✅ Ro'yxatdan o'tdingiz! Dastlabki 30 kun VIP obuna sovg'a qilindi.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=True))
 
 @router.message(F.text == "🛣 Yangi marshrut sozlash")
 async def driver_pick_scope(message: Message, state: FSMContext):
@@ -791,7 +790,7 @@ async def drv_local_region_picked(callback: CallbackQuery, state: FSMContext):
         return
     await state.update_data(local_region=region)
     await state.set_state(DriverLocalRoute.pick_from_district)
-    await callback.message.edit_text(f"[{region}] — Qaysi tumandan yo‘lga chiqasiz?", reply_markup=get_districts_kb(region, "drv_lfrom"))
+    await callback.message.edit_text(f"[{region}] — Qaysi tumandan yo'lga chiqasiz?", reply_markup=get_districts_kb(region, "drv_lfrom"))
 
 @router.callback_query(DriverLocalRoute.pick_from_district, F.data.startswith("drv_lfrom_dist_"))
 async def drv_local_from_picked(callback: CallbackQuery, state: FSMContext):
@@ -810,7 +809,7 @@ async def drv_local_to_picked(callback: CallbackQuery, state: FSMContext):
     from_dist = data.get('from_dist')
 
     if from_dist == to_dist:
-        await callback.answer("⚠️ Chiqish tumani va borish tumani bir xil bo‘lishi mumkin emas!", show_alert=True)
+        await callback.answer("⚠️ Chiqish tumani va borish tumani bir xil bo'lishi mumkin emas!", show_alert=True)
         return
 
     from_loc = f"{region}, {from_dist}"
@@ -821,7 +820,7 @@ async def drv_local_to_picked(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     is_sub = await db.is_driver_subscribed(callback.from_user.id)
     await callback.message.answer(
-        f"✅ Lokal yo‘nalish faollashtirildi!\n📍 {from_loc} ➡️ {to_loc}",
+        f"✅ Lokal yo'nalish faollashtirildi!\n📍 {from_loc} ➡️ {to_loc}",
         reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub)
     )
 
@@ -894,7 +893,7 @@ async def mto_reg(callback: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         fl = data.get("from_list", [])
         if "Toshkent shahri" in fl:
-            await callback.answer("⚠️ Chiqish manzili va borish manzili bir xil bo‘lishi mumkin emas!", show_alert=True)
+            await callback.answer("⚠️ Chiqish manzili va borish manzili bir xil bo'lishi mumkin emas!", show_alert=True)
             return
         tl = ["Toshkent shahri"]
         await db.add_driver_multi_routes(callback.from_user.id, fl, tl, route_category='intercity')
@@ -902,7 +901,7 @@ async def mto_reg(callback: CallbackQuery, state: FSMContext):
         await callback.message.delete()
         is_sub = await db.is_driver_subscribed(callback.from_user.id)
         await callback.message.answer(
-            f"✅ Marshrutlar saqlandi! ({len(fl)*len(tl)} ta bog‘lanma)",
+            f"✅ Marshrutlar saqlandi! ({len(fl)*len(tl)} ta bog'lanma)",
             reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub)
         )
         return
@@ -954,7 +953,7 @@ async def mto_finish(callback: CallbackQuery, state: FSMContext):
 
     valid_tl = [t for t in tl if t not in fl]
     if not valid_tl:
-        await callback.answer("⚠️ Chiqish va borish manzillari bir xil bo‘lishi mumkin emas!", show_alert=True)
+        await callback.answer("⚠️ Chiqish va borish manzillari bir xil bo'lishi mumkin emas!", show_alert=True)
         return
 
     await db.add_driver_multi_routes(callback.from_user.id, fl, valid_tl, route_category='intercity')
@@ -962,11 +961,11 @@ async def mto_finish(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
     is_sub = await db.is_driver_subscribed(callback.from_user.id)
     await callback.message.answer(
-        f"✅ Marshrutlar saqlandi! ({len(fl)*len(valid_tl)} ta bog‘lanma)",
+        f"✅ Marshrutlar saqlandi! ({len(fl)*len(valid_tl)} ta bog'lanma)",
         reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub)
     )
 
-@router.message(F.text == "🚀 Yo‘lga chiqdim")
+@router.message(F.text == "🚀 Yo'lga chiqdim")
 async def driver_set_on_way(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
@@ -982,35 +981,35 @@ async def driver_set_waiting(message: Message, state: FSMContext):
     is_sub = await db.is_driver_subscribed(message.from_user.id)
     await message.answer("🟢 Faol qidiruvdasiz.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
 
-@router.message(F.text == "📋 Yo‘lovchilar ro‘yxati")
+@router.message(F.text == "📋 Yo'lovchilar ro'yxati")
 async def driver_view_passengers(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     orders = await db.get_passenger_orders_for_driver(message.from_user.id)
     is_sub = await db.is_driver_subscribed(message.from_user.id)
     if not orders:
-        await message.answer("Hozirda buyurtmalar yo‘q.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
+        await message.answer("Hozirda buyurtmalar yo'q.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
         return
     text = "📋 <b>Buyurtmalar:</b>\n\n"
     for o in orders:
         text += f"👤 {o['full_name']} | 📍 {o['from_loc']} ➡️ {o['to_loc']} | 📞 {o['phone']}\n"
     await message.answer(text, reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub), parse_mode="HTML")
 
-@router.message(F.text == "🗑 Yo‘nalishlarni tozalash")
+@router.message(F.text == "🗑 Yo'nalishlarni tozalash")
 async def driver_clear_routes(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     await db.clear_driver_routes(message.from_user.id)
     is_sub = await db.is_driver_subscribed(message.from_user.id)
-    await message.answer("✅ Yo‘nalishlar tozalandi.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
+    await message.answer("✅ Yo'nalishlar tozalandi.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
 
-@router.message(F.text.in_(["🙋‍♂️ Yo‘lovchi", "📦 Pochta berish", "🚚 Yuk yuborish"]))
+@router.message(F.text.in_(["🙋‍♂️ Yo'lovchi", "📦 Pochta berish", "🚚 Yuk yuborish"]))
 async def psg_start(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     service_type = "cargo" if message.text in ["📦 Pochta berish", "🚚 Yuk yuborish"] else "passenger"
     await state.update_data(req_service=service_type)
-    await message.answer("Safar ko‘lamini tanlang:", reply_markup=get_route_scope_kb("psg_scope"))
+    await message.answer("Safar ko'lamini tanlang:", reply_markup=get_route_scope_kb("psg_scope"))
 
 @router.callback_query(F.data == "psg_scope_type_local")
 async def psg_local_start(callback: CallbackQuery, state: FSMContext):
@@ -1031,7 +1030,7 @@ async def psg_local_reg_picked(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "psg_scope_type_intercity")
 async def psg_inter_start(callback: CallbackQuery, state: FSMContext):
     await state.update_data(is_local=False)
-    await callback.message.edit_text("Qaysi viloyatdan yo‘lga chiqasiz?", reply_markup=get_regions_kb("psg_from"))
+    await callback.message.edit_text("Qaysi viloyatdan yo'lga chiqasiz?", reply_markup=get_regions_kb("psg_from"))
     await state.set_state(PassengerSearch.from_region)
 
 @router.callback_query(PassengerSearch.from_region, F.data.startswith("psg_from_reg_"))
@@ -1065,7 +1064,7 @@ async def psg_to_reg_picked(callback: CallbackQuery, state: FSMContext, bot: Bot
     if region == "Toshkent shahri":
         data = await state.get_data()
         if data.get("from_region") == "Toshkent shahri":
-            await callback.answer("⚠️ Chiqish manzili va borish manzili bir xil bo‘lishi mumkin emas!", show_alert=True)
+            await callback.answer("⚠️ Chiqish manzili va borish manzili bir xil bo'lishi mumkin emas!", show_alert=True)
             return
         await state.update_data(to_region="Toshkent shahri", to_district="")
         await finalize_passenger_search(callback, state, bot)
@@ -1091,7 +1090,7 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
     to_loc = f"{t_reg}, {t_dist}" if t_dist else t_reg
 
     if from_loc == to_loc:
-        await callback.answer("⚠️ Chiqish manzili va borish manzili bir xil bo‘lishi mumkin emas!", show_alert=True)
+        await callback.answer("⚠️ Chiqish manzili va borish manzili bir xil bo'lishi mumkin emas!", show_alert=True)
         return
 
     req_service = data.get("req_service", "passenger")
@@ -1112,15 +1111,15 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
     sorted_drivers = vip_drivers + free_drivers
 
     if sorted_drivers:
-        await callback.message.answer(f"🔍 <b>{from_loc}</b> ➡️ <b>{to_loc}</b> bo‘yicha topilgan faol haydovchilar:", parse_mode="HTML")
+        await callback.message.answer(f"🔍 <b>{from_loc}</b> ➡️ <b>{to_loc}</b> bo'yicha topilgan faol haydovchilar:", parse_mode="HTML")
         for drv in sorted_drivers:
             is_vip = await db.is_driver_subscribed(drv['telegram_id'])
             vip_badge = "🌟 <b>[VIP TAVSIYA]</b> " if is_vip else ""
-            post_status = "Ha" if drv["accepts_post"] else "Yo‘q"
+            post_status = "Ha" if drv["accepts_post"] else "Yo'q"
             caption = (
                 f"{vip_badge}👤 <b>Haydovchi:</b> {drv['full_name']}\n"
                 f"🚘 <b>Mashina:</b> {drv['car_model']} ({drv['car_number']})\n"
-                f"💺 <b>Bo‘sh joy:</b> {drv['seats']} ta\n"
+                f"💺 <b>Bo'sh joy:</b> {drv['seats']} ta\n"
                 f"📦 <b>Pochta oladi:</b> {post_status}\n"
                 f"📞 <b>Aloqa:</b> {drv['phone']}"
             )
@@ -1145,8 +1144,8 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
                 else:
                     vip_receivers.append(d_id)
 
-            order_title = "📦 <b>Yangi Pochta/Yuk buyurtmasi!</b>" if req_service == "cargo" else "🔔 <b>Yangi yo‘lovchi buyurtmasi!</b>"
-            drv_msg = f"{order_title}\n\n📍 <b>Yo‘nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {callback.from_user.full_name}\n📞 <b>Telefon:</b> {saved_phone}\n\n🔗 @w_taxi_bot"
+            order_title = "📦 <b>Yangi Pochta/Yuk buyurtmasi!</b>" if req_service == "cargo" else "🔔 <b>Yangi yo'lovchi buyurtmasi!</b>"
+            drv_msg = f"{order_title}\n\n📍 <b>Yo'nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {callback.from_user.full_name}\n📞 <b>Telefon:</b> {saved_phone}\n\n🔗 @w_taxi_bot"
 
             for vid in vip_receivers:
                 try:
@@ -1162,14 +1161,14 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
             await callback.message.answer(
                 f"✅ <b>Buyurtmangiz qabul qilindi!</b>\n\n"
                 f"📍 {from_loc} ➡️ {to_loc}\n"
-                f"📞 Bog‘lanish raqami: <b>{saved_phone}</b>\n\n"
-                "Haydovchilar tez orada siz bilan bog‘lanishadi.",
+                f"📞 Bog'lanish raqami: <b>{saved_phone}</b>\n\n"
+                "Haydovchilar tez orada siz bilan bog'lanishadi.",
                 reply_markup=get_close_order_kb(order_id),
                 parse_mode="HTML"
             )
         else:
             await callback.message.answer(
-                f"📍 <b>{from_loc}</b> ➡️ <b>{to_loc}</b> yo‘nalishida hozircha mashina topilmadi.\n\n"
+                f"📍 <b>{from_loc}</b> ➡️ <b>{to_loc}</b> yo'nalishida hozircha mashina topilmadi.\n\n"
                 "Buyurtmangizni barcha haydovchilarga yetkazishimiz uchun pastdagi tugma orqali telefon raqamingizni yuboring:",
                 reply_markup=phone_keyboard,
                 parse_mode="HTML"
@@ -1189,7 +1188,7 @@ async def psg_book_direct_driver(callback: CallbackQuery, state: FSMContext, bot
     if saved_phone:
         order_id = await db.add_passenger_order(user_id=callback.from_user.id, full_name=callback.from_user.full_name, phone=saved_phone, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=target_drv, service_type=req_service)
         try:
-            drv_msg = f"🎯 <b>Sizga to‘g‘ridan-to‘g‘ri buyurtma!</b>\n\n📍 <b>Yo‘nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {callback.from_user.full_name}\n📞 <b>Telefon:</b> {saved_phone}\n\n🔗 @w_taxi_bot"
+            drv_msg = f"🎯 <b>Sizga to'g'ridan-to'g'ri buyurtma!</b>\n\n📍 <b>Yo'nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {callback.from_user.full_name}\n📞 <b>Telefon:</b> {saved_phone}\n\n🔗 @w_taxi_bot"
             await bot.send_message(chat_id=target_drv, text=drv_msg, parse_mode="HTML")
         except Exception:
             pass
@@ -1197,14 +1196,14 @@ async def psg_book_direct_driver(callback: CallbackQuery, state: FSMContext, bot
         await callback.message.answer(
             f"✅ <b>Buyurtmangiz haydovchiga yetkazildi!</b>\n\n"
             f"📍 {from_loc} ➡️ {to_loc}\n"
-            f"📞 Bog‘lanish uchun: <b>{saved_phone}</b>\n"
-            "Haydovchi tez orada siz bilan bog‘lanadi.",
+            f"📞 Bog'lanish uchun: <b>{saved_phone}</b>\n"
+            "Haydovchi tez orada siz bilan bog'lanadi.",
             reply_markup=get_close_order_kb(order_id),
             parse_mode="HTML"
         )
     else:
         await state.update_data(target_driver_id=target_drv)
-        await callback.message.answer("Haydovchi siz bilan bog‘lanishi uchun pastdagi tugma orqali telefon raqamingizni yuboring:", reply_markup=phone_keyboard)
+        await callback.message.answer("Haydovchi siz bilan bog'lanishi uchun pastdagi tugma orqali telefon raqamingizni yuboring:", reply_markup=phone_keyboard)
         await state.set_state(PassengerOrderState.phone)
 
 @router.message(PassengerOrderState.phone, F.contact)
@@ -1212,7 +1211,7 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
     phone = message.contact.phone_number
     phone_clean = clean_phone(phone)
     if not phone_clean:
-        await message.answer("Telefon raqamni o‘qishda xatolik. Iltimos, pastdagi tugmani qayta bosing:", reply_markup=phone_keyboard)
+        await message.answer("Telefon raqamni o'qishda xatolik. Iltimos, pastdagi tugmani qayta bosing:", reply_markup=phone_keyboard)
         return
 
     await db.save_user_phone(message.from_user.id, message.from_user.full_name, phone_clean)
@@ -1227,7 +1226,7 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
 
     if target_drv != 0:
         try:
-            drv_msg = f"🎯 <b>Sizga to‘g‘ridan-to‘g‘ri buyurtma!</b>\n\n📍 <b>Yo‘nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {message.from_user.full_name}\n📞 <b>Telefon:</b> {phone_clean}\n\n🔗 @w_taxi_bot"
+            drv_msg = f"🎯 <b>Sizga to'g'ridan-to'g'ri buyurtma!</b>\n\n📍 <b>Yo'nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {message.from_user.full_name}\n📞 <b>Telefon:</b> {phone_clean}\n\n🔗 @w_taxi_bot"
             await bot.send_message(chat_id=target_drv, text=drv_msg, parse_mode="HTML")
         except Exception:
             pass
@@ -1246,8 +1245,8 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
             else:
                 vip_receivers.append(d_id)
 
-        order_title = "📦 <b>Yangi Pochta/Yuk buyurtmasi!</b>" if req_service == "cargo" else "🔔 <b>Yangi yo‘lovchi buyurtmasi!</b>"
-        drv_msg = f"{order_title}\n\n📍 <b>Yo‘nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {message.from_user.full_name}\n📞 <b>Telefon:</b> {phone_clean}\n\n🔗 @w_taxi_bot"
+        order_title = "📦 <b>Yangi Pochta/Yuk buyurtmasi!</b>" if req_service == "cargo" else "🔔 <b>Yangi yo'lovchi buyurtmasi!</b>"
+        drv_msg = f"{order_title}\n\n📍 <b>Yo'nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {message.from_user.full_name}\n📞 <b>Telefon:</b> {phone_clean}\n\n🔗 @w_taxi_bot"
 
         for vid in vip_receivers:
             try:
@@ -1264,7 +1263,7 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
         f"✅ <b>Buyurtmangiz muvaffaqiyatli yetkazildi!</b>\n\n"
         f"📍 {from_loc} ➡️ {to_loc}\n"
         f"📞 Aloqa raqamingiz: <b>{phone_clean}</b>\n"
-        "Haydovchilar tez orada ular bilan bog‘lanishadi.",
+        "Haydovchilar tez orada ular bilan bog'lanishadi.",
         reply_markup=get_close_order_kb(order_id),
         parse_mode="HTML"
     )
@@ -1273,13 +1272,13 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
 async def close_order_callback(callback: CallbackQuery):
     order_id = int(callback.data.replace("close_order_", ""))
     await db.close_passenger_order(order_id)
-    await callback.message.edit_text("✅ <b>E'loningiz yopildi va haydovchilar ro‘yxatidan olib tashlandi.</b>", parse_mode="HTML")
+    await callback.message.edit_text("✅ <b>E'loningiz yopildi va haydovchilar ro'yxatidan olib tashlandi.</b>", parse_mode="HTML")
     await callback.answer("E'lon muvaffaqiyatli bekor qilindi!")
 
 @router.message(PassengerOrderState.phone, F.text)
 async def psg_order_phone_text_rejected(message: Message):
     await message.answer(
-        "⚠️ <b>Iltimos, raqamni matn ko‘rinishida yozmang.</b>\n\n"
+        "⚠️ <b>Iltimos, raqamni matn ko'rinishida yozmang.</b>\n\n"
         "Faqat pastdagi <b>📲 Telefon raqamni yuborish</b> tugmasini bosing:",
         reply_markup=phone_keyboard,
         parse_mode="HTML"
