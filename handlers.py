@@ -20,7 +20,7 @@ from keyboards import (
     start_confirm_1_kb, start_confirm_2_kb,
     monetization_start_1_kb, monetization_start_2_kb,
     monetization_stop_1_kb, monetization_stop_2_kb,
-    get_close_order_kb
+    get_close_order_kb, get_roadside_services_kb
 )
 from states import (
     DriverReg, DriverMultiRoute, DriverLocalRoute, PassengerSearch,
@@ -629,6 +629,54 @@ async def admin_drivers_list(message: Message, state: FSMContext):
         sub_ok = "🟢 VIP Obuna" if await db.is_driver_subscribed(d['telegram_id']) else "⚪️ Bepul"
         text += f"👤 {d['full_name']} | <code>{d['telegram_id']}</code> | {sub_ok}\n"
     await message.answer(text, parse_mode="HTML")
+
+@router.message(F.text == "🗺 Yo‘l bo‘yi xizmatlari")
+async def roadside_services_menu(message: Message, state: FSMContext):
+    if not await check_access(message): return
+    await state.clear()
+    await message.answer(
+        "🗺 <b>Yo‘l bo‘yi xizmatlari markazi</b>\n\n"
+        "O‘zingizga kerakli xizmat turini tanlang. Tugmani bosishingiz bilan sizga eng yaqin 10 tasi chiqarib beriladi:",
+        reply_markup=get_roadside_services_kb(),
+        parse_mode="HTML"
+    )
+
+@router.message(F.location, F.text.in_(["⛽️ Zapravka", "🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis"]))
+async def process_roadside_service_search(message: Message):
+    text_map = {
+        "⛽️ Zapravka": "gas",
+        "🍽 Ovqatlanish": "food",
+        "🛏 Hostel va Mehmonxona": "hotel",
+        "🔧 Avtoservis": "service"
+    }
+    stype = text_map.get(message.text)
+    if not stype:
+        return
+
+    user_lat = message.location.latitude
+    user_lon = message.location.longitude
+
+    services = await db.get_nearest_services(user_lat, user_lon, stype, limit=10)
+
+    if not services:
+        await message.answer("😔 Afsuski, yaqin atrofdan bunday xizmat topilmadi.")
+        return
+
+    response_text = f"📍 <b>Sizga eng yaqin topilgan 10 ta xizmat:</b>\n\n"
+
+    for i, s in enumerate(services, 1):
+        dist = round(s["distance"], 1)
+        maps_url = f"https://maps.google.com/?q={s['latitude']},{s['longitude']}"
+
+        response_text += (
+            f"<b>{i}. {s['name']}</b>\n"
+            f"📏 Masofa: <b>~{dist} km</b> | 📞 Tel: {s['phone'] or 'Yo‘q'}\n"
+            f"📝 Izoh: {s['description'] or '-'}\n"
+            f"🗺 <a href='{maps_url}'>Yo‘lni ko‘rsatish (Google Maps)</a>\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+        )
+
+    await message.answer(response_text, parse_mode="HTML", disable_web_page_preview=True)
 
 @router.message(F.text == "🚗 Haydovchi")
 async def driver_start(message: Message, state: FSMContext):

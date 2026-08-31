@@ -75,8 +75,20 @@ async def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        # Eski bazalar uchun ustun qo'shish
         await db.execute("ALTER TABLE passenger_orders ADD COLUMN IF NOT EXISTS service_type TEXT DEFAULT 'passenger';")
+
+        # Yo'l bo'yi xizmatlari jadvali (Monetizatsiya va GPS uchun)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS roadside_services (
+                id SERIAL PRIMARY KEY,
+                service_type TEXT,
+                name TEXT,
+                latitude DOUBLE PRECISION,
+                longitude DOUBLE PRECISION,
+                phone TEXT,
+                description TEXT
+            )
+        """)
 
         await db.execute("""
             CREATE TABLE IF NOT EXISTS activity_logs (
@@ -346,8 +358,8 @@ async def get_passenger_orders_for_driver(telegram_id: int):
             SELECT DISTINCT p.id, p.full_name, p.phone, p.from_loc, p.to_loc, p.seats_needed, p.created_at, p.target_driver_id
             FROM passenger_orders p
             JOIN driver_routes r ON p.from_loc = r.from_loc AND p.to_loc = r.to_loc
-            WHERE r.telegram_id = $1 
-              AND p.is_active = 1 
+            WHERE r.telegram_id = $1
+              AND p.is_active = 1
               AND (p.target_driver_id = 0 OR p.target_driver_id = $1)
               AND (
                   (p.service_type = 'cargo' AND p.created_at >= NOW() - INTERVAL '4 hours')
@@ -368,6 +380,24 @@ async def get_matching_driver_ids(from_loc: str, to_loc: str):
         """
         rows = await db.fetch(query, from_loc, to_loc)
         return [row["telegram_id"] for row in rows]
+
+async def get_nearest_services(lat: float, lon: float, service_type: str, limit: int = 10):
+    async with pool.acquire() as db:
+        query = """
+            SELECT name, phone, description, latitude, longitude,
+            (
+                6371 * acos(
+                    cos(radians($1)) * cos(radians(latitude)) * 
+                    cos(radians(longitude) - radians($2)) + 
+                    sin(radians($1)) * sin(radians(latitude))
+                )
+            ) AS distance
+            FROM roadside_services
+            WHERE service_type = $3
+            ORDER BY distance ASC
+            LIMIT $4
+        """
+        return await db.fetch(query, lat, lon, service_type, limit)
 
 async def get_stats():
     async with pool.acquire() as db:

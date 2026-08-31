@@ -24,13 +24,24 @@ REGIONS_DATA = {
 def get_main_menu(is_super: bool = False, is_sub: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [KeyboardButton(text="🚗 Haydovchi"), KeyboardButton(text="🙋‍♂️ Yo‘lovchi")],
-        [KeyboardButton(text="📦 Pochta berish"), KeyboardButton(text="🚚 Yuk yuborish")]
+        [KeyboardButton(text="📦 Pochta berish"), KeyboardButton(text="🚚 Yuk yuborish")],
+        [KeyboardButton(text="🗺 Yo‘l bo‘yi xizmatlari")]
     ]
     if is_super:
         keyboard.append([KeyboardButton(text="👑 Super Admin Panel")])
     elif is_sub:
         keyboard.append([KeyboardButton(text="🛠 Admin Panel")])
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+def get_roadside_services_kb() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="⛽️ Zapravka", request_location=True), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
+            [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
+            [KeyboardButton(text="🔙 Bosh menyu")]
+        ],
+        resize_keyboard=True
+    )
 
 def get_driver_cabinet_kb(status: str = 'waiting', is_subscribed: bool = True) -> ReplyKeyboardMarkup:
     status_btn = KeyboardButton(text="🚀 Yo‘lga chiqdim") if status == 'waiting' else KeyboardButton(text="🟢 Mijoz kutmoqdaman")
