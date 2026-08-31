@@ -171,9 +171,10 @@ async def admin_stats(message: Message, state: FSMContext):
     )
     await message.answer(text, parse_mode="HTML")
 
-@router.message(F.text == "💳 To‘lov kartasini sozlash")
+@router.message(F.text == "💳 To‘lov kartasini sozlash", state="*")
 async def change_card_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
+    await state.clear()
     curr_card = await db.get_setting("p2p_card_number", "8600123456789012")
     await message.answer(
         f"💳 <b>Hozirgi to‘lov qabul qiluvchi karta:</b>\n<code>{curr_card}</code>\n\n"
@@ -363,9 +364,10 @@ async def admin_approve_subscription(callback: CallbackQuery, bot: Bot):
 
     await callback.answer("Obuna muvaffaqiyatli tasdiqlandi!")
 
-@router.message(F.text == "🔑 Parolni o‘zgartirish")
+@router.message(F.text == "🔑 Parolni o‘zgartirish", state="*")
 async def change_password_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
+    await state.clear()
     await message.answer("Yangi Super Admin parolini yozing:")
     await state.set_state(ChangePasswordState.new_password)
 
