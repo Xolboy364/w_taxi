@@ -257,3 +257,25 @@ def get_close_order_kb(order_id: int) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="❌ E'lonni bekor qilish (Mashina topdim)", callback_data=f"close_order_{order_id}")]
         ]
     )
+
+# ============ SERVICE ADS KEYBOARD ============
+
+def get_service_types_kb():
+    from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+    kb = InlineKeyboardMarkup(inline_keyboard=[])
+    types = {
+        "gas": "⛽️ Zapravka",
+        "food": "🍽 Ovqatlanish",
+        "hotel": "🛏 Mehmonxona",
+        "service": "🔧 Avtoservis",
+        "autosalon": "🚗 Avtosalon",
+        "medical": "🏥 Tibbiyot"
+    }
+    for key, val in types.items():
+        kb.inline_keyboard.append([
+            InlineKeyboardButton(text=val, callback_data=f"svc_type_{key}")
+        ])
+    kb.inline_keyboard.append([
+        InlineKeyboardButton(text="🔙 Bosh menyu", callback_data="svc_back")
+    ])
+    return kb

@@ -95,3 +95,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+# ============ SERVICE ADS ROUTER ============
+from service_ad import router as service_ad_router
+dp.include_router(service_ad_router)
