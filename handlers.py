@@ -19,7 +19,8 @@ from keyboards import (
     kill_confirm_1_kb, kill_confirm_2_kb,
     start_confirm_1_kb, start_confirm_2_kb,
     monetization_start_1_kb, monetization_start_2_kb,
-    monetization_stop_1_kb, monetization_stop_2_kb
+    monetization_stop_1_kb, monetization_stop_2_kb,
+    get_close_order_kb
 )
 from states import (
     DriverReg, DriverMultiRoute, DriverLocalRoute, PassengerSearch,
@@ -1073,7 +1074,7 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
     else:
         saved_phone = await db.get_user_phone(callback.from_user.id)
         if saved_phone:
-            await db.add_passenger_order(user_id=callback.from_user.id, full_name=callback.from_user.full_name, phone=saved_phone, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=0)
+            order_id = await db.add_passenger_order(user_id=callback.from_user.id, full_name=callback.from_user.full_name, phone=saved_phone, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=0, service_type=req_service)
 
             driver_ids = await db.get_matching_driver_ids(from_loc, to_loc)
             monetization_on = (await db.get_setting("monetization_active", "0")) == "1"
@@ -1109,7 +1110,7 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
                 f"📍 {from_loc} ➡️ {to_loc}\n"
                 f"📞 Bog‘lanish raqami: <b>{saved_phone}</b>\n\n"
                 "Haydovchilar tez orada siz bilan bog‘lanishadi.",
-                reply_markup=menu,
+                reply_markup=get_close_order_kb(order_id),
                 parse_mode="HTML"
             )
         else:
@@ -1129,9 +1130,10 @@ async def psg_book_direct_driver(callback: CallbackQuery, state: FSMContext, bot
     data = await state.get_data()
     from_loc = data.get('final_from', "Noma'lum")
     to_loc = data.get('final_to', "Noma'lum")
+    req_service = data.get('req_service', 'passenger')
 
     if saved_phone:
-        await db.add_passenger_order(user_id=callback.from_user.id, full_name=callback.from_user.full_name, phone=saved_phone, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=target_drv)
+        order_id = await db.add_passenger_order(user_id=callback.from_user.id, full_name=callback.from_user.full_name, phone=saved_phone, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=target_drv, service_type=req_service)
         try:
             drv_msg = f"🎯 <b>Sizga to‘g‘ridan-to‘g‘ri buyurtma!</b>\n\n📍 <b>Yo‘nalish:</b> {from_loc} ➡️ {to_loc}\n👤 <b>Mijoz:</b> {callback.from_user.full_name}\n📞 <b>Telefon:</b> {saved_phone}\n\n🔗 @w_taxi_bot"
             await bot.send_message(chat_id=target_drv, text=drv_msg, parse_mode="HTML")
@@ -1143,7 +1145,7 @@ async def psg_book_direct_driver(callback: CallbackQuery, state: FSMContext, bot
             f"📍 {from_loc} ➡️ {to_loc}\n"
             f"📞 Bog‘lanish uchun: <b>{saved_phone}</b>\n"
             "Haydovchi tez orada siz bilan bog‘lanadi.",
-            reply_markup=menu,
+            reply_markup=get_close_order_kb(order_id),
             parse_mode="HTML"
         )
     else:
@@ -1167,7 +1169,7 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
     target_drv = data.get('target_driver_id', 0)
     req_service = data.get('req_service', 'passenger')
 
-    await db.add_passenger_order(user_id=message.from_user.id, full_name=message.from_user.full_name, phone=phone_clean, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=target_drv)
+    order_id = await db.add_passenger_order(user_id=message.from_user.id, full_name=message.from_user.full_name, phone=phone_clean, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=target_drv, service_type=req_service)
 
     if target_drv != 0:
         try:
@@ -1203,16 +1205,22 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
         if monetization_on and free_receivers:
             asyncio.create_task(delayed_dispatch_to_free_drivers(bot, free_receivers, drv_msg, delay_seconds=300))
 
-    menu = await render_user_menu(message.from_user.id)
     await state.clear()
     await message.answer(
         f"✅ <b>Buyurtmangiz muvaffaqiyatli yetkazildi!</b>\n\n"
         f"📍 {from_loc} ➡️ {to_loc}\n"
         f"📞 Aloqa raqamingiz: <b>{phone_clean}</b>\n"
         "Haydovchilar tez orada ular bilan bog‘lanishadi.",
-        reply_markup=menu,
+        reply_markup=get_close_order_kb(order_id),
         parse_mode="HTML"
     )
+
+@router.callback_query(F.data.startswith("close_order_"))
+async def close_order_callback(callback: CallbackQuery):
+    order_id = int(callback.data.replace("close_order_", ""))
+    await db.close_passenger_order(order_id)
+    await callback.message.edit_text("✅ <b>E'loningiz yopildi va haydovchilar ro‘yxatidan olib tashlandi.</b>", parse_mode="HTML")
+    await callback.answer("E'lon muvaffaqiyatli bekor qilindi!")
 
 @router.message(PassengerOrderState.phone, F.text)
 async def psg_order_phone_text_rejected(message: Message):

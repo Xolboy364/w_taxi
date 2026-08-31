@@ -239,3 +239,10 @@ def get_driver_card_kb(driver_id: int) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="🚖 Shu haydovchiga buyurtma berish", callback_data=f"book_drv_{driver_id}")]
         ]
     )
+
+def get_close_order_kb(order_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="❌ E'lonni bekor qilish (Mashina topdim)", callback_data=f"close_order_{order_id}")]
+        ]
+    )

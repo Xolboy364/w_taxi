@@ -7,7 +7,7 @@ pool = None
 async def init_db():
     global pool
     database_url = os.getenv("DATABASE_URL")
-    
+
     pool = await asyncpg.create_pool(
         dsn=database_url,
         min_size=5,
@@ -70,10 +70,14 @@ async def init_db():
                 to_loc TEXT,
                 seats_needed INT DEFAULT 1,
                 target_driver_id BIGINT DEFAULT 0,
+                service_type TEXT DEFAULT 'passenger',
                 is_active INT DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Eski bazalar uchun ustun qo'shish
+        await db.execute("ALTER TABLE passenger_orders ADD COLUMN IF NOT EXISTS service_type TEXT DEFAULT 'passenger';")
+
         await db.execute("""
             CREATE TABLE IF NOT EXISTS activity_logs (
                 id SERIAL PRIMARY KEY,
@@ -323,12 +327,18 @@ async def search_drivers(from_loc: str, to_loc: str):
         """
         return await db.fetch(query, from_loc, to_loc)
 
-async def add_passenger_order(user_id: int, full_name: str, phone: str, from_loc: str, to_loc: str, seats: int = 1, target_driver_id: int = 0):
+async def add_passenger_order(user_id: int, full_name: str, phone: str, from_loc: str, to_loc: str, seats: int = 1, target_driver_id: int = 0, service_type: str = 'passenger'):
     async with pool.acquire() as db:
-        await db.execute("""
-            INSERT INTO passenger_orders (user_id, full_name, phone, from_loc, to_loc, seats_needed, target_driver_id, is_active)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, 1)
-        """, user_id, full_name, phone, from_loc, to_loc, seats, target_driver_id)
+        row = await db.fetchrow("""
+            INSERT INTO passenger_orders (user_id, full_name, phone, from_loc, to_loc, seats_needed, target_driver_id, service_type, is_active)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 1)
+            RETURNING id
+        """, user_id, full_name, phone, from_loc, to_loc, seats, target_driver_id, service_type)
+        return row["id"] if row else None
+
+async def close_passenger_order(order_id: int):
+    async with pool.acquire() as db:
+        await db.execute("UPDATE passenger_orders SET is_active = 0 WHERE id = $1", order_id)
 
 async def get_passenger_orders_for_driver(telegram_id: int):
     async with pool.acquire() as db:
@@ -336,7 +346,14 @@ async def get_passenger_orders_for_driver(telegram_id: int):
             SELECT DISTINCT p.id, p.full_name, p.phone, p.from_loc, p.to_loc, p.seats_needed, p.created_at, p.target_driver_id
             FROM passenger_orders p
             JOIN driver_routes r ON p.from_loc = r.from_loc AND p.to_loc = r.to_loc
-            WHERE r.telegram_id = $1 AND p.is_active = 1 AND (p.target_driver_id = 0 OR p.target_driver_id = $1)
+            WHERE r.telegram_id = $1 
+              AND p.is_active = 1 
+              AND (p.target_driver_id = 0 OR p.target_driver_id = $1)
+              AND (
+                  (p.service_type = 'cargo' AND p.created_at >= NOW() - INTERVAL '4 hours')
+                  OR
+                  (p.service_type != 'cargo' AND p.created_at >= NOW() - INTERVAL '2 hours')
+              )
             ORDER BY p.id DESC LIMIT 15
         """
         return await db.fetch(query, telegram_id)
