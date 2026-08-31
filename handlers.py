@@ -7,7 +7,7 @@ import datetime
 import logging
 from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
 from config import ADMIN_ID
@@ -171,7 +171,7 @@ async def admin_stats(message: Message, state: FSMContext):
     )
     await message.answer(text, parse_mode="HTML")
 
-@router.message(F.text == "💳 To‘lov kartasini sozlash", state="*")
+@router.message(F.text == "💳 To‘lov kartasini sozlash", StateFilter("*"))
 async def change_card_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
     await state.clear()
@@ -364,7 +364,7 @@ async def admin_approve_subscription(callback: CallbackQuery, bot: Bot):
 
     await callback.answer("Obuna muvaffaqiyatli tasdiqlandi!")
 
-@router.message(F.text == "🔑 Parolni o‘zgartirish", state="*")
+@router.message(F.text == "🔑 Parolni o‘zgartirish", StateFilter("*"))
 async def change_password_start(message: Message, state: FSMContext):
     if not is_super_admin(message.from_user.id): return
     await state.clear()
