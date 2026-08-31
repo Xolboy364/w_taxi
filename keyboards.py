@@ -33,20 +33,11 @@ def get_main_menu(is_super: bool = False, is_sub: bool = False) -> ReplyKeyboard
         keyboard.append([KeyboardButton(text="🛠 Admin Panel")])
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
-def get_roadside_categories_kb() -> ReplyKeyboardMarkup:
+def get_roadside_services_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="⛽️ Zapravka"), KeyboardButton(text="🍽 Ovqatlanish")],
-            [KeyboardButton(text="🛏 Hostel va Mehmonxona"), KeyboardButton(text="🔧 Avtoservis")],
-            [KeyboardButton(text="🔙 Bosh menyu")]
-        ],
-        resize_keyboard=True
-    )
-
-def get_location_request_kb() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="📍 Joriy lokatsiyani yuborish", request_location=True)],
+            [KeyboardButton(text="⛽️ Zapravka", request_location=True), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
+            [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
             [KeyboardButton(text="🔙 Bosh menyu")]
         ],
         resize_keyboard=True
