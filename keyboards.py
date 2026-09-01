@@ -38,6 +38,7 @@ def get_roadside_services_kb() -> ReplyKeyboardMarkup:
         keyboard=[
             [KeyboardButton(text="⛽️ Zapravka", request_location=True), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
             [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
+            [KeyboardButton(text="📢 E'lon joylashtirish")],
             [KeyboardButton(text="🔙 Bosh menyu")]
         ],
         resize_keyboard=True
