@@ -36,7 +36,7 @@ def get_main_menu(is_super: bool = False, is_sub: bool = False) -> ReplyKeyboard
 def get_roadside_services_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="⛽️ Zapravka", request_location=True), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
+            [KeyboardButton(text="⛽️ Zapravka"), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
             [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
             [KeyboardButton(text="📢 E'lon joylashtirish")],
             [KeyboardButton(text="🔙 Bosh menyu")]
@@ -266,8 +266,7 @@ SERVICE_TYPES = {
     "food": {"name": "🍽 Ovqatlanish", "price": 50000},
     "hotel": {"name": "🛏 Mehmonxona", "price": 70000},
     "service": {"name": "🔧 Avtoservis", "price": 50000},
-    "autosalon": {"name": "🚗 Avtosalon", "price": 100000},
-    "medical": {"name": "🏥 Tibbiyot", "price": 60000}
+    "autosalon": {"name": "🚗 Avtosalon", "price": 100000}
 }
 
 def get_service_types_kb() -> InlineKeyboardMarkup:
@@ -280,3 +279,37 @@ def get_service_types_kb() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="🔙 Bosh menyu", callback_data="svc_type_back")
     ])
     return kb
+
+FUEL_TYPES = {
+    "metan": "🔵 Metan",
+    "propan": "🟢 Propan",
+    "benzin": "⛽️ Benzin",
+    "dizel": "🛢 Dizel"
+}
+
+def get_fuel_types_kb(selected: list = None, prefix: str = "fuel", multi: bool = True) -> InlineKeyboardMarkup:
+    if selected is None:
+        selected = []
+    builder = InlineKeyboardBuilder()
+    for key, label in FUEL_TYPES.items():
+        if multi:
+            icon = "✅" if key in selected else "◻️"
+            builder.button(text=f"{icon} {label}", callback_data=f"{prefix}_tog_{key}")
+        else:
+            builder.button(text=label, callback_data=f"{prefix}_pick_{key}")
+    builder.adjust(2)
+    if multi:
+        controls = InlineKeyboardBuilder()
+        controls.button(text=f"✅ Davom etish ({len(selected)} ta)", callback_data=f"{prefix}_done")
+        controls.adjust(1)
+        builder.attach(controls)
+    return builder.as_markup()
+
+def get_location_request_kb() -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📍 Lokatsiyani yuborish", request_location=True)],
+            [KeyboardButton(text="🔙 Bosh menyu")]
+        ],
+        resize_keyboard=True
+    )

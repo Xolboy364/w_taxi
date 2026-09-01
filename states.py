@@ -58,6 +58,7 @@ class RoadsideServiceState(StatesGroup):
 
 class ServiceAdStates(StatesGroup):
     choose_type = State()
+    choose_fuel_types = State()
     enter_name = State()
     enter_location = State()
     enter_phone = State()
@@ -65,3 +66,6 @@ class ServiceAdStates(StatesGroup):
     enter_photo = State()
     waiting_payment = State()
     receipt_photo = State()
+
+class RoadsideSearchState(StatesGroup):
+    waiting_location = State()

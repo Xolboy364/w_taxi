@@ -380,7 +380,8 @@ async def get_matching_driver_ids(from_loc: str, to_loc: str):
         rows = await db.fetch(query, from_loc, to_loc)
         return [row["telegram_id"] for row in rows]
 
-async def get_nearest_services(lat: float, lon: float, service_type: str, limit: int = 10):
+async def get_nearest_services(lat: float, lon: float, service_type: str, limit: int = 10, fuel_type: str = None):
+    await _ensure_service_tables()
     async with pool.acquire() as db:
         query = """
             SELECT name, phone, description, latitude, longitude,
@@ -393,10 +394,27 @@ async def get_nearest_services(lat: float, lon: float, service_type: str, limit:
             ) AS distance
             FROM roadside_services
             WHERE service_type = $3
+
+            UNION ALL
+
+            SELECT name, phone, description, latitude, longitude,
+            (
+                6371 * acos(
+                    cos(radians($1)) * cos(radians(latitude)) *
+                    cos(radians(longitude) - radians($2)) +
+                    sin(radians($1)) * sin(radians(latitude))
+                )
+            ) AS distance
+            FROM service_ads
+            WHERE service_type = $3
+              AND is_active = 1
+              AND (expires_at IS NULL OR expires_at > NOW())
+              AND ($5::text IS NULL OR fuel_types LIKE '%' || $5 || '%')
+
             ORDER BY distance ASC
             LIMIT $4
         """
-        return await db.fetch(query, lat, lon, service_type, limit)
+        return await db.fetch(query, lat, lon, service_type, limit, fuel_type)
 
 async def get_stats():
     async with pool.acquire() as db:
@@ -428,6 +446,7 @@ async def _ensure_service_tables():
                 id SERIAL PRIMARY KEY,
                 user_id BIGINT,
                 service_type TEXT,
+                fuel_types TEXT,
                 name TEXT,
                 latitude DOUBLE PRECISION,
                 longitude DOUBLE PRECISION,
@@ -439,6 +458,7 @@ async def _ensure_service_tables():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS fuel_types TEXT;")
         await db.execute("""
             CREATE TABLE IF NOT EXISTS service_payments (
                 id SERIAL PRIMARY KEY,
@@ -454,14 +474,16 @@ async def _ensure_service_tables():
 async def save_service_ad(data: dict) -> int:
     await _ensure_service_tables()
     user_id = data.get("user_id") or data.get("telegram_id")
+    fuel_list = data.get("fuel_types") or []
+    fuel_str = ",".join(fuel_list) if fuel_list else None
     async with pool.acquire() as db:
         row = await db.fetchrow("""
             INSERT INTO service_ads
-            (user_id, service_type, name, latitude, longitude, phone, description, photo_id, is_active)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 0)
+            (user_id, service_type, fuel_types, name, latitude, longitude, phone, description, photo_id, is_active)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 0)
             RETURNING id
         """,
-            user_id, data.get("service_type"), data.get("name"),
+            user_id, data.get("service_type"), fuel_str, data.get("name"),
             data.get("latitude"), data.get("longitude"), data.get("phone"),
             data.get("description"), data.get("photo_id")
         )

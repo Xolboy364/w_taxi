@@ -20,12 +20,14 @@ from keyboards import (
     start_confirm_1_kb, start_confirm_2_kb,
     monetization_start_1_kb, monetization_start_2_kb,
     monetization_stop_1_kb, monetization_stop_2_kb,
-    get_close_order_kb, get_roadside_services_kb
+    get_close_order_kb, get_roadside_services_kb,
+    get_fuel_types_kb, get_location_request_kb
 )
 from states import (
     DriverReg, DriverMultiRoute, DriverLocalRoute, PassengerSearch,
     PassengerOrderState, AdminManage, SuperAdminAuth,
-    ChangePasswordState, ChangeCardState, BroadcastState, BanUserManage, DriverPaymentState, ServiceAdStates
+    ChangePasswordState, ChangeCardState, BroadcastState, BanUserManage, DriverPaymentState, ServiceAdStates,
+    RoadsideSearchState
 )
 import database as db
 
@@ -641,33 +643,12 @@ async def roadside_services_menu(message: Message, state: FSMContext):
         parse_mode="HTML"
     )
 
-@router.message(F.location, F.text.in_(["⛽️ Zapravka", "🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis"]))
-async def process_roadside_service_search(message: Message):
-    try:
-        await message.delete()
-    except Exception:
-        pass
-
-    text_map = {
-        "⛽️ Zapravka": "gas",
-        "🍽 Ovqatlanish": "food",
-        "🛏 Hostel va Mehmonxona": "hotel",
-        "🔧 Avtoservis": "service"
-    }
-    stype = text_map.get(message.text)
-    if not stype:
-        return
-
-    user_lat = message.location.latitude
-    user_lon = message.location.longitude
-
-    services = await db.get_nearest_services(user_lat, user_lon, stype, limit=10)
-
+async def render_roadside_results(message: Message, user_id: int, services):
     if not services:
-        await message.answer("😔 Afsuski, yaqin atrofdan bunday xizmat topilmadi.", reply_markup=await render_user_menu(message.from_user.id))
+        await message.answer("😔 Afsuski, yaqin atrofdan bunday xizmat topilmadi.", reply_markup=await render_user_menu(user_id))
         return
 
-    response_text = f"📍 <b>Sizga eng yaqin topilgan 10 ta xizmat:</b>\n\n"
+    response_text = f"📍 <b>Sizga eng yaqin topilgan {len(services)} ta xizmat:</b>\n\n"
 
     for i, s in enumerate(services, 1):
         dist = round(s["distance"], 1)
@@ -681,7 +662,71 @@ async def process_roadside_service_search(message: Message):
             f"━━━━━━━━━━━━━━━━━━\n"
         )
 
-    await message.answer(response_text, reply_markup=await render_user_menu(message.from_user.id), parse_mode="HTML", disable_web_page_preview=True)
+    await message.answer(response_text, reply_markup=await render_user_menu(user_id), parse_mode="HTML", disable_web_page_preview=True)
+
+@router.message(F.location, F.text.in_(["🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis"]))
+async def process_roadside_service_search(message: Message):
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
+    text_map = {
+        "🍽 Ovqatlanish": "food",
+        "🛏 Hostel va Mehmonxona": "hotel",
+        "🔧 Avtoservis": "service"
+    }
+    stype = text_map.get(message.text)
+    if not stype:
+        return
+
+    user_lat = message.location.latitude
+    user_lon = message.location.longitude
+
+    services = await db.get_nearest_services(user_lat, user_lon, stype, limit=10)
+    await render_roadside_results(message, message.from_user.id, services)
+
+@router.message(F.text == "⛽️ Zapravka")
+async def roadside_gas_start(message: Message, state: FSMContext):
+    if not await check_access(message): return
+    await state.clear()
+    await message.answer(
+        "⛽️ <b>Qanday yoqilg'i turi kerak?</b>",
+        reply_markup=get_fuel_types_kb([], "sfuel", multi=False),
+        parse_mode="HTML"
+    )
+
+@router.callback_query(F.data.startswith("sfuel_pick_"))
+async def roadside_gas_fuel_picked(callback: CallbackQuery, state: FSMContext):
+    fuel_key = callback.data.replace("sfuel_pick_", "")
+    await state.update_data(roadside_fuel=fuel_key)
+    await state.set_state(RoadsideSearchState.waiting_location)
+    try:
+        await callback.message.delete()
+    except Exception:
+        pass
+    await callback.message.answer(
+        "📍 Iltimos, joylashuvingizni yuboring:",
+        reply_markup=get_location_request_kb()
+    )
+    await callback.answer()
+
+@router.message(RoadsideSearchState.waiting_location, F.location)
+async def process_gas_location_search(message: Message, state: FSMContext):
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
+    data = await state.get_data()
+    fuel_key = data.get("roadside_fuel")
+    await state.clear()
+
+    user_lat = message.location.latitude
+    user_lon = message.location.longitude
+
+    services = await db.get_nearest_services(user_lat, user_lon, "gas", limit=10, fuel_type=fuel_key)
+    await render_roadside_results(message, message.from_user.id, services)
 
 @router.message(F.text == "🚗 Haydovchi")
 async def driver_start(message: Message, state: FSMContext):

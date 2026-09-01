@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, InlineKey
 from aiogram.fsm.context import FSMContext
 
 from config import ADMIN_ID
-from keyboards import phone_keyboard, get_service_types_kb
+from keyboards import phone_keyboard, get_service_types_kb, get_fuel_types_kb, FUEL_TYPES
 from states import ServiceAdStates
 import database as db
 
@@ -15,8 +15,7 @@ SERVICE_TYPES = {
     "food": {"name": "🍽 Ovqatlanish", "price": 50000},
     "hotel": {"name": "🛏 Mehmonxona", "price": 70000},
     "service": {"name": "🔧 Avtoservis", "price": 50000},
-    "autosalon": {"name": "🚗 Avtosalon", "price": 100000},
-    "medical": {"name": "🏥 Tibbiyot", "price": 60000}
+    "autosalon": {"name": "🚗 Avtosalon", "price": 100000}
 }
 
 async def check_access_svc(message_or_callback) -> bool:
@@ -126,9 +125,15 @@ async def show_payment_summary(message: Message, state: FSMContext):
     card_num = await db.get_setting("p2p_card_number", "8600123456789012")
     click_url = f"https://my.click.uz/clickp2p/?recipient={card_num}&amount={amount}"
     
+    fuel_line = ""
+    if data.get("fuel_types"):
+        fuel_names = ", ".join(FUEL_TYPES.get(k, k) for k in data["fuel_types"])
+        fuel_line = f"⛽️ Yoqilg'i turlari: {fuel_names}\n"
+
     text = (
         f"📢 <b>E'lon ma'lumotlari:</b>\n\n"
         f"🏷 Tur: {svc_info['name']}\n"
+        f"{fuel_line}"
         f"📌 Nomi: {data['name']}\n"
         f"📍 Manzil: {data['latitude']}, {data['longitude']}\n"
         f"📞 Telefon: {data['phone']}\n"
