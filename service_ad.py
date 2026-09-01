@@ -52,8 +52,41 @@ async def service_ad_type(callback: CallbackQuery, state: FSMContext):
         await callback.message.answer("🔙 Bosh menyu", reply_markup=menu)
         await callback.answer()
         return
-    
+
     await state.update_data(service_type=svc_type)
+
+    if svc_type == "gas":
+        await state.update_data(fuel_types=[])
+        fuel_msg = "⛽️ Qanday yoqilgi turlari mavjud? Kerakli turlarni belgilang, song Davom etish tugmasini bosing:"
+        await callback.message.edit_text(fuel_msg, reply_markup=get_fuel_types_kb([], "adfuel"))
+        await state.set_state(ServiceAdStates.choose_fuel_types)
+        await callback.answer()
+        return
+
+    await callback.message.answer("📌 Xizmat nomini kiriting:")
+    await state.set_state(ServiceAdStates.enter_name)
+    await callback.answer()
+
+@router.callback_query(ServiceAdStates.choose_fuel_types, F.data.startswith("adfuel_tog_"))
+async def ad_fuel_toggle(callback: CallbackQuery, state: FSMContext):
+    key = callback.data.replace("adfuel_tog_", "")
+    data = await state.get_data()
+    sel = data.get("fuel_types", [])
+    if key in sel:
+        sel.remove(key)
+    else:
+        sel.append(key)
+    await state.update_data(fuel_types=sel)
+    await callback.message.edit_reply_markup(reply_markup=get_fuel_types_kb(sel, "adfuel"))
+    await callback.answer()
+
+@router.callback_query(ServiceAdStates.choose_fuel_types, F.data == "adfuel_done")
+async def ad_fuel_done(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    if not data.get("fuel_types"):
+        await callback.answer("Kamida 1 ta yoqilgi turini tanlang!", show_alert=True)
+        return
+    await callback.message.delete()
     await callback.message.answer("📌 Xizmat nomini kiriting:")
     await state.set_state(ServiceAdStates.enter_name)
     await callback.answer()
