@@ -257,3 +257,25 @@ def get_close_order_kb(order_id: int) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="❌ E'lonni bekor qilish (Mashina topdim)", callback_data=f"close_order_{order_id}")]
         ]
     )
+
+# ---- Xizmat turlari klaviaturasi (avtomatik patch, service_ad.py uchun) ----
+
+SERVICE_TYPES = {
+    "gas": {"name": "⛽️ Zapravka", "price": 50000},
+    "food": {"name": "🍽 Ovqatlanish", "price": 50000},
+    "hotel": {"name": "🛏 Mehmonxona", "price": 70000},
+    "service": {"name": "🔧 Avtoservis", "price": 50000},
+    "autosalon": {"name": "🚗 Avtosalon", "price": 100000},
+    "medical": {"name": "🏥 Tibbiyot", "price": 60000}
+}
+
+def get_service_types_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardMarkup(inline_keyboard=[])
+    for key, val in SERVICE_TYPES.items():
+        kb.inline_keyboard.append([
+            InlineKeyboardButton(text=val["name"], callback_data=f"svc_type_{key}")
+        ])
+    kb.inline_keyboard.append([
+        InlineKeyboardButton(text="🔙 Bosh menyu", callback_data="svc_type_back")
+    ])
+    return kb

@@ -8,6 +8,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 from aiohttp import web
 from config import BOT_TOKEN, ADMIN_ID
 from handlers import router
+from service_ad import router as service_ad_router
 import database as db
 
 logging.basicConfig(level=logging.INFO)
@@ -78,6 +79,7 @@ async def main():
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher(storage=storage)
     dp.include_router(router)
+    dp.include_router(service_ad_router)
 
     await bot.delete_webhook(drop_pending_updates=True)
 

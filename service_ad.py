@@ -1,24 +1,15 @@
 from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
 
 from config import ADMIN_ID
-from keyboards import phone_keyboard
+from keyboards import phone_keyboard, get_service_types_kb
+from states import ServiceAdStates
 import database as db
 
 router = Router()
 
-class ServiceAdStates(StatesGroup):
-    choose_type = State()
-    enter_name = State()
-    enter_location = State()
-    enter_phone = State()
-    enter_description = State()
-    enter_photo = State()
-    waiting_payment = State()
-    receipt_photo = State()
-
+# Xizmat turlari va narxlari
 SERVICE_TYPES = {
     "gas": {"name": "⛽️ Zapravka", "price": 50000},
     "food": {"name": "🍽 Ovqatlanish", "price": 50000},
@@ -27,17 +18,6 @@ SERVICE_TYPES = {
     "autosalon": {"name": "🚗 Avtosalon", "price": 100000},
     "medical": {"name": "🏥 Tibbiyot", "price": 60000}
 }
-
-def service_types_kb():
-    kb = InlineKeyboardMarkup(inline_keyboard=[])
-    for key, val in SERVICE_TYPES.items():
-        kb.inline_keyboard.append([
-            InlineKeyboardButton(text=val["name"], callback_data=f"svc_type_{key}")
-        ])
-    kb.inline_keyboard.append([
-        InlineKeyboardButton(text="🔙 Bosh menyu", callback_data="svc_back")
-    ])
-    return kb
 
 async def check_access_svc(message_or_callback) -> bool:
     user_id = message_or_callback.from_user.id
@@ -58,7 +38,7 @@ async def service_ad_start(message: Message, state: FSMContext):
     await message.answer(
         "📢 <b>Yo'l bo'yi xizmati e'loni</b>\n\n"
         "Xizmat turini tanlang:",
-        reply_markup=service_types_kb(),
+        reply_markup=get_service_types_kb(),
         parse_mode="HTML"
     )
     await state.set_state(ServiceAdStates.choose_type)
