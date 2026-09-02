@@ -21,6 +21,7 @@ REGIONS_DATA = {
     "Toshkent viloyati": ["Nurafshon sh.", "Olmaliq sh.", "Angren sh.", "Chirchiq sh.", "Bekobod sh.", "Yangiyo‘l sh.", "Bo‘stonliq", "Chinoz", "Qibray", "Parkent", "Piskent", "Quyi Chirchiq", "O‘rta Chirchiq", "Yuqori Chirchiq", "Zangiota", "Toshkent tumani", "Bo‘ka", "Bekobod tumani"]
 }
 
+
 def get_main_menu(is_super: bool = False, is_sub: bool = False) -> ReplyKeyboardMarkup:
     keyboard = [
         [KeyboardButton(text="🚗 Haydovchi"), KeyboardButton(text="🙋‍♂️ Yo‘lovchi")],
@@ -33,16 +34,19 @@ def get_main_menu(is_super: bool = False, is_sub: bool = False) -> ReplyKeyboard
         keyboard.append([KeyboardButton(text="🛠 Admin Panel")])
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
+
 def get_roadside_services_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="⛽️ Zapravka"), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
             [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
-            [KeyboardButton(text="📢 E'lon joylashtirish")],
+            [KeyboardButton(text="🚗 Avtosalon", request_location=True)],
+            [KeyboardButton(text="📢 E'lon joylashtirish"), KeyboardButton(text="📋 Mening e'lonlarim")],
             [KeyboardButton(text="🔙 Bosh menyu")]
         ],
         resize_keyboard=True
     )
+
 
 def get_driver_cabinet_kb(status: str = 'waiting', is_subscribed: bool = True) -> ReplyKeyboardMarkup:
     status_btn = KeyboardButton(text="🚀 Yo‘lga chiqdim") if status == 'waiting' else KeyboardButton(text="🟢 Mijoz kutmoqdaman")
@@ -57,6 +61,7 @@ def get_driver_cabinet_kb(status: str = 'waiting', is_subscribed: bool = True) -
     keyboard = [row for row in keyboard if row]
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
+
 def get_super_admin_kb(maintenance_on: bool = False, monetization_on: bool = False, is_temp_session: bool = False) -> ReplyKeyboardMarkup:
     kill_switch_btn = KeyboardButton(text="🍏 Botni ishga tushirish (Start)") if maintenance_on else KeyboardButton(text="🔴 Favqulodda to‘xtatish")
     monetization_btn = KeyboardButton(text="🛑 Monetizatsiyani to‘xtatish") if monetization_on else KeyboardButton(text="💎 Monetizatsiyani boshlash")
@@ -67,7 +72,7 @@ def get_super_admin_kb(maintenance_on: bool = False, monetization_on: bool = Fal
         [KeyboardButton(text="📋 Adminlar ro‘yxati"), KeyboardButton(text="📝 Adminlar faoliyati (Audit)")],
         [KeyboardButton(text="📢 Ommaviy xabar yuborish"), KeyboardButton(text="🚫 Qora ro‘yxat (Ban)")],
         [KeyboardButton(text="💳 To‘lov kartasini sozlash"), KeyboardButton(text="🔑 Parolni o‘zgartirish")],
-        [KeyboardButton(text="💾 Baza zaxirasini yuklash (.db)")],
+        [KeyboardButton(text="💾 Baza zaxirasini yuklash (.sql)")],
         [monetization_btn, kill_switch_btn]
     ]
     if is_temp_session:
@@ -76,10 +81,11 @@ def get_super_admin_kb(maintenance_on: bool = False, monetization_on: bool = Fal
         keyboard.append([KeyboardButton(text="🔙 Bosh menyu")])
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
+
 sub_admin_kb = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📊 Bot Statistikasi"), KeyboardButton(text="👥 Haydovchilar ro‘yxati")],
-        [KeyboardButton(text="🚫 Qora ro‘yxat (Ban)"), KeyboardButton(text="💾 Baza zaxirasini yuklash (.db)")],
+        [KeyboardButton(text="🚫 Qora ro‘yxat (Ban)"), KeyboardButton(text="💾 Baza zaxirasini yuklash (.sql)")],
         [KeyboardButton(text="🔙 Bosh menyu")]
     ],
     resize_keyboard=True
@@ -155,6 +161,7 @@ start_confirm_2_kb = InlineKeyboardMarkup(
     ]
 )
 
+
 def get_route_scope_kb(prefix: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -162,6 +169,7 @@ def get_route_scope_kb(prefix: str) -> InlineKeyboardMarkup:
             [InlineKeyboardButton(text="🏘 O‘z viloyatim ichida (Lokal)", callback_data=f"{prefix}_type_local")]
         ]
     )
+
 
 phone_keyboard = ReplyKeyboardMarkup(
     keyboard=[
@@ -178,6 +186,7 @@ driver_type_kb = InlineKeyboardMarkup(
     ]
 )
 
+
 def get_cars_kb(service_type: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     cars = ["Cobalt", "Gentra", "Nexia 3", "Damas", "Tracker", "Captiva"] if service_type == "passenger" else ["Labo", "Porter", "Isuzu", "Gazel", "Fura"]
@@ -186,6 +195,7 @@ def get_cars_kb(service_type: str) -> InlineKeyboardMarkup:
     builder.button(text="✍️ Boshqa (qo‘lda yozish)", callback_data="car_other")
     builder.adjust(2)
     return builder.as_markup()
+
 
 def get_regions_kb(action_prefix: str, selected_list: list = None) -> InlineKeyboardMarkup:
     if selected_list is None:
@@ -211,6 +221,7 @@ def get_regions_kb(action_prefix: str, selected_list: list = None) -> InlineKeyb
 
     return builder.as_markup()
 
+
 def get_districts_kb(region: str, action_prefix: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for dist in REGIONS_DATA.get(region, []):
@@ -218,6 +229,7 @@ def get_districts_kb(region: str, action_prefix: str) -> InlineKeyboardMarkup:
     builder.button(text="🔙 Boshqa viloyat", callback_data=f"{action_prefix}_back_reg")
     builder.adjust(2)
     return builder.as_markup()
+
 
 def get_multi_districts_kb(region: str, selected_list: list, prefix: str) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
@@ -245,12 +257,15 @@ def get_multi_districts_kb(region: str, selected_list: list, prefix: str) -> Inl
     builder.attach(controls)
     return builder.as_markup()
 
+
 def get_driver_card_kb(driver_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🚖 Shu haydovchiga buyurtma berish", callback_data=f"book_drv_{driver_id}")]
+            [InlineKeyboardButton(text="🚖 Shu haydovchiga buyurtma berish", callback_data=f"book_drv_{driver_id}")],
+            [InlineKeyboardButton(text="⚠️ Shikoyat qilish", callback_data=f"complain_{driver_id}")]
         ]
     )
+
 
 def get_close_order_kb(order_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
@@ -259,7 +274,8 @@ def get_close_order_kb(order_id: int) -> InlineKeyboardMarkup:
         ]
     )
 
-# ---- Xizmat turlari klaviaturasi (avtomatik patch, service_ad.py uchun) ----
+
+# ---- Xizmat turlari klaviaturasi (Avtosalon endi qidiruv menyusida ham bor) ----
 
 SERVICE_TYPES = {
     "gas": {"name": "⛽️ Zapravka", "price": 50000},
@@ -268,6 +284,7 @@ SERVICE_TYPES = {
     "service": {"name": "🔧 Avtoservis", "price": 50000},
     "autosalon": {"name": "🚗 Avtosalon", "price": 100000}
 }
+
 
 def get_service_types_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardMarkup(inline_keyboard=[])
@@ -280,12 +297,14 @@ def get_service_types_kb() -> InlineKeyboardMarkup:
     ])
     return kb
 
+
 FUEL_TYPES = {
     "metan": "🔵 Metan",
     "propan": "🟢 Propan",
     "benzin": "⛽️ Benzin",
     "dizel": "🛢 Dizel"
 }
+
 
 def get_fuel_types_kb(selected: list = None, prefix: str = "fuel", multi: bool = True) -> InlineKeyboardMarkup:
     if selected is None:
@@ -298,12 +317,15 @@ def get_fuel_types_kb(selected: list = None, prefix: str = "fuel", multi: bool =
         else:
             builder.button(text=label, callback_data=f"{prefix}_pick_{key}")
     builder.adjust(2)
+
+    controls = InlineKeyboardBuilder()
     if multi:
-        controls = InlineKeyboardBuilder()
         controls.button(text=f"✅ Davom etish ({len(selected)} ta)", callback_data=f"{prefix}_done")
-        controls.adjust(1)
-        builder.attach(controls)
+    controls.button(text="🔙 Orqaga", callback_data=f"{prefix}_back")
+    controls.adjust(1)
+    builder.attach(controls)
     return builder.as_markup()
+
 
 def get_location_request_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
