@@ -196,6 +196,7 @@ async def init_db():
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('monetization_active', '0') ON CONFLICT (key) DO NOTHING")
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('p2p_card_number', '8600123456789012') ON CONFLICT (key) DO NOTHING")
 
+        await db.execute("ALTER TABLE service_payments ALTER COLUMN status TYPE TEXT USING status::TEXT;")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_routes_lookup ON driver_routes(from_loc, to_loc);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_orders_time ON passenger_orders(created_at);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_logs_time ON activity_logs(created_at);")
