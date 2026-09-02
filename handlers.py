@@ -958,13 +958,14 @@ async def render_roadside_results(message: Message, user_id: int, services):
     await message.answer(response_text, reply_markup=await render_user_menu(user_id), parse_mode="HTML", disable_web_page_preview=True)
 
 
-# Endi "🚗 Avtosalon" ham shu ro'yxatga qo'shildi
-@router.message(F.location, F.text.in_(["🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis", "🚗 Avtosalon"]))
-async def process_roadside_service_search(message: Message):
-    try:
-        await message.delete()
-    except Exception:
-        pass
+# "🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis", "🚗 Avtosalon" tugmalari endi
+# oddiy matn tugmalari (request_location emas) - chunki Telegram location xabarida "text"
+# maydoni bo'sh keladi, shuning uchun F.location + F.text.in_([...]) birgalikda HECH QACHON
+# ishlamas edi (eski xato). Endi: tugma bosilganda avval holat (state) belgilanadi,
+# so'ng foydalanuvchidan alohida joylashuv so'raladi - xuddi zapravka oqimidagi kabi.
+@router.message(F.text.in_(["🍽 Ovqatlanish", "🛏 Hostel va Mehmonxona", "🔧 Avtoservis", "🚗 Avtosalon"]))
+async def roadside_category_picked(message: Message, state: FSMContext):
+    if not await check_access(message): return
 
     text_map = {
         "🍽 Ovqatlanish": "food",
@@ -976,11 +977,12 @@ async def process_roadside_service_search(message: Message):
     if not stype:
         return
 
-    user_lat = message.location.latitude
-    user_lon = message.location.longitude
-
-    services = await db.get_nearest_services(user_lat, user_lon, stype, limit=10)
-    await render_roadside_results(message, message.from_user.id, services)
+    await state.update_data(roadside_type=stype)
+    await state.set_state(RoadsideSearchState.waiting_location)
+    await message.answer(
+        "📍 Iltimos, joylashuvingizni yuboring:",
+        reply_markup=get_location_request_kb()
+    )
 
 
 @router.message(F.text == "⛽️ Zapravka")
@@ -1026,21 +1028,51 @@ async def roadside_gas_fuel_picked(callback: CallbackQuery, state: FSMContext):
 
 
 @router.message(RoadsideSearchState.waiting_location, F.location)
-async def process_gas_location_search(message: Message, state: FSMContext):
+async def process_roadside_location_search(message: Message, state: FSMContext):
+    """
+    Zapravka (yoqilg'i turi bilan) va boshqa xizmat turlari (ovqat, mehmonxona,
+    avtoservis, avtosalon) uchun YAGONA joylashuv handleri. Qaysi turi so'ralganini
+    FSM state ichidagi ma'lumotdan aniqlaymiz (matn emas, chunki location xabarida
+    matn bo'lmaydi). Xabar (location bubble) darhol chatdan o'chiriladi.
+    """
     try:
         await message.delete()
     except Exception:
         pass
 
     data = await state.get_data()
-    fuel_key = data.get("roadside_fuel")
     await state.clear()
 
     user_lat = message.location.latitude
     user_lon = message.location.longitude
 
-    services = await db.get_nearest_services(user_lat, user_lon, "gas", limit=10, fuel_type=fuel_key)
+    if "roadside_fuel" in data:
+        fuel_key = data.get("roadside_fuel")
+        services = await db.get_nearest_services(user_lat, user_lon, "gas", limit=10, fuel_type=fuel_key)
+    else:
+        stype = data.get("roadside_type")
+        if not stype:
+            return
+        services = await db.get_nearest_services(user_lat, user_lon, stype, limit=10)
+
     await render_roadside_results(message, message.from_user.id, services)
+
+
+@router.message(StateFilter(None), F.location)
+async def catch_all_location_cleanup(message: Message):
+    """
+    Xavfsizlik to'ri: bu handler FAQAT foydalanuvchida hech qanday faol FSM holati
+    bo'lmaganda ishlaydi (StateFilter(None)). Aks holda, masalan, "📢 E'lon
+    joylashtirish" oqimidagi joylashuv so'rovi (service_ad.py, ServiceAdStates.enter_location)
+    shu yerda "o'g'irlanib" qolib, e'lon joylashtirish butunlay buzilardi.
+    Faqat chindan ham kutilmagan/ortiqcha location xabarlari o'chiriladi.
+    """
+    try:
+        await message.delete()
+    except Exception:
+        pass
+
+
 
 
 @router.message(F.text == "🚗 Haydovchi")
