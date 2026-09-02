@@ -848,15 +848,18 @@ async def admin_remove_process(message: Message, state: FSMContext):
 
 @router.message(F.text.startswith("💾 Baza"))
 async def admin_manual_backup(message: Message, state: FSMContext):
-    if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): return
+    if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): 
+        return
     await state.clear()
 
     await message.answer("⏳ Zaxira tayyorlanmoqda, biroz kuting...")
 
     try:
-        filename = f"backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
-        lines = [f"-- PostgreSQL backup generated at {datetime.datetime.now()}
-"]
+        now_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"backup_{now_str}.sql"
+        header_line = f"-- PostgreSQL backup generated at {datetime.datetime.now()}
+"
+        lines = [header_line]
         
         async with db.pool.acquire() as conn:
             tables = await conn.fetch("SELECT tablename FROM pg_tables WHERE schemaname='public'")
@@ -882,11 +885,13 @@ async def admin_manual_backup(message: Message, state: FSMContext):
                                     escaped = str(val).replace("'", "''")
                                     vals.append(f"'{escaped}'")
                             vals_str = ", ".join(vals)
-                            lines.append(f'INSERT INTO "{tname}" ({cols_str}) VALUES ({vals_str});
-')
+                            insert_line = f'INSERT INTO "{tname}" ({cols_str}) VALUES ({vals_str});
+'
+                            lines.append(insert_line)
                 except Exception as e:
-                    lines.append(f"-- Error dumping table {tname}: {e}
-")
+                    err_line = f"-- Error dumping table {tname}: {e}
+"
+                    lines.append(err_line)
 
         with tempfile.NamedTemporaryFile(suffix='.sql', delete=False, mode='w', encoding='utf-8') as tmp:
             tmp.writelines(lines)
