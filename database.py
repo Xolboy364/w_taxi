@@ -166,6 +166,7 @@ async def init_db():
             )
         """)
         await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS fuel_types TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP;")
         await db.execute("""
             CREATE TABLE IF NOT EXISTS service_payments (
                 id SERIAL PRIMARY KEY,
