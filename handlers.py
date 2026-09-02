@@ -871,37 +871,44 @@ async def admin_manual_backup(message: Message, state: FSMContext):
     with tempfile.NamedTemporaryFile(suffix=".sql", delete=False) as tmp:
         tmp_path = tmp.name
 
-    cmd = [
-        "pg_dump",
-        "-h", parsed.hostname or "localhost",
-        "-p", str(parsed.port or 5432),
-        "-U", parsed.username or "postgres",
-        "-d", (parsed.path or "/postgres").lstrip("/"),
-        "-f", tmp_path,
-        "--no-owner",
-        "--no-privileges",
-    ]
-
     try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd, env=env,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        _, stderr = await proc.communicate()
+        lines = [f"-- PostgreSQL backup generated at {datetime.datetime.now()}\n"]
+        async with db.pool.acquire() as conn:
+            tables = await conn.fetch("SELECT tablename FROM pg_tables WHERE schemaname='public'")
+            for t in tables:
+                tname = t['tablename']
+                try:
+                    rows = await conn.fetch(f"SELECT * FROM \"{tname}\"")
+                    if rows:
+                        cols = list(rows[0].keys())
+                        cols_str = ", ".join(f\"\\\"{c}\\\\" for c in cols)
+                        for row in rows:
+                            vals = []
+                            for val in row.values():
+                                if val is None:
+                                    vals.append("NULL")
+                                elif isinstance(val, (int, float)):
+                                    vals.append(str(val))
+                                elif isinstance(val, datetime.datetime):
+                                    vals.append(f\"'{val.isoformat()}'\")
+                                elif isinstance(val, bool):
+                                    vals.append("TRUE" if val else "FALSE")
+                                else:
+                                    escaped = str(val).replace(''', '''''')
+                                    vals.append(f\"'{escaped}'\")
+                            vals_str = ", ".join(vals)
+                            lines.append(f"INSERT INTO \"{tname}\" ({cols_str}) VALUES ({vals_str});\n")
+                except Exception as e:
+                    lines.append(f"-- Error dumping table {tname}: {e}\n")
 
-        if proc.returncode != 0 or not os.path.exists(tmp_path) or os.path.getsize(tmp_path) == 0:
-            logging.error(f"pg_dump xatosi: {stderr.decode(errors='ignore')}")
-            await message.answer("❌ Zaxira yaratishda xatolik yuz berdi. pg_dump o‘rnatilganligini tekshiring.")
-            return
+        with open(tmp_path, "w", encoding="utf-8") as tmp_file:
+            tmp_file.writelines(lines)
 
         filename = f"backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
         await message.answer_document(document=FSInputFile(tmp_path, filename=filename))
-    except FileNotFoundError:
-        await message.answer("❌ pg_dump topilmadi. Server(container)da PostgreSQL client vositalari o‘rnatilganligiga ishonch hosil qiling.")
     except Exception as e:
         logging.error(f"Zaxira yaratishda xatolik: {e}")
-        await message.answer("❌ Zaxira yaratishda kutilmagan xatolik yuz berdi.")
+        await message.answer("❌ Zaxira yaratishda xatolik yuz berdi.")
     finally:
         try:
             os.remove(tmp_path)
