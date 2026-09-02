@@ -197,6 +197,16 @@ async def init_db():
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('monetization_active', '0') ON CONFLICT (key) DO NOTHING")
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('p2p_card_number', '8600123456789012') ON CONFLICT (key) DO NOTHING")
 
+        
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS service_type TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS name TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS phone TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS description TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS photo_id TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS is_active INT DEFAULT 0;")
+
         await db.execute("CREATE INDEX IF NOT EXISTS idx_routes_lookup ON driver_routes(from_loc, to_loc);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_orders_time ON passenger_orders(created_at);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_logs_time ON activity_logs(created_at);")
