@@ -801,10 +801,11 @@ async def get_user_service_ads(user_id: int, limit: int = 10):
             SELECT sa.id, sa.service_type, sa.name, sa.is_active, sa.expires_at, sa.created_at,
                    sp.status AS payment_status, sp.reject_reason
             FROM service_ads sa
-            LEFT JOIN LATERAL (
-                SELECT status, reject_reason FROM service_payments
-                WHERE ad_id = sa.id ORDER BY id DESC LIMIT 1
-            ) sp ON true
+            LEFT JOIN (
+                SELECT DISTINCT ON (ad_id) ad_id, status, reject_reason
+                FROM service_payments
+                ORDER BY ad_id, id DESC
+            ) sp ON sp.ad_id = sa.id
             WHERE sa.user_id = $1
             ORDER BY sa.created_at DESC
             LIMIT $2
