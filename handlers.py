@@ -848,65 +848,68 @@ async def admin_remove_process(message: Message, state: FSMContext):
 
 @router.message(F.text.startswith("💾 Baza"))
 async def admin_manual_backup(message: Message, state: FSMContext):
-    if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): 
-        return
+    """
+    PostgreSQL uchun to'g'ri zaxira: pg_dump orqali .sql fayl yaratiladi.
+    (Avvalgi versiyada SQLite davridan qolgan db.DB_NAME ishlatilgan edi -
+    bu PostgreSQL bilan ishlamas edi va xatolik berardi.)
+    """
+    if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): return
     await state.clear()
+
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        await message.answer("⚠️ DATABASE_URL topilmadi, zaxira yaratib bo‘lmadi.")
+        return
 
     await message.answer("⏳ Zaxira tayyorlanmoqda, biroz kuting...")
 
+    parsed = urlparse(database_url)
+    env = os.environ.copy()
+    if parsed.password:
+        env["PGPASSWORD"] = parsed.password
+
+    with tempfile.NamedTemporaryFile(suffix=".sql", delete=False) as tmp:
+        tmp_path = tmp.name
+
+    cmd = [
+        "pg_dump",
+        "-h", parsed.hostname or "localhost",
+        "-p", str(parsed.port or 5432),
+        "-U", parsed.username or "postgres",
+        "-d", (parsed.path or "/postgres").lstrip("/"),
+        "-f", tmp_path,
+        "--no-owner",
+        "--no-privileges",
+    ]
+
     try:
-        now_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"backup_{now_str}.sql"
-        header_line = f"-- PostgreSQL backup generated at {datetime.datetime.now()}
-"
-        lines = [header_line]
-        
-        async with db.pool.acquire() as conn:
-            tables = await conn.fetch("SELECT tablename FROM pg_tables WHERE schemaname='public'")
-            for t in tables:
-                tname = t['tablename']
-                try:
-                    rows = await conn.fetch(f'SELECT * FROM "{tname}"')
-                    if rows:
-                        cols = list(rows[0].keys())
-                        cols_str = ", ".join([f'"{c}"' for c in cols])
-                        for row in rows:
-                            vals = []
-                            for val in row.values():
-                                if val is None:
-                                    vals.append("NULL")
-                                elif isinstance(val, (int, float)):
-                                    vals.append(str(val))
-                                elif isinstance(val, datetime.datetime):
-                                    vals.append(f"'{val.isoformat()}'")
-                                elif isinstance(val, bool):
-                                    vals.append("TRUE" if val else "FALSE")
-                                else:
-                                    escaped = str(val).replace("'", "''")
-                                    vals.append(f"'{escaped}'")
-                            vals_str = ", ".join(vals)
-                            insert_line = f'INSERT INTO "{tname}" ({cols_str}) VALUES ({vals_str});
-'
-                            lines.append(insert_line)
-                except Exception as e:
-                    err_line = f"-- Error dumping table {tname}: {e}
-"
-                    lines.append(err_line)
+        proc = await asyncio.create_subprocess_exec(
+            *cmd, env=env,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        _, stderr = await proc.communicate()
 
-        with tempfile.NamedTemporaryFile(suffix='.sql', delete=False, mode='w', encoding='utf-8') as tmp:
-            tmp.writelines(lines)
-            tmp_path = tmp.name
+        if proc.returncode != 0 or not os.path.exists(tmp_path) or os.path.getsize(tmp_path) == 0:
+            logging.error(f"pg_dump xatosi: {stderr.decode(errors='ignore')}")
+            await message.answer("❌ Zaxira yaratishda xatolik yuz berdi. pg_dump o‘rnatilganligini tekshiring.")
+            return
 
+        filename = f"backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
         await message.answer_document(document=FSInputFile(tmp_path, filename=filename))
+    except FileNotFoundError:
+        await message.answer("❌ pg_dump topilmadi. Server(container)da PostgreSQL client vositalari o‘rnatilganligiga ishonch hosil qiling.")
     except Exception as e:
         logging.error(f"Zaxira yaratishda xatolik: {e}")
-        await message.answer("❌ Zaxira yaratishda xatolik yuz berdi.")
+        await message.answer("❌ Zaxira yaratishda kutilmagan xatolik yuz berdi.")
     finally:
         try:
-            if 'tmp_path' in locals() and os.path.exists(tmp_path):
-                os.remove(tmp_path)
+            os.remove(tmp_path)
         except Exception:
             pass
+
+
+@router.message(F.text.startswith("👥 Haydovchilar"))
 async def admin_drivers_list(message: Message, state: FSMContext):
     if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): return
     await state.clear()
