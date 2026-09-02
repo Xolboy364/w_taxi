@@ -264,16 +264,8 @@ async def service_receipt_received(message: Message, state: FSMContext, bot: Bot
     photo_id = message.photo[-1].file_id
     data = await state.get_data()
 
-    if not data.get("user_id") and not data.get("telegram_id"):
-        data["telegram_id"] = message.from_user.id
-
     ad_id = await db.save_service_ad(data)
-    if not ad_id:
-        await message.answer("❌ E'lonni saqlashda xatolik yuz berdi.")
-        await state.clear()
-        return
-
-    await db.save_service_payment(ad_id, message.from_user.id, data.get('amount', 50000), photo_id)
+    await db.save_service_payment(ad_id, message.from_user.id, data['amount'], photo_id)
 
     await message.answer(
         "✅ <b>Chek qabul qilindi!</b>\n"

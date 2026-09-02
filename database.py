@@ -166,7 +166,6 @@ async def init_db():
             )
         """)
         await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS fuel_types TEXT;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP;")
         await db.execute("""
             CREATE TABLE IF NOT EXISTS service_payments (
                 id SERIAL PRIMARY KEY,
@@ -196,16 +195,6 @@ async def init_db():
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('maintenance_mode', '0') ON CONFLICT (key) DO NOTHING")
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('monetization_active', '0') ON CONFLICT (key) DO NOTHING")
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('p2p_card_number', '8600123456789012') ON CONFLICT (key) DO NOTHING")
-
-        
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS service_type TEXT;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS name TEXT;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS phone TEXT;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS description TEXT;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS photo_id TEXT;")
-        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS is_active INT DEFAULT 0;")
 
         await db.execute("CREATE INDEX IF NOT EXISTS idx_routes_lookup ON driver_routes(from_loc, to_loc);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_orders_time ON passenger_orders(created_at);")
@@ -806,17 +795,23 @@ async def has_pending_service_ad(user_id: int) -> bool:
 
 
 async def get_user_service_ads(user_id: int, limit: int = 10):
-    """Foydalanuvchining o'z e'lonlari ro'yxati - holati bilan birga ('📋 Mening e'lonlarim' uchun)."""
+    """
+    Foydalanuvchining o'z e'lonlari ro'yxati - holati bilan birga ('📋 Mening e'lonlarim' uchun).
+    LATERAL JOIN o'rniga oddiy correlated subquery ishlatilgan - bu ba'zi muhitlarda
+    (masalan eski PgBouncer/connection pooler sozlamalarida) ishonchliroq ishlaydi.
+    """
     async with pool.acquire() as db:
         return await db.fetch("""
-            SELECT sa.id, sa.service_type, sa.name, sa.is_active, sa.expires_at, sa.created_at,
-                   sp.status AS payment_status, sp.reject_reason
+            SELECT
+                sa.id,
+                sa.service_type,
+                sa.name,
+                sa.is_active,
+                sa.expires_at,
+                sa.created_at,
+                (SELECT status FROM service_payments WHERE ad_id = sa.id ORDER BY id DESC LIMIT 1) AS payment_status,
+                (SELECT reject_reason FROM service_payments WHERE ad_id = sa.id ORDER BY id DESC LIMIT 1) AS reject_reason
             FROM service_ads sa
-            LEFT JOIN (
-                SELECT DISTINCT ON (ad_id) ad_id, status, reject_reason
-                FROM service_payments
-                ORDER BY ad_id, id DESC
-            ) sp ON sp.ad_id = sa.id
             WHERE sa.user_id = $1
             ORDER BY sa.created_at DESC
             LIMIT $2
