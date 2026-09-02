@@ -848,40 +848,25 @@ async def admin_remove_process(message: Message, state: FSMContext):
 
 @router.message(F.text.startswith("💾 Baza"))
 async def admin_manual_backup(message: Message, state: FSMContext):
-    """
-    PostgreSQL uchun to'g'ri zaxira: pg_dump orqali .sql fayl yaratiladi.
-    (Avvalgi versiyada SQLite davridan qolgan db.DB_NAME ishlatilgan edi -
-    bu PostgreSQL bilan ishlamas edi va xatolik berardi.)
-    """
     if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): return
     await state.clear()
 
-    database_url = os.getenv("DATABASE_URL")
-    if not database_url:
-        await message.answer("⚠️ DATABASE_URL topilmadi, zaxira yaratib bo‘lmadi.")
-        return
-
     await message.answer("⏳ Zaxira tayyorlanmoqda, biroz kuting...")
 
-    parsed = urlparse(database_url)
-    env = os.environ.copy()
-    if parsed.password:
-        env["PGPASSWORD"] = parsed.password
-
-    with tempfile.NamedTemporaryFile(suffix=".sql", delete=False) as tmp:
-        tmp_path = tmp.name
-
     try:
-        lines = [f"-- PostgreSQL backup generated at {datetime.datetime.now()}\n"]
+        filename = f"backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
+        lines = [f"-- PostgreSQL backup generated at {datetime.datetime.now()}
+"]
+        
         async with db.pool.acquire() as conn:
             tables = await conn.fetch("SELECT tablename FROM pg_tables WHERE schemaname='public'")
             for t in tables:
                 tname = t['tablename']
                 try:
-                    rows = await conn.fetch(f"SELECT * FROM \"{tname}\"")
+                    rows = await conn.fetch(f'SELECT * FROM "{tname}"')
                     if rows:
                         cols = list(rows[0].keys())
-                        cols_str = ", ".join(f\"\\\"{c}\\\\" for c in cols)
+                        cols_str = ", ".join([f'"{c}"' for c in cols])
                         for row in rows:
                             vals = []
                             for val in row.values():
@@ -890,33 +875,33 @@ async def admin_manual_backup(message: Message, state: FSMContext):
                                 elif isinstance(val, (int, float)):
                                     vals.append(str(val))
                                 elif isinstance(val, datetime.datetime):
-                                    vals.append(f\"'{val.isoformat()}'\")
+                                    vals.append(f"'{val.isoformat()}'")
                                 elif isinstance(val, bool):
                                     vals.append("TRUE" if val else "FALSE")
                                 else:
-                                    escaped = str(val).replace(''', '''''')
-                                    vals.append(f\"'{escaped}'\")
+                                    escaped = str(val).replace("'", "''")
+                                    vals.append(f"'{escaped}'")
                             vals_str = ", ".join(vals)
-                            lines.append(f"INSERT INTO \"{tname}\" ({cols_str}) VALUES ({vals_str});\n")
+                            lines.append(f'INSERT INTO "{tname}" ({cols_str}) VALUES ({vals_str});
+')
                 except Exception as e:
-                    lines.append(f"-- Error dumping table {tname}: {e}\n")
+                    lines.append(f"-- Error dumping table {tname}: {e}
+")
 
-        with open(tmp_path, "w", encoding="utf-8") as tmp_file:
-            tmp_file.writelines(lines)
+        with tempfile.NamedTemporaryFile(suffix='.sql', delete=False, mode='w', encoding='utf-8') as tmp:
+            tmp.writelines(lines)
+            tmp_path = tmp.name
 
-        filename = f"backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.sql"
         await message.answer_document(document=FSInputFile(tmp_path, filename=filename))
     except Exception as e:
         logging.error(f"Zaxira yaratishda xatolik: {e}")
         await message.answer("❌ Zaxira yaratishda xatolik yuz berdi.")
     finally:
         try:
-            os.remove(tmp_path)
+            if 'tmp_path' in locals() and os.path.exists(tmp_path):
+                os.remove(tmp_path)
         except Exception:
             pass
-
-
-@router.message(F.text.startswith("👥 Haydovchilar"))
 async def admin_drivers_list(message: Message, state: FSMContext):
     if not (is_super_admin(message.from_user.id) or await db.is_admin(message.from_user.id, ADMIN_ID)): return
     await state.clear()
