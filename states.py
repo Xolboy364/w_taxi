@@ -82,6 +82,11 @@ class RoadsideSearchState(StatesGroup):
     waiting_location = State()
 
 
+class TripSetupState(StatesGroup):
+    picking_region = State()
+    picking_district = State()
+
+
 class AdminRejectState(StatesGroup):
     enter_reason = State()
 

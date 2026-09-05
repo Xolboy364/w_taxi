@@ -38,9 +38,9 @@ def get_main_menu(is_super: bool = False, is_sub: bool = False) -> ReplyKeyboard
 def get_roadside_services_kb() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="⛽️ Zapravka"), KeyboardButton(text="🍽 Ovqatlanish", request_location=True)],
-            [KeyboardButton(text="🛏 Hostel va Mehmonxona", request_location=True), KeyboardButton(text="🔧 Avtoservis", request_location=True)],
-            [KeyboardButton(text="🚗 Avtosalon", request_location=True)],
+            [KeyboardButton(text="⛽️ Zapravka"), KeyboardButton(text="🍽 Ovqatlanish")],
+            [KeyboardButton(text="🛏 Hostel va Mehmonxona"), KeyboardButton(text="🔧 Avtoservis")],
+            [KeyboardButton(text="🚗 Avtosalon")],
             [KeyboardButton(text="📢 E'lon joylashtirish"), KeyboardButton(text="📋 Mening e'lonlarim")],
             [KeyboardButton(text="🔙 Bosh menyu")]
         ],
@@ -48,18 +48,37 @@ def get_roadside_services_kb() -> ReplyKeyboardMarkup:
     )
 
 
-def get_driver_cabinet_kb(status: str = 'waiting', is_subscribed: bool = True) -> ReplyKeyboardMarkup:
+def get_driver_cabinet_kb(status: str = 'waiting', is_subscribed: bool = True, has_active_trip: bool = False) -> ReplyKeyboardMarkup:
     status_btn = KeyboardButton(text="🚀 Yo‘lga chiqdim") if status == 'waiting' else KeyboardButton(text="🟢 Mijoz kutmoqdaman")
 
     keyboard = [
         [KeyboardButton(text="🛣 Yangi marshrut sozlash")],
         [status_btn],
-        [KeyboardButton(text="📋 Yo‘lovchilar ro‘yxati")],
-        [KeyboardButton(text="🌟 Tarif va Obuna")] if not is_subscribed else [],
-        [KeyboardButton(text="🗑 Yo‘nalishlarni tozalash"), KeyboardButton(text="🔙 Bosh menyu")]
     ]
+    if has_active_trip:
+        keyboard.append([KeyboardButton(text="📍 Bekatga yetdim (band joy)"), KeyboardButton(text="🏁 Safarni yakunlash")])
+    keyboard.append([KeyboardButton(text="📋 Yo‘lovchilar ro‘yxati")])
+    if not is_subscribed:
+        keyboard.append([KeyboardButton(text="🌟 Tarif va Obuna")])
+    keyboard.append([KeyboardButton(text="🗑 Yo‘nalishlarni tozalash"), KeyboardButton(text="🔙 Bosh menyu")])
     keyboard = [row for row in keyboard if row]
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+
+trip_mode_choice_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="🔄 Oddiy safar (o'zgarishsiz)", callback_data="trip_mode_simple")],
+        [InlineKeyboardButton(text="🗺 Ko'p bekatli safar boshlash", callback_data="trip_mode_multi")]
+    ]
+)
+
+
+def get_trip_stop_controls_kb(stops_count: int) -> InlineKeyboardMarkup:
+    buttons = [[InlineKeyboardButton(text="➕ Yana bekat qo'shish", callback_data="trip_add_stop")]]
+    if stops_count >= 2:
+        buttons.append([InlineKeyboardButton(text=f"✅ Safarni boshlash ({stops_count} bekat)", callback_data="trip_finish_setup")])
+    buttons.append([InlineKeyboardButton(text="❌ Bekor qilish", callback_data="trip_cancel_setup")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 def get_super_admin_kb(maintenance_on: bool = False, monetization_on: bool = False, is_temp_session: bool = False) -> ReplyKeyboardMarkup:

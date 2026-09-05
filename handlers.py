@@ -18,6 +18,7 @@ from keyboards import (
     driver_type_kb, get_cars_kb, get_route_scope_kb,
     get_regions_kb, get_districts_kb, get_multi_districts_kb,
     phone_keyboard, get_driver_cabinet_kb, get_driver_card_kb,
+    trip_mode_choice_kb, get_trip_stop_controls_kb,
     ban_management_kb, ban_duration_kb,
     kill_confirm_1_kb, kill_confirm_2_kb,
     start_confirm_1_kb, start_confirm_2_kb,
@@ -30,7 +31,7 @@ from states import (
     DriverReg, DriverMultiRoute, DriverLocalRoute, PassengerSearch,
     PassengerOrderState, AdminManage, SuperAdminAuth,
     ChangePasswordState, ChangeCardState, BroadcastState, BanUserManage, DriverPaymentState, ServiceAdStates,
-    RoadsideSearchState, AdminRejectState, ComplaintState
+    RoadsideSearchState, AdminRejectState, ComplaintState, TripSetupState
 )
 
 MAX_ORDERS_PER_HOUR = 3  # bitta foydalanuvchi 1 soatda nechta buyurtma bera oladi (spam nazorati)
@@ -1092,7 +1093,7 @@ async def driver_start(message: Message, state: FSMContext):
             f"📶 Holat: <b>{status_text}</b>\n"
             f"💎 Tarif: {vip_text}\n"
             f"🛣 Faol yo‘nalishlar: <b>{count} ta</b>",
-            reply_markup=get_driver_cabinet_kb(driver['status'], is_subscribed=is_sub),
+            reply_markup=await build_driver_cabinet_kb(message.from_user.id, driver['status'], is_sub),
             parse_mode="HTML"
         )
     else:
@@ -1418,22 +1419,233 @@ async def mto_finish(callback: CallbackQuery, state: FSMContext):
     )
 
 
+async def build_driver_cabinet_kb(driver_id: int, status: str, is_subscribed: bool):
+    """
+    get_driver_cabinet_kb() ni chaqirishdan oldin, haydovchida faol ko'p-bekatli
+    safar bor-yo'qligini tekshiradi - shunga qarab qo'shimcha tugmalar
+    ("📍 Bekatga yetdim", "🏁 Safarni yakunlash") ko'rsatiladi yoki yashiriladi.
+    """
+    trip = await db.get_active_trip_for_driver(driver_id)
+    return get_driver_cabinet_kb(status, is_subscribed=is_subscribed, has_active_trip=bool(trip))
+
+
 @router.message(F.text == "🚀 Yo‘lga chiqdim")
 async def driver_set_on_way(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
-    await db.set_driver_status(message.from_user.id, 'on_way')
+    await message.answer(
+        "🚀 <b>Qanday safar qilmoqchisiz?</b>\n\n"
+        "🔄 <b>Oddiy safar</b> — hozirgidek, oddiy \"yo'lda\" holatiga o'tasiz.\n"
+        "🗺 <b>Ko'p bekatli safar</b> — butun yo'lingizni (masalan Surxondaryo → "
+        "Qarshi → Samarqand → Toshkent) oldindan belgilaysiz. Har bekatda "
+        "\"📍 Bekatga yetdim\" tugmasini bossangiz, bot avtomatik ravishda "
+        "QOLGAN yo'lingiz bo'ylab mos mijozlarni topib beradi.",
+        reply_markup=trip_mode_choice_kb,
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(F.data == "trip_mode_simple")
+async def trip_mode_simple_cb(callback: CallbackQuery, state: FSMContext):
+    await db.set_driver_status(callback.from_user.id, 'on_way')
+    is_sub = await db.is_driver_subscribed(callback.from_user.id)
+    try:
+        await callback.message.delete()
+    except Exception:
+        pass
+    kb = await build_driver_cabinet_kb(callback.from_user.id, 'on_way', is_sub)
+    await callback.message.answer("🚀 Qatnov boshlandi.", reply_markup=kb)
+    await callback.answer()
+
+
+@router.callback_query(F.data == "trip_mode_multi")
+async def trip_mode_multi_cb(callback: CallbackQuery, state: FSMContext):
+    await state.update_data(trip_stops=[])
+    await state.set_state(TripSetupState.picking_region)
+    await callback.message.edit_text(
+        "🗺 <b>1-bekat:</b> yo'lingiz boshlanadigan viloyatni tanlang:",
+        reply_markup=get_regions_kb("trip_reg"),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.callback_query(TripSetupState.picking_region, F.data.startswith("trip_reg_reg_"))
+async def trip_pick_region(callback: CallbackQuery, state: FSMContext):
+    region = callback.data.replace("trip_reg_reg_", "")
+    if region == "Toshkent shahri":
+        data = await state.get_data()
+        stops = data.get("trip_stops", [])
+        stops.append(region)
+        await state.update_data(trip_stops=stops)
+        await callback.message.edit_text(
+            f"✅ Bekat qo'shildi: <b>{region}</b>\nJami bekatlar: {len(stops)}",
+            reply_markup=get_trip_stop_controls_kb(len(stops)),
+            parse_mode="HTML"
+        )
+        await callback.answer()
+        return
+
+    await state.update_data(trip_cur_region=region)
+    await state.set_state(TripSetupState.picking_district)
+    await callback.message.edit_text(
+        f"[{region}] — Tumanni tanlang:",
+        reply_markup=get_districts_kb(region, "trip_dist")
+    )
+    await callback.answer()
+
+
+@router.callback_query(TripSetupState.picking_district, F.data.startswith("trip_dist_dist_"))
+async def trip_pick_district(callback: CallbackQuery, state: FSMContext):
+    dist = callback.data.replace("trip_dist_dist_", "")
+    data = await state.get_data()
+    region = data.get("trip_cur_region")
+    location = f"{region}, {dist}"
+    stops = data.get("trip_stops", [])
+    stops.append(location)
+    await state.update_data(trip_stops=stops)
+    await callback.message.edit_text(
+        f"✅ Bekat qo'shildi: <b>{location}</b>\nJami bekatlar: {len(stops)}",
+        reply_markup=get_trip_stop_controls_kb(len(stops)),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.callback_query(TripSetupState.picking_district, F.data == "trip_dist_back_reg")
+async def trip_district_back(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(TripSetupState.picking_region)
+    await callback.message.edit_text(
+        "🗺 Viloyatni tanlang:",
+        reply_markup=get_regions_kb("trip_reg")
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "trip_add_stop")
+async def trip_add_stop_cb(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(TripSetupState.picking_region)
+    data = await state.get_data()
+    stops = data.get("trip_stops", [])
+    await callback.message.edit_text(
+        f"🗺 <b>{len(stops) + 1}-bekat:</b> keyingi viloyatni tanlang:",
+        reply_markup=get_regions_kb("trip_reg"),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data == "trip_cancel_setup")
+async def trip_cancel_setup_cb(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    try:
+        await callback.message.delete()
+    except Exception:
+        pass
+    is_sub = await db.is_driver_subscribed(callback.from_user.id)
+    kb = await build_driver_cabinet_kb(callback.from_user.id, 'waiting', is_sub)
+    await callback.message.answer("❌ Safar sozlash bekor qilindi.", reply_markup=kb)
+    await callback.answer()
+
+
+@router.callback_query(F.data == "trip_finish_setup")
+async def trip_finish_setup_cb(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    stops = data.get("trip_stops", [])
+    if len(stops) < 2:
+        await callback.answer("Kamida 2 ta bekat kerak!", show_alert=True)
+        return
+
+    driver = await db.get_driver(callback.from_user.id)
+    service_type = driver["service_type"] if driver else "passenger"
+
+    await db.create_active_trip(callback.from_user.id, service_type, stops)
+    await db.set_driver_status(callback.from_user.id, 'on_way')
+    await state.clear()
+
+    route_text = " ➡️ ".join(stops)
+    try:
+        await callback.message.delete()
+    except Exception:
+        pass
+
+    is_sub = await db.is_driver_subscribed(callback.from_user.id)
+    kb = await build_driver_cabinet_kb(callback.from_user.id, 'on_way', is_sub)
+    await callback.message.answer(
+        f"🚀 <b>Safar boshlandi!</b>\n\n📍 {route_text}\n\n"
+        "Har bekatda \"📍 Bekatga yetdim\" tugmasini bosing - bot avtomatik "
+        "ravishda qolgan yo'lingiz bo'ylab mos mijozlarni qidirib beradi.",
+        reply_markup=kb,
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.message(F.text == "📍 Bekatga yetdim (band joy)")
+async def trip_advance_stop(message: Message, state: FSMContext):
+    if not await check_access(message): return
+    await state.clear()
+
+    trip_info = await db.get_active_trip_for_driver(message.from_user.id)
+    if not trip_info:
+        await message.answer("Sizda hozir faol ko'p-bekatli safar yo'q.")
+        return
+
+    trip_id = trip_info["trip"]["id"]
+    still_active = await db.advance_trip_stop(trip_id)
     is_sub = await db.is_driver_subscribed(message.from_user.id)
-    await message.answer("🚀 Qatnov boshlandi.", reply_markup=get_driver_cabinet_kb('on_way', is_subscribed=is_sub))
+
+    if not still_active:
+        await db.set_driver_status(message.from_user.id, 'waiting')
+        kb = await build_driver_cabinet_kb(message.from_user.id, 'waiting', is_sub)
+        await message.answer(
+            "🏁 <b>Siz safarning oxirgi bekatiga yetdingiz - safar avtomatik yakunlandi!</b>",
+            reply_markup=kb,
+            parse_mode="HTML"
+        )
+        return
+
+    orders = await db.get_remaining_trip_orders(trip_id, message.from_user.id)
+    kb = await build_driver_cabinet_kb(message.from_user.id, 'on_way', is_sub)
+
+    if not orders:
+        await message.answer(
+            "📍 Bekat belgilandi. Hozircha qolgan yo'lingiz bo'ylab mos mijoz topilmadi - "
+            "yangi buyurtma tushishi bilan sizga avtomatik xabar boradi.",
+            reply_markup=kb
+        )
+        return
+
+    text = "🎯 <b>Qolgan yo'lingiz bo'ylab mos mijozlar topildi:</b>\n\n"
+    for o in orders:
+        text += f"👤 {o['full_name']} | 📍 {o['from_loc']} ➡️ {o['to_loc']} | 📞 {o['phone']}\n"
+    await message.answer(text, reply_markup=kb, parse_mode="HTML")
+
+
+@router.message(F.text == "🏁 Safarni yakunlash")
+async def trip_finish_manual(message: Message, state: FSMContext):
+    if not await check_access(message): return
+    await state.clear()
+
+    trip_info = await db.get_active_trip_for_driver(message.from_user.id)
+    if trip_info:
+        await db.finish_trip(trip_info["trip"]["id"])
+
+    await db.set_driver_status(message.from_user.id, 'waiting')
+    is_sub = await db.is_driver_subscribed(message.from_user.id)
+    kb = await build_driver_cabinet_kb(message.from_user.id, 'waiting', is_sub)
+    await message.answer("🏁 Safar yakunlandi. Endi \"Mijoz kutmoqdaman\" holatidasiz.", reply_markup=kb)
 
 
 @router.message(F.text == "🟢 Mijoz kutmoqdaman")
 async def driver_set_waiting(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
+    await db.cancel_active_trip_for_driver(message.from_user.id)
     await db.set_driver_status(message.from_user.id, 'waiting')
     is_sub = await db.is_driver_subscribed(message.from_user.id)
-    await message.answer("🟢 Faol qidiruvdasiz.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
+    kb = await build_driver_cabinet_kb(message.from_user.id, 'waiting', is_sub)
+    await message.answer("🟢 Faol qidiruvdasiz.", reply_markup=kb)
 
 
 @router.message(F.text == "📋 Yo‘lovchilar ro‘yxati")
@@ -1442,13 +1654,14 @@ async def driver_view_passengers(message: Message, state: FSMContext):
     await state.clear()
     orders = await db.get_passenger_orders_for_driver(message.from_user.id)
     is_sub = await db.is_driver_subscribed(message.from_user.id)
+    kb = await build_driver_cabinet_kb(message.from_user.id, 'waiting', is_sub)
     if not orders:
-        await message.answer("Hozirda buyurtmalar yo‘q.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
+        await message.answer("Hozirda buyurtmalar yo‘q.", reply_markup=kb)
         return
     text = "📋 <b>Buyurtmalar:</b>\n\n"
     for o in orders:
         text += f"👤 {o['full_name']} | 📍 {o['from_loc']} ➡️ {o['to_loc']} | 📞 {o['phone']}\n"
-    await message.answer(text, reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub), parse_mode="HTML")
+    await message.answer(text, reply_markup=kb, parse_mode="HTML")
 
 
 @router.message(F.text == "🗑 Yo‘nalishlarni tozalash")
@@ -1456,8 +1669,10 @@ async def driver_clear_routes(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     await db.clear_driver_routes(message.from_user.id)
+    await db.cancel_active_trip_for_driver(message.from_user.id)
     is_sub = await db.is_driver_subscribed(message.from_user.id)
-    await message.answer("✅ Yo‘nalishlar tozalandi.", reply_markup=get_driver_cabinet_kb('waiting', is_subscribed=is_sub))
+    kb = await build_driver_cabinet_kb(message.from_user.id, 'waiting', is_sub)
+    await message.answer("✅ Yo‘nalishlar tozalandi.", reply_markup=kb)
 
 
 @router.message(F.text.in_(["🙋‍♂️ Yo‘lovchi", "📦 Pochta berish", "🚚 Yuk yuborish"]))
@@ -1562,7 +1777,15 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
     await state.update_data(final_from=from_loc, final_to=to_loc)
 
     await callback.message.delete()
-    drivers = await db.search_drivers(from_loc, to_loc)
+    static_drivers = await db.search_drivers(from_loc, to_loc)
+    trip_drivers = await db.search_active_trip_drivers(from_loc, to_loc, req_service)
+    # Ikkala manbadan kelgan natijalarni birlashtiramiz (bir xil haydovchi ikki marta chiqmasin)
+    seen_ids = set()
+    drivers = []
+    for drv in static_drivers + list(trip_drivers):
+        if drv['telegram_id'] not in seen_ids:
+            seen_ids.add(drv['telegram_id'])
+            drivers.append(drv)
 
     vip_drivers = []
     free_drivers = []
@@ -1604,7 +1827,10 @@ async def finalize_passenger_search(callback: CallbackQuery, state: FSMContext, 
         if saved_phone:
             order_id = await db.add_passenger_order(user_id=callback.from_user.id, full_name=callback.from_user.full_name, phone=saved_phone, from_loc=from_loc, to_loc=to_loc, seats=1, target_driver_id=0, service_type=req_service)
 
-            driver_ids = await db.get_matching_driver_ids(from_loc, to_loc)
+            driver_ids = list(set(
+                await db.get_matching_driver_ids(from_loc, to_loc) +
+                await db.get_matching_driver_ids_from_trips(from_loc, to_loc, req_service)
+            ))
             monetization_on = (await db.get_setting("monetization_active", "0")) == "1"
 
             vip_receivers = []
@@ -1718,7 +1944,10 @@ async def psg_order_phone_submit(message: Message, state: FSMContext, bot: Bot):
         except Exception:
             pass
     else:
-        driver_ids = await db.get_matching_driver_ids(from_loc, to_loc)
+        driver_ids = list(set(
+            await db.get_matching_driver_ids(from_loc, to_loc) +
+            await db.get_matching_driver_ids_from_trips(from_loc, to_loc, req_service)
+        ))
         monetization_on = (await db.get_setting("monetization_active", "0")) == "1"
         vip_receivers = []
         free_receivers = []

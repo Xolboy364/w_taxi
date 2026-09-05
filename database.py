@@ -1,10 +1,25 @@
 import os
 import asyncpg
 import datetime
+from zoneinfo import ZoneInfo
 
 from security import hash_password, verify_password
 
 pool = None
+
+TASHKENT_TZ = ZoneInfo("Asia/Tashkent")
+
+
+def now_tz() -> datetime.datetime:
+    """
+    Hozirgi vaqtni O'zbekiston (Tashkent, UTC+5) vaqti bo'yicha qaytaradi.
+    Serverlar odatda UTC vaqt zonasida ishlaydi (masalan Railway) - shu sabab
+    datetime.datetime.now() ishlatilsa, botning barcha vaqt bilan bog'liq
+    hisob-kitoblari (ertalabki xabar, obuna muddati, ban muddati va h.k.)
+    5 soatga siljib qoladi. Shu funksiya orqali BUTUN botda faqat bitta,
+    izchil vaqt manbai ishlatiladi.
+    """
+    return datetime.datetime.now(TASHKENT_TZ).replace(tzinfo=None)
 
 
 async def init_db():
@@ -15,7 +30,11 @@ async def init_db():
         dsn=database_url,
         min_size=5,
         max_size=30,
-        command_timeout=60
+        command_timeout=60,
+        # Har bir ulanish uchun vaqt zonasini Toshkentga sozlaymiz - shu orqali
+        # bazadagi NOW(), CURRENT_TIMESTAMP kabi barcha ifodalar ham UTC emas,
+        # O'zbekiston vaqti bo'yicha ishlaydi (Python tomonidagi now_tz() bilan mos).
+        server_settings={"timezone": "Asia/Tashkent"}
     )
 
     async with pool.acquire() as db:
@@ -63,7 +82,6 @@ async def init_db():
                 FOREIGN KEY(telegram_id) REFERENCES drivers(telegram_id)
             )
         """)
-        # Dublikat marshrutlarning oldini olish uchun unikal indeks
         await db.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS idx_driver_routes_unique
             ON driver_routes(telegram_id, from_loc, to_loc)
@@ -121,7 +139,6 @@ async def init_db():
             )
         """)
 
-        # Haydovchi to'lov cheklari (obuna) - atomik tasdiqlash uchun alohida jadval
         await db.execute("""
             CREATE TABLE IF NOT EXISTS driver_payments (
                 id SERIAL PRIMARY KEY,
@@ -136,7 +153,6 @@ async def init_db():
         await db.execute("ALTER TABLE driver_payments ADD COLUMN IF NOT EXISTS reject_reason TEXT;")
         await db.execute("ALTER TABLE driver_payments ADD COLUMN IF NOT EXISTS reminded INT DEFAULT 0;")
 
-        # Shikoyatlar (haydovchiga nisbatan)
         await db.execute("""
             CREATE TABLE IF NOT EXISTS complaints (
                 id SERIAL PRIMARY KEY,
@@ -147,7 +163,6 @@ async def init_db():
             )
         """)
 
-        # Xizmat e'lonlari va ularning to'lovlari (service_ad.py uchun)
         await db.execute("""
             CREATE TABLE IF NOT EXISTS service_ads (
                 id SERIAL PRIMARY KEY,
@@ -183,10 +198,8 @@ async def init_db():
         await db.execute("ALTER TABLE service_payments ADD COLUMN IF NOT EXISTS reminded INT DEFAULT 0;")
         await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS last_expiry_reminder TIMESTAMP;")
 
-        # Obuna tugashi haqida bir martalik eslatma yuborilganini kuzatish uchun
         await db.execute("ALTER TABLE drivers ADD COLUMN IF NOT EXISTS last_expiry_reminder TIMESTAMP;")
 
-        # Super admin paroli endi HASH holida saqlanadi (plaintext emas)
         default_hash = hash_password("admin777")
         await db.execute(
             "INSERT INTO system_settings (key, value) VALUES ('super_admin_password', $1) ON CONFLICT (key) DO NOTHING",
@@ -197,6 +210,30 @@ async def init_db():
         await db.execute("INSERT INTO system_settings (key, value) VALUES ('p2p_card_number', '8600123456789012') ON CONFLICT (key) DO NOTHING")
 
         await db.execute("ALTER TABLE service_payments ALTER COLUMN status TYPE TEXT USING status::TEXT;")
+
+        # ---- Ko'p bekatli safar (real-vaqtli marshrut kuzatuvi) ----
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS active_trips (
+                id SERIAL PRIMARY KEY,
+                driver_id BIGINT REFERENCES drivers(telegram_id),
+                service_type TEXT DEFAULT 'passenger',
+                current_stop_index INT DEFAULT 0,
+                status TEXT DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS trip_stops (
+                id SERIAL PRIMARY KEY,
+                trip_id INT REFERENCES active_trips(id) ON DELETE CASCADE,
+                position INT NOT NULL,
+                location TEXT NOT NULL,
+                UNIQUE(trip_id, position)
+            )
+        """)
+        await db.execute("CREATE INDEX IF NOT EXISTS idx_trip_stops_lookup ON trip_stops(location, position);")
+        await db.execute("CREATE INDEX IF NOT EXISTS idx_active_trips_driver ON active_trips(driver_id, status);")
+
         await db.execute("CREATE INDEX IF NOT EXISTS idx_routes_lookup ON driver_routes(from_loc, to_loc);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_orders_time ON passenger_orders(created_at);")
         await db.execute("CREATE INDEX IF NOT EXISTS idx_logs_time ON activity_logs(created_at);")
@@ -207,8 +244,6 @@ async def close_db():
     if pool:
         await pool.close()
 
-
-# ---------------- Super admin parol funksiyalari (endi xavfsiz) ----------------
 
 async def verify_super_admin_password(password: str) -> bool:
     async with pool.acquire() as db:
@@ -227,10 +262,8 @@ async def set_super_admin_password(new_password: str):
         """, hashed)
 
 
-# ---------------- Obuna / haydovchi funksiyalari ----------------
-
-GRACE_PERIOD_HOURS = 24  # obuna tugagach 1 kunlik imtiyoz muddati (haydovchi to'satdan yo'qolib qolmasin)
-FREE_DRIVER_ROUTE_LIMIT = 5  # monetizatsiya yoqilganda, to'lamagan haydovchi uchun maksimal marshrut soni
+GRACE_PERIOD_HOURS = 24
+FREE_DRIVER_ROUTE_LIMIT = 5
 
 
 async def is_driver_subscribed(telegram_id: int) -> bool:
@@ -247,16 +280,12 @@ async def is_driver_subscribed(telegram_id: int) -> bool:
             if isinstance(sub_end, str):
                 sub_end = datetime.datetime.fromisoformat(sub_end)
             grace_end = sub_end + datetime.timedelta(hours=GRACE_PERIOD_HOURS)
-            return datetime.datetime.now() < grace_end
+            return now_tz() < grace_end
         except Exception:
             return False
 
 
 async def get_drivers_expiring_soon(days_before: int = 3):
-    """
-    Obunasi 'days_before' kundan keyin (yoki undan kamroq vaqtda) tugaydigan,
-    hali eslatma yuborilmagan haydovchilarni qaytaradi.
-    """
     async with pool.acquire() as db:
         return await db.fetch("""
             SELECT telegram_id, subscription_until FROM drivers
@@ -273,7 +302,6 @@ async def mark_expiry_reminded(telegram_id: int):
 
 
 async def grant_grace_days_to_all_drivers(days: int = 7):
-    """Monetizatsiya yangi yoqilganda barcha haydovchilarga bepul muddat beradi."""
     driver_ids = await get_all_driver_ids()
     for did in driver_ids:
         await extend_driver_subscription(did, days=days)
@@ -281,11 +309,6 @@ async def grant_grace_days_to_all_drivers(days: int = 7):
 
 
 async def can_add_more_routes(telegram_id: int, additional_count: int) -> tuple[bool, int]:
-    """
-    Monetizatsiya yoqilgan va haydovchi obunachi bo'lmasa, marshrut soni
-    FREE_DRIVER_ROUTE_LIMIT bilan cheklanadi. To'lagan haydovchilar uchun cheklov yo'q.
-    Qaytaradi: (ruxsat_bormi, limit_qancha [0 - cheksiz]).
-    """
     monetization = await get_setting("monetization_active", "0")
     if monetization != "1":
         return True, 0
@@ -303,7 +326,7 @@ async def can_add_more_routes(telegram_id: int, additional_count: int) -> tuple[
 async def extend_driver_subscription(telegram_id: int, days: int = 30):
     async with pool.acquire() as db:
         row = await db.fetchrow("SELECT subscription_until FROM drivers WHERE telegram_id = $1", telegram_id)
-        current_end = datetime.datetime.now()
+        current_end = now_tz()
         if row and row["subscription_until"]:
             try:
                 existing_end = row["subscription_until"]
@@ -361,7 +384,7 @@ async def is_user_banned(telegram_id: int) -> tuple[bool, str]:
                 ban_end = row["ban_until"]
                 if isinstance(ban_end, str):
                     ban_end = datetime.datetime.fromisoformat(ban_end)
-                if datetime.datetime.now() > ban_end:
+                if now_tz() > ban_end:
                     await db.execute("UPDATE users SET is_banned = 0, ban_until = NULL, ban_reason = NULL WHERE telegram_id = $1", telegram_id)
                     return False, ""
             except Exception:
@@ -372,7 +395,7 @@ async def is_user_banned(telegram_id: int) -> tuple[bool, str]:
 async def ban_user(telegram_id: int, reason: str, duration_hours: int = None):
     ban_until = None
     if duration_hours:
-        ban_until = datetime.datetime.now() + datetime.timedelta(hours=duration_hours)
+        ban_until = now_tz() + datetime.timedelta(hours=duration_hours)
     async with pool.acquire() as db:
         await db.execute("""
             UPDATE users
@@ -489,7 +512,6 @@ async def add_driver_multi_routes(telegram_id: int, from_list: list, to_list: li
     async with pool.acquire() as db:
         for f in from_list:
             for t in to_list:
-                # ON CONFLICT DO NOTHING - bir xil marshrut ikki marta yozilmaydi
                 await db.execute("""
                     INSERT INTO driver_routes (telegram_id, from_loc, to_loc, route_category, seats, accepts_post)
                     VALUES ($1, $2, $3, $4, 4, 1)
@@ -526,7 +548,6 @@ async def search_drivers(from_loc: str, to_loc: str):
 
 
 async def count_recent_orders(user_id: int, minutes: int = 60) -> int:
-    """Foydalanuvchi so'nggi N daqiqada nechta buyurtma bergani (spam nazorati uchun)."""
     async with pool.acquire() as db:
         row = await db.fetchrow("""
             SELECT COUNT(*) FROM passenger_orders
@@ -537,8 +558,6 @@ async def count_recent_orders(user_id: int, minutes: int = 60) -> int:
 
 async def add_passenger_order(user_id: int, full_name: str, phone: str, from_loc: str, to_loc: str, seats: int = 1, target_driver_id: int = 0, service_type: str = 'passenger'):
     async with pool.acquire() as db:
-        # Bitta foydalanuvchida bir vaqtda faqat 1 ta faol buyurtma bo'lishi uchun,
-        # yangisini qo'shishdan oldin eskilarini avtomatik yopamiz.
         await db.execute("UPDATE passenger_orders SET is_active = 0 WHERE user_id = $1 AND is_active = 1", user_id)
 
         row = await db.fetchrow("""
@@ -556,11 +575,6 @@ async def get_passenger_order_owner(order_id: int):
 
 
 async def close_passenger_order(order_id: int, requester_id: int = None, is_admin: bool = False) -> bool:
-    """
-    E'lonni yopadi. Agar requester_id berilgan bo'lsa va admin bo'lmasa,
-    faqat e'lon egasi yopa oladi (begona odam yopa olmaydi).
-    Muvaffaqiyatli yopilsa True, aks holda False qaytaradi.
-    """
     async with pool.acquire() as db:
         if requester_id is not None and not is_admin:
             result = await db.execute(
@@ -572,7 +586,6 @@ async def close_passenger_order(order_id: int, requester_id: int = None, is_admi
                 "UPDATE passenger_orders SET is_active = 0 WHERE id = $1 AND is_active = 1",
                 order_id
             )
-        # asyncpg "UPDATE N" formatida qaytaradi
         try:
             affected = int(result.split()[-1])
         except Exception:
@@ -612,10 +625,6 @@ async def get_matching_driver_ids(from_loc: str, to_loc: str):
 
 
 async def get_nearest_services(lat: float, lon: float, service_type: str, limit: int = 10, fuel_type: str = None):
-    """
-    Statik (roadside_services) va pullik e'lonlar (service_ads) ikkalasida ham
-    fuel_type filtri bir xil tarzda qo'llaniladi (avval faqat service_ads'da ishlar edi).
-    """
     async with pool.acquire() as db:
         query = """
             SELECT name, phone, description, latitude, longitude,
@@ -675,8 +684,6 @@ async def get_all_drivers():
         return await db.fetch("SELECT * FROM drivers ORDER BY telegram_id DESC LIMIT 20")
 
 
-# ---- Haydovchi obuna to'lovlari (atomik tasdiqlash bilan, ikki marta ishlamaydi) ----
-
 async def save_driver_payment(user_id: int, photo_id: str) -> int:
     async with pool.acquire() as db:
         row = await db.fetchrow("""
@@ -688,12 +695,6 @@ async def save_driver_payment(user_id: int, photo_id: str) -> int:
 
 
 async def approve_driver_payment(payment_id: int):
-    """
-    Atomik: faqat 'pending' holatdagi to'lovni 'approved'ga o'tkazadi.
-    Agar allaqachon tasdiqlangan/rad etilgan bo'lsa, None qaytaradi
-    (shu orqali ikki marta bosilganda qayta ishlamaydi).
-    Muvaffaqiyatli bo'lsa user_id qaytaradi va obunani uzaytiradi.
-    """
     async with pool.acquire() as db:
         row = await db.fetchrow("""
             UPDATE driver_payments SET status = 'approved'
@@ -709,7 +710,6 @@ async def approve_driver_payment(payment_id: int):
 
 
 async def reject_driver_payment(payment_id: int, reason: str):
-    """Atomik: faqat 'pending' holatdagi to'lovni 'rejected'ga o'tkazadi va user_id qaytaradi."""
     async with pool.acquire() as db:
         row = await db.fetchrow("""
             UPDATE driver_payments SET status = 'rejected', reject_reason = $2
@@ -755,8 +755,6 @@ async def save_complaint(from_user_id: int, target_driver_id: int, text: str):
         """, from_user_id, target_driver_id, text)
 
 
-# ---- Xizmat e'lonlari uchun funksiyalar ----
-
 async def save_service_ad(data: dict) -> int:
     user_id = data.get("user_id") or data.get("telegram_id")
     fuel_list = data.get("fuel_types") or []
@@ -784,7 +782,6 @@ async def save_service_payment(ad_id: int, user_id: int, amount: int, photo_id: 
 
 
 async def has_pending_service_ad(user_id: int) -> bool:
-    """Foydalanuvchida ko'rib chiqilayotgan (pending) e'lon bor-yo'qligini tekshiradi (spam nazorati)."""
     async with pool.acquire() as db:
         row = await db.fetchrow("""
             SELECT sa.id FROM service_ads sa
@@ -796,11 +793,6 @@ async def has_pending_service_ad(user_id: int) -> bool:
 
 
 async def get_user_service_ads(user_id: int, limit: int = 10):
-    """
-    Foydalanuvchining o'z e'lonlari ro'yxati - holati bilan birga ('📋 Mening e'lonlarim' uchun).
-    LATERAL JOIN o'rniga oddiy correlated subquery ishlatilgan - bu ba'zi muhitlarda
-    (masalan eski PgBouncer/connection pooler sozlamalarida) ishonchliroq ishlaydi.
-    """
     async with pool.acquire() as db:
         return await db.fetch("""
             SELECT
@@ -820,11 +812,6 @@ async def get_user_service_ads(user_id: int, limit: int = 10):
 
 
 async def expire_service_ads():
-    """
-    Muddati tugagan e'lonlarni is_active=0 ga o'tkazadi (avval faqat qidiruvda
-    yashiringan, lekin bazada "faol" bo'lib chalkashlik tug'dirardi).
-    Xabar berish uchun (id, user_id, name) ro'yxatini qaytaradi.
-    """
     async with pool.acquire() as db:
         rows = await db.fetch("""
             UPDATE service_ads SET is_active = 0
@@ -835,7 +822,6 @@ async def expire_service_ads():
 
 
 async def get_service_ads_expiring_soon(days_before: int = 3):
-    """Muddati 'days_before' kundan keyin tugaydigan, hali eslatma yuborilmagan e'lonlar."""
     async with pool.acquire() as db:
         return await db.fetch("""
             SELECT id, user_id, name FROM service_ads
@@ -854,9 +840,7 @@ async def mark_service_ad_expiry_reminded(ad_id: int):
 
 async def activate_service_ad(ad_id: int, days: int = 30):
     async with pool.acquire() as db:
-        expires = datetime.datetime.now() + datetime.timedelta(days=days)
-        # last_expiry_reminder ham tozalanadi - aks holda yangilangan e'lon uchun
-        # eslatma tizimi "eski" holatni eslab qolib, yangi muddat uchun ishlamay qolishi mumkin
+        expires = now_tz() + datetime.timedelta(days=days)
         await db.execute(
             "UPDATE service_ads SET is_active = 1, expires_at = $1, last_expiry_reminder = NULL WHERE id = $2",
             expires, ad_id
@@ -872,10 +856,6 @@ async def reject_service_ad(ad_id: int):
 
 
 async def activate_service_ad_once(ad_id: int, days: int = 30):
-    """
-    Atomik: shu ad_id uchun 'pending' holatdagi to'lovni topib 'approved'ga o'tkazadi.
-    Agar allaqachon tasdiqlangan/rad etilgan bo'lsa None qaytaradi (ikki marta ishlamaydi).
-    """
     async with pool.acquire() as db:
         row = await db.fetchrow("""
             UPDATE service_payments SET status = 'approved'
@@ -897,3 +877,143 @@ async def reject_service_ad_once(ad_id: int, reason: str = ""):
         if not row:
             return None
     return await reject_service_ad(ad_id)
+
+
+# ==================== KO'P BEKATLI SAFAR (REAL-VAQTLI MARSHRUT) ====================
+#
+# G'oya: haydovchi butun yo'lini (masalan Surxondaryo -> Qarshi -> Samarqand ->
+# Jizzax -> Toshkent) bekatlar zanjiri sifatida belgilaydi. Har safar u "shu yerda
+# tushirdim / bo'sh joy bor" deganda, tizim AVTOMATIK ravishda "hozirgi turgan
+# nuqtadan -> qolgan yo'l bo'ylab" mos yo'lovchi/yuk buyurtmalarini qidiradi va
+# darhol xabar beradi. Bu yo'lovchi va yuk/pochta uchun BIR XIL ishlaydi -
+# faqat service_type orqali ajratiladi.
+
+async def create_active_trip(driver_id: int, service_type: str, stops: list) -> int:
+    """Yangi safar boshlaydi: bekatlar ro'yxatini tartib bilan saqlaydi. trip_id qaytaradi."""
+    async with pool.acquire() as db:
+        async with db.transaction():
+            row = await db.fetchrow("""
+                INSERT INTO active_trips (driver_id, service_type, current_stop_index, status)
+                VALUES ($1, $2, 0, 'active')
+                RETURNING id
+            """, driver_id, service_type)
+            trip_id = row["id"]
+            for position, location in enumerate(stops):
+                await db.execute("""
+                    INSERT INTO trip_stops (trip_id, position, location)
+                    VALUES ($1, $2, $3)
+                """, trip_id, position, location)
+            return trip_id
+
+
+async def get_active_trip_for_driver(driver_id: int):
+    """Haydovchining hozirgi faol safarini (bor bo'lsa) bekatlar bilan birga qaytaradi."""
+    async with pool.acquire() as db:
+        trip = await db.fetchrow("""
+            SELECT * FROM active_trips WHERE driver_id = $1 AND status = 'active'
+            ORDER BY id DESC LIMIT 1
+        """, driver_id)
+        if not trip:
+            return None
+        stops = await db.fetch("""
+            SELECT position, location FROM trip_stops WHERE trip_id = $1 ORDER BY position
+        """, trip["id"])
+        return {"trip": trip, "stops": [s["location"] for s in stops]}
+
+
+async def advance_trip_stop(trip_id: int) -> bool:
+    """
+    Haydovchi keyingi bekatga o'tganda chaqiriladi. Agar oxirgi bekatga
+    yetib kelgan bo'lsa, safarni avtomatik yakunlaydi va False qaytaradi.
+    Aks holda current_stop_index +1 qilinadi va True qaytaradi.
+    """
+    async with pool.acquire() as db:
+        trip = await db.fetchrow("SELECT current_stop_index FROM active_trips WHERE id = $1", trip_id)
+        if not trip:
+            return False
+        max_pos = await db.fetchval("SELECT MAX(position) FROM trip_stops WHERE trip_id = $1", trip_id)
+        if max_pos is None or trip["current_stop_index"] >= max_pos:
+            await db.execute("UPDATE active_trips SET status = 'finished' WHERE id = $1", trip_id)
+            return False
+        await db.execute("UPDATE active_trips SET current_stop_index = current_stop_index + 1 WHERE id = $1", trip_id)
+        return True
+
+
+async def finish_trip(trip_id: int):
+    async with pool.acquire() as db:
+        await db.execute("UPDATE active_trips SET status = 'finished' WHERE id = $1", trip_id)
+
+
+async def cancel_active_trip_for_driver(driver_id: int):
+    """Haydovchi marshrutlarni tozalasa yoki 'Mijoz kutmoqdaman'ga qaytsa, faol safar bekor qilinadi."""
+    async with pool.acquire() as db:
+        await db.execute("""
+            UPDATE active_trips SET status = 'cancelled'
+            WHERE driver_id = $1 AND status = 'active'
+        """, driver_id)
+
+
+async def get_matching_driver_ids_from_trips(from_loc: str, to_loc: str, service_type: str = 'passenger'):
+    """
+    Faol safardagi haydovchilar orasidan, HOZIRGI turgan nuqtadan (yoki undan keyingi
+    bekatdan) boshlab, so'ralgan segmentga mos keladiganlarini topadi. Masalan haydovchi
+    Surxondaryo->Toshkent yo'lida hozir Samarqandda bo'lsa, Samarqand->Jizzax yoki
+    Samarqand->Toshkent so'rovlariga mos keladi, lekin Surxondaryo->Samarqand'ga
+    mos kelmaydi (chunki bu qism allaqachon bosib o'tilgan).
+    """
+    async with pool.acquire() as db:
+        rows = await db.fetch("""
+            SELECT DISTINCT t.driver_id
+            FROM active_trips t
+            JOIN trip_stops s_from ON s_from.trip_id = t.id
+                AND s_from.location = $1 AND s_from.position >= t.current_stop_index
+            JOIN trip_stops s_to ON s_to.trip_id = t.id
+                AND s_to.location = $2 AND s_to.position > s_from.position
+            WHERE t.status = 'active' AND t.service_type = $3
+        """, from_loc, to_loc, service_type)
+        return [r["driver_id"] for r in rows]
+
+
+async def search_active_trip_drivers(from_loc: str, to_loc: str, service_type: str = 'passenger'):
+    """search_drivers() bilan bir xil formatda, lekin faol safardagi haydovchilar orasidan qidiradi."""
+    async with pool.acquire() as db:
+        query = """
+            SELECT DISTINCT d.telegram_id, d.full_name, d.phone, d.car_model, d.car_number, d.photo_id, d.status,
+                   4 AS seats, 1 AS accepts_post
+            FROM active_trips t
+            JOIN trip_stops s_from ON s_from.trip_id = t.id
+                AND s_from.location = $1 AND s_from.position >= t.current_stop_index
+            JOIN trip_stops s_to ON s_to.trip_id = t.id
+                AND s_to.location = $2 AND s_to.position > s_from.position
+            JOIN drivers d ON d.telegram_id = t.driver_id
+            WHERE t.status = 'active' AND t.service_type = $3 AND d.is_active = 1
+        """
+        return await db.fetch(query, from_loc, to_loc, service_type)
+
+
+async def get_remaining_trip_orders(trip_id: int, driver_id: int):
+    """
+    Haydovchi 'bekatga yetdim' deganda chaqiriladi: shu safarning QOLGAN yo'li
+    bo'ylab mos keladigan, hali yopilmagan yo'lovchi/yuk buyurtmalarini topadi.
+    """
+    async with pool.acquire() as db:
+        trip = await db.fetchrow("SELECT current_stop_index, service_type FROM active_trips WHERE id = $1", trip_id)
+        if not trip:
+            return []
+        return await db.fetch("""
+            SELECT DISTINCT p.id, p.full_name, p.phone, p.from_loc, p.to_loc, p.seats_needed, p.created_at
+            FROM passenger_orders p
+            JOIN trip_stops s_from ON s_from.trip_id = $1
+                AND s_from.location = p.from_loc AND s_from.position >= $3
+            JOIN trip_stops s_to ON s_to.trip_id = $1
+                AND s_to.location = p.to_loc AND s_to.position > s_from.position
+            WHERE p.is_active = 1
+              AND (p.target_driver_id = 0 OR p.target_driver_id = $2)
+              AND p.service_type = $4
+              AND (
+                  (p.service_type = 'cargo' AND p.created_at >= NOW() - INTERVAL '4 hours')
+                  OR
+                  (p.service_type != 'cargo' AND p.created_at >= NOW() - INTERVAL '2 hours')
+              )
+            ORDER BY p.id DESC LIMIT 15
+        """, trip_id, driver_id, trip["current_stop_index"], trip["service_type"])
