@@ -1,3 +1,4 @@
+from webapp_api import register_webapp_routes
 import asyncio
 import logging
 import datetime
@@ -17,9 +18,10 @@ async def handle_ping(request):
     return web.Response(text="Bot is running and healthy!")
 
 
-async def start_web_server():
+async def start_web_server(bot: Bot):
     app = web.Application()
     app.add_routes([web.get('/', handle_ping), web.get('/ping', handle_ping)])
+    register_webapp_routes(app, bot)
     port = int(os.getenv("PORT", 8080))
     runner = web.AppRunner(app)
     await runner.setup()
@@ -185,7 +187,7 @@ async def main():
 
     await bot.delete_webhook(drop_pending_updates=True)
 
-    asyncio.create_task(start_web_server())
+    asyncio.create_task(start_web_server(bot))
     asyncio.create_task(daily_backup_worker(bot))
     asyncio.create_task(scheduled_notifications_worker(bot))
     asyncio.create_task(admin_payment_reminder_worker(bot))
