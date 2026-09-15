@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#F5F7FB">
-<title>W-Taxi Production v3.0 Masterpiece</title>
+<title>W-Taxi</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -12,88 +12,184 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;color:#0B2A5B;display:flex;justify-content:center;align-items:center;overscroll-behavior:none;user-select:none}
 .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+
 :root{
-  --navy:#0B2A5B;--navy-2:#1A3B7A;--navy-soft:rgba(11,42,91,.10);
-  --green:#22A06B;--green-soft:rgba(34,160,107,.12);
-  --silver:#A8B2BF;--silver-2:#DDE3EA;--bg:#F5F7FB;
-  --ink:#0B2A5B;--muted:#7C8AA0;--hair:rgba(11,42,91,.08);
+  --navy:#0B2A5B;
+  --navy-2:#1A3B7A;
+  --navy-soft:rgba(11,42,91,.10);
+  --green:#22A06B;
+  --green-soft:rgba(34,160,107,.12);
+  --silver:#A8B2BF;
+  --silver-2:#DDE3EA;
+  --bg:#F5F7FB;
+  --ink:#0B2A5B;
+  --muted:#7C8AA0;
+  --hair:rgba(11,42,91,.08);
 }
+
 .phone{position:relative;width:100%;max-width:420px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 @media(min-width:640px){.phone{height:880px;border-radius:44px;box-shadow:0 60px 140px -30px rgba(11,42,91,.28),0 0 0 1px rgba(11,42,91,.06)}}
+
 .ic{display:inline-block;flex-shrink:0;width:1em;height:1em;color:currentColor;vertical-align:middle}
 .ic use{pointer-events:none}
 
-/* Map Layer (Google/Yandex style) */
 .map{position:absolute;inset:0;z-index:0}
 .map svg.map-svg{width:100%;height:100%;display:block}
 .glow{position:absolute;border-radius:9999px;filter:blur(100px);pointer-events:none}
 .glow-a{top:30%;left:20%;width:280px;height:280px;background:var(--navy);opacity:.07}
 .glow-b{bottom:25%;right:15%;width:320px;height:320px;background:var(--green);opacity:.06}
 
+.map-ctrl{position:absolute;z-index:15;right:14px;bottom:340px;display:flex;flex-direction:column;gap:8px}
+.map-btn{
+  width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.96);
+  border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.1);
+  display:flex;align-items:center;justify-content:center;color:var(--navy);
+  cursor:pointer;transition:transform .15s;
+}
+.map-btn:active{transform:scale(.9)}
+.map-btn .ic{width:18px;height:18px}
+.map-btn.small{width:36px;height:36px;border-radius:12px}
+.map-btn.small .ic{width:15px;height:15px}
+
+.street-label{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:6.5px;font-weight:600;
+  fill:#9AA7B8;letter-spacing:.08em;text-transform:uppercase;
+  paint-order:stroke;stroke:#fff;stroke-width:1.5px;stroke-linejoin:round;
+}
+.block-label{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:5px;font-weight:700;
+  fill:#B8C2D0;text-anchor:middle;
+}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes sheetIn{from{transform:translateY(120px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes pulseRing{0%{transform:scale(1);opacity:.8}100%{transform:scale(18);opacity:0}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes drawLine{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+@keyframes popIn{from{transform:scale(0) rotate(-90deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+@keyframes sweep{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes treeShimmer{0%,100%{opacity:.85}50%{opacity:1}}
+
 .fade-up{animation:fadeUp .34s cubic-bezier(.22,.61,.36,1) both}
 .sheet-in{animation:sheetIn .7s cubic-bezier(.22,.61,.36,1) both}
+.pop{animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both}
+.blink{animation:blink 1.6s ease-in-out infinite}
+.sweep{animation:sweep 2.6s ease-in-out infinite}
+.shimmer{background:linear-gradient(90deg,#E5EAF1 0%,#F1F5FA 50%,#E5EAF1 100%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.draw{stroke-dasharray:300;stroke-dashoffset:300;animation:drawLine 1.3s cubic-bezier(.65,0,.35,1) forwards}
 .ripple,.ripple2,.ripple3{transform-origin:120px 560px;animation:pulseRing 2.2s ease-out infinite}
 .ripple2{animation-delay:.7s}.ripple3{animation-delay:1.4s}
+.tree-grp{animation:treeShimmer 4s ease-in-out infinite}
 
 .topbar{position:relative;z-index:20;padding:24px 20px 0;display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06)}
+.brand{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06)}
 .brand-w{width:18px;height:18px;color:var(--navy)}
 .brand-txt{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--navy)}
 .brand-txt .dash{color:var(--silver);margin:0 1px;font-weight:600}
 .brand-ver{font-size:10px;color:var(--silver);font-family:'JetBrains Mono',monospace}
+.avatar{width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06);display:flex;align-items:center;justify-content:center;color:var(--navy);transition:transform .15s;overflow:hidden;position:relative}
+.avatar:active{transform:scale(.9)}
+.avatar .ic{width:18px;height:18px}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:9999px}
 
-.avatar{width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06);display:flex;align-items:center;justify-content:center;color:var(--navy);overflow:hidden;font-weight:700}
-
-.sheet{position:relative;z-index:20;margin-top:auto;background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.99) 100%);backdrop-filter:blur(30px);border-top:1px solid var(--hair);border-radius:36px 36px 0 0;padding:12px 20px 20px;box-shadow:0 -20px 60px -20px rgba(11,42,91,.14);max-height:70vh;overflow-y:auto}
+.sheet{position:relative;z-index:20;margin-top:auto;background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.99) 100%);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-top:1px solid var(--hair);border-radius:36px 36px 0 0;padding:12px 20px 20px;box-shadow:0 -20px 60px -20px rgba(11,42,91,.14)}
 .handle{width:40px;height:4px;border-radius:9999px;background:rgba(11,42,91,.12);margin:0 auto 16px}
 
 .pills{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px}
 .pills::-webkit-scrollbar{display:none}
 .pill{flex-shrink:0;padding:10px 14px;border-radius:16px;background:#F1F5F9;border:1px solid var(--hair);display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .25s;font-family:inherit}
 .pill.active{background:linear-gradient(135deg,rgba(11,42,91,.10),rgba(11,42,91,.04));border-color:rgba(11,42,91,.28)}
-.pill-ic{width:22px;height:22px;color:var(--silver);display:flex;align-items:center;justify-content:center}
+.pill:active{transform:scale(.96)}
+.pill-ic{width:22px;height:22px;color:var(--silver);transition:color .25s;display:flex;align-items:center;justify-content:center}
 .pill.active .pill-ic{color:var(--navy)}
-.pill-label{font-size:11px;font-weight:700;color:#475569}
+.pill-ic .ic{width:100%;height:100%}
+.pill-label{font-size:11px;font-weight:700;line-height:1;color:#475569;text-align:left;transition:color .25s}
 .pill.active .pill-label{color:var(--navy)}
-.pill-sub{font-size:9px;color:var(--silver);margin-top:4px;font-family:'JetBrains Mono',monospace;display:block}
+.pill-sub{font-size:9px;color:var(--silver);margin-top:4px;line-height:1;font-family:'JetBrains Mono',monospace;text-align:left;display:block}
 .pill.active .pill-sub{color:var(--navy-2)}
 
-.route{position:relative;border-radius:24px;padding:16px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:16px}
-.route-inner{display:flex;gap:12px}
+.route{position:relative;border-radius:24px;padding:16px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:16px;overflow:hidden}
+.route::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background:radial-gradient(circle at 20% 0%,rgba(11,42,91,.07),transparent 60%)}
+.route-inner{position:relative;display:flex;gap:12px}
 .route-rail{display:flex;flex-direction:column;align-items:center;padding-top:6px}
-.dot-a{width:8px;height:8px;border-radius:9999px;background:var(--navy)}
-.rail{width:1px;height:28px;margin:4px 0;background:var(--silver-2)}
-.dot-b{width:8px;height:8px;border-radius:9999px;background:var(--green)}
+.dot-a{width:8px;height:8px;border-radius:9999px;background:var(--navy);box-shadow:0 0 0 3px var(--navy-soft)}
+.rail{width:1px;height:28px;margin:4px 0;background:linear-gradient(180deg,rgba(11,42,91,.4),rgba(34,160,107,.4))}
+.dot-b{width:8px;height:8px;border-radius:9999px;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
 .route-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
-.route-fields input{width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13px;font-weight:600;font-family:inherit}
+.route-fields input{width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13px;font-weight:600;font-family:inherit;user-select:text}
 .route-sep{height:1px;background:var(--hair)}
-.route-foot{margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;font-size:10px}
+.route-foot{position:relative;margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;font-size:10px}
 .route-stats{display:flex;align-items:center;gap:12px;color:var(--silver)}
+.route-stats .sep{width:4px;height:4px;border-radius:9999px;background:#CBD5E1}
 .route-price{color:var(--muted);font-weight:700}
 .route-price .num{color:var(--ink)}
 
-.cta{width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 14px 40px -10px rgba(11,42,91,.5);display:flex;align-items:center;justify-content:center;gap:9px}
+.cta{position:relative;width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden;transition:transform .12s;box-shadow:0 14px 40px -10px rgba(11,42,91,.5);display:flex;align-items:center;justify-content:center;gap:9px}
 .cta:active{transform:scale(.975)}
+.cta span{position:relative;z-index:2}
+.cta .ic{width:17px;height:17px;position:relative;z-index:2}
+.cta::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);animation:sweep 2.6s ease-in-out infinite}
 
-.drivers-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.driver-card{background:#F8FAFC;border:1px solid var(--hair);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
-.driver-top{display:flex;align-items:center;justify-content:space-between}
-.driver-info{display:flex;align-items:center;gap:10px}
-.driver-avatar{width:40px;height:40px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
-.driver-name{font-size:12px;font-weight:700;color:var(--ink)}
-.driver-car{font-size:10px;color:var(--muted)}
-.book-btn{padding:8px 14px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:700;font-size:11px;cursor:pointer}
+.search-row{display:flex;align-items:center;gap:16px;padding:8px 0}
+.search-pulse{position:relative;width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.search-core{width:12px;height:12px;border-radius:9999px;background:var(--navy);animation:blink 1.4s ease-in-out infinite}
+.search-ring{position:absolute;width:8px;height:8px;border-radius:9999px;border:1.5px solid var(--navy);animation:pulseRing 2.2s ease-out infinite}
+.search-ring:nth-child(2){animation-delay:.7s}
+.search-title{font-size:13px;font-weight:700;color:var(--ink)}
+.search-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.search-sub .n{color:var(--ink);font-family:'JetBrains Mono',monospace}
+.skels{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.skel{height:8px;border-radius:9999px}
 
-/* Tabs & Custom Icons */
+.status-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.status-dot{width:6px;height:6px;border-radius:9999px;background:var(--green);animation:blink 1.6s ease-in-out infinite}
+.status-txt{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--green);text-transform:uppercase}
+.driver-card{border-radius:24px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(11,42,91,.08),rgba(11,42,91,.02));border:1px solid rgba(11,42,91,.18)}
+.driver-row{display:flex;align-items:center;gap:12px}
+.driver-av{position:relative;flex-shrink:0;width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--navy),var(--navy-2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800}
+.driver-badge{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:9999px;background:var(--green);border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff}
+.driver-badge .ic{width:8px;height:8px}
+.driver-info{flex:1;min-width:0}
+.driver-name{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.driver-car{font-size:10px;color:var(--navy-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.driver-meta{display:flex;align-items:center;gap:8px;margin-top:6px}
+.driver-meta .star{font-size:10px;color:#E8A500;display:flex;align-items:center;gap:3px;font-weight:700}
+.driver-meta .star .ic{width:9px;height:9px}
+.driver-meta .sep{width:4px;height:4px;border-radius:9999px;background:#CBD5E1}
+.driver-meta .trips{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.driver-eta{text-align:right;flex-shrink:0}
+.eta-label{font-size:9px;color:var(--silver);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.eta-num{font-size:24px;font-weight:800;line-height:1;margin-top:4px;color:var(--navy);font-family:'JetBrains Mono',monospace}
+.eta-unit{font-size:11px;color:var(--muted);font-weight:700;margin-left:2px}
+.driver-actions{display:flex;gap:8px;margin-top:16px}
+.driver-actions button{flex:1;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--hair);color:var(--ink);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s;display:flex;align-items:center;justify-content:center;gap:6px}
+.driver-actions button:active{transform:scale(.95)}
+.driver-actions button .ic{width:13px;height:13px;color:var(--navy-2)}
+
+.progress-wrap{margin-bottom:16px}
+.progress-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--silver);margin-bottom:8px;font-weight:700}
+.progress-track{height:4px;border-radius:9999px;background:var(--silver-2);overflow:hidden}
+.progress-fill{height:100%;border-radius:9999px;background:linear-gradient(90deg,var(--navy),var(--green));transition:width .7s cubic-bezier(.22,.61,.36,1)}
+.btn-ghost{width:100%;padding:14px;border-radius:16px;background:#F1F5F9;border:1px solid var(--hair);color:var(--muted);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s}
+.btn-ghost:active{transform:scale(.97)}
+
+.rating{text-align:center;padding:8px 0}
+.rating-emoji{width:56px;height:56px;border-radius:9999px;margin:0 auto 12px;background:linear-gradient(135deg,var(--green-soft),rgba(34,160,107,.04));border:1px solid rgba(34,160,107,.3);display:flex;align-items:center;justify-content:center;color:var(--green)}
+.rating-emoji .ic{width:26px;height:26px}
+.rating-title{font-size:14px;font-weight:800;color:var(--ink)}
+.rating-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.stars{display:flex;justify-content:center;gap:12px;margin:16px 0}
+.stars button{background:transparent;border:none;cursor:pointer;padding:0;transition:transform .15s;color:#DDE3EA;display:flex}
+.stars button .ic{width:26px;height:26px}
+.stars button.on{color:#E8A500}
+.stars button:active{transform:scale(1.3)}
+
 .tabs{position:relative;padding-top:16px;margin-top:16px;border-top:1px solid var(--hair)}
 .tab-indicator{position:absolute;top:0;height:1px;pointer-events:none;transition:left .3s cubic-bezier(.22,.61,.36,1)}
 .tab-indicator::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:9999px;background:var(--navy)}
 .tabs-row{display:flex;justify-content:space-around;align-items:center}
-.tab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 16px;background:transparent;border:none;cursor:pointer;font-family:inherit}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 20px;background:transparent;border:none;cursor:pointer;font-family:inherit}
 .tab .ic-o,.tab .ic-f{width:18px;height:18px;transition:opacity .25s;position:absolute}
 .tab .ic-f{opacity:0}
 .tab.active .ic-f{opacity:1}
@@ -101,62 +197,237 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
 .tab-ic-wrap{position:relative;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
 .tab .ic-o{color:var(--silver)}
 .tab .ic-f{color:var(--navy)}
-.tab-label{font-size:10px;font-weight:700}
+.tab-label{font-size:10px;font-weight:700;transition:color .3s}
 .tab.active .tab-label{color:var(--ink)}
 .tab:not(.active) .tab-label{color:var(--silver)}
 
-.profile-card{background:#F8FAFC;border:1px solid var(--hair);border-radius:16px;padding:16px;text-align:center}
-.pc-bal{font-size:22px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;margin:6px 0}
+.tg-badge{position:fixed;bottom:8px;left:8px;z-index:100;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--silver);background:rgba(255,255,255,.6);padding:3px 7px;border-radius:6px;opacity:.7;pointer-events:none}
+
+.history-list, .profile-box, .chat-box { display: flex; flex-direction: column; gap: 10px; max-height: 240px; overflow-y: auto; }
+.history-list::-webkit-scrollbar, .chat-msgs::-webkit-scrollbar { display: none; }
+.history-item { background: #F8FAFC; border: 1px solid var(--hair); border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+.hi-left { display: flex; flex-direction: column; gap: 2px; }
+.hi-route { font-size: 12px; font-weight: 700; color: var(--ink); }
+.hi-date { font-size: 10px; color: var(--silver); font-family: 'JetBrains Mono', monospace; }
+.hi-price { font-size: 12px; font-weight: 800; color: var(--navy); font-family: 'JetBrains Mono', monospace; text-align: right; }
+.hi-status { font-size: 9px; color: var(--green); font-weight: 700; text-transform: uppercase; }
+
+.profile-card { background: #F8FAFC; border: 1px solid var(--hair); border-radius: 16px; padding: 16px; text-align: center; }
+.pc-bal { font-size: 24px; font-weight: 800; color: var(--navy); font-family: 'JetBrains Mono', monospace; margin: 6px 0; }
+.pc-row { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--hair); font-size: 11px; color: var(--muted); }
+.pc-row span:last-child { font-weight: 700; color: var(--ink); font-family: 'JetBrains Mono', monospace; }
+
+.chat-msgs { height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding: 4px; }
+.msg { padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 11px; line-height: 1.4; }
+.msg.driver { background: #F1F5F9; color: var(--ink); align-self: flex-start; border-bottom-left-radius: 2px; }
+.msg.user { background: var(--navy); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input-row input { flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--hair); background: #F8FAFC; font-size: 12px; outline: none; color: var(--ink); font-family: inherit; }
+.chat-input-row button { padding: 0 16px; border-radius: 12px; background: var(--navy); color: #fff; border: none; font-weight: 700; cursor: pointer; }
+
+.offline-banner {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #854D0E;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  animation: blink 2s infinite;
+}
 </style>
-<link rel="manifest" href="/static/manifest.json">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
 <div class="phone" id="phone">
-  <!-- Google/Yandex Style Map Background -->
+
   <div class="map">
     <svg class="map-svg" viewBox="0 0 420 880" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
-        <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/></pattern>
-        <radialGradient id="parkG" cx=".5" cy=".5"><stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/></radialGradient>
-        <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFDBFE"/><stop offset="1" stop-color="#93C5FD"/></linearGradient>
+        <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/>
+        </linearGradient>
+        <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+          <path d="M32 0H0V32" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/>
+        </pattern>
+        <radialGradient id="parkG" cx=".5" cy=".5">
+          <stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#BFDBFE"/><stop offset="1" stop-color="#93C5FD"/>
+        </linearGradient>
+        <filter id="bld" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#0B2A5B" flood-opacity=".08"/>
+        </filter>
+        <path id="rH" d="M-30 440 H 450"/>
+        <path id="rH-rev" d="M 450 446 H -30"/>
+        <path id="rV" d="M 210 -30 V 910"/>
+        <path id="rV-rev" d="M 216 910 V -30"/>
+        <path id="rD" d="M -30 200 L 450 520"/>
       </defs>
       <rect width="420" height="880" fill="url(#bg)"/>
       <rect width="420" height="880" fill="url(#grid)"/>
+
       <ellipse cx="330" cy="180" rx="90" ry="60" fill="url(#parkG)" opacity=".95"/>
+      <g class="tree-grp" opacity=".85">
+        <circle cx="300" cy="160" r="3" fill="#86EFAC"/>
+        <circle cx="320" cy="175" r="3.5" fill="#86EFAC"/>
+        <circle cx="340" cy="155" r="3" fill="#86EFAC"/>
+        <circle cx="355" cy="180" r="3.2" fill="#86EFAC"/>
+        <circle cx="310" cy="195" r="3" fill="#86EFAC"/>
+        <circle cx="335" cy="205" r="3.3" fill="#86EFAC"/>
+        <circle cx="360" cy="205" r="2.8" fill="#86EFAC"/>
+        <circle cx="290" cy="185" r="2.8" fill="#86EFAC"/>
+      </g>
+
       <path d="M-30 720 Q 110 690 210 730 T 450 700" stroke="url(#waterG)" stroke-width="34" fill="none" opacity=".85"/>
+      <path d="M-30 720 Q 110 690 210 730 T 450 700" stroke="#60A5FA" stroke-width=".8" fill="none" opacity=".5"/>
+      <text x="220" y="735" class="street-label" fill="#2563EB" style="font-size:6px;letter-spacing:.15em">ANHOR KANALI</text>
+
+      <g filter="url(#bld)">
+        <rect x="30" y="80" width="40" height="28" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="80" y="60" width="32" height="44" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="130" y="90" width="52" height="22" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="240" y="70" width="36" height="40" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="300" y="100" width="44" height="32" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="350" y="60" width="30" height="52" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="40" y="470" width="44" height="34" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="100" y="500" width="30" height="50" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="150" y="480" width="52" height="26" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="260" y="460" width="40" height="44" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="320" y="500" width="50" height="30" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="360" y="480" width="30" height="40" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="60" y="700" width="46" height="32" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="130" y="720" width="36" height="44" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="220" y="690" width="54" height="28" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="290" y="710" width="42" height="40" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="360" y="690" width="32" height="50" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width=".6"/>
+      </g>
+
+      <text x="50" y="98" class="block-label">12</text>
+      <text x="96" y="86" class="block-label">14</text>
+      <text x="156" y="106" class="block-label">16</text>
+      <text x="258" y="94" class="block-label">18</text>
+      <text x="322" y="120" class="block-label">20</text>
+      <text x="62" y="490" class="block-label">24</text>
+      <text x="115" y="530" class="block-label">26</text>
+      <text x="176" y="496" class="block-label">28</text>
+      <text x="280" y="486" class="block-label">30</text>
+      <text x="345" y="520" class="block-label">32</text>
+
       <path d="M-30 440 H 450" stroke="#FFFFFF" stroke-width="18" fill="none"/>
       <path d="M 210 -30 V 910" stroke="#FFFFFF" stroke-width="18" fill="none"/>
+      <path d="M -30 200 L 450 520" stroke="#FFFFFF" stroke-width="12" fill="none"/>
+      <path d="M-30 440 H 450" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
+      <path d="M 210 -30 V 910" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
+
+      <text x="60" y="436" class="street-label">BUNYODKOR SHOH KO'CHASI</text>
+      <text x="216" y="120" class="street-label" transform="rotate(90 216 120)">AMIR TEMUR</text>
+      <text x="226" y="640" class="street-label" transform="rotate(90 226 640)">SHAYHONTOHUR</text>
+
+      <g id="traffic">
+        <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2" fill="#8896A8" opacity=".95"/><rect x="-2" y="-1.6" width="3" height="3.2" rx=".6" fill="#5C6B80"/><animateMotion rotate="auto" dur="9s" begin="0s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#6B7A90"/><animateMotion rotate="auto" dur="11s" begin="3s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
+        <g><rect x="-9" y="-3" width="18" height="6" rx="2.2" fill="#4F5E75"/><animateMotion rotate="auto" dur="14s" begin="6s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#8896A8"/><animateMotion rotate="auto" dur="10s" begin="1.5s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#A8B2BF"/><animateMotion rotate="auto" dur="12s" begin="2s" repeatCount="indefinite"><mpath href="#rH-rev"/></animateMotion></g>
+        <g><rect x="-8" y="-2.8" width="16" height="5.6" rx="2" fill="#6B7A90"/><animateMotion rotate="auto" dur="15s" begin="5s" repeatCount="indefinite"><mpath href="#rH-rev"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#8896A8"/><animateMotion rotate="auto" dur="10s" begin="7.5s" repeatCount="indefinite"><mpath href="#rH-rev"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#7C8AA0"/><animateMotion rotate="auto" dur="11s" begin="0.5s" repeatCount="indefinite"><mpath href="#rV"/></animateMotion></g>
+        <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2" fill="#5C6B80"/><animateMotion rotate="auto" dur="13s" begin="4s" repeatCount="indefinite"><mpath href="#rV"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#8896A8"/><animateMotion rotate="auto" dur="9.5s" begin="8s" repeatCount="indefinite"><mpath href="#rV"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#A8B2BF"/><animateMotion rotate="auto" dur="12s" begin="1s" repeatCount="indefinite"><mpath href="#rV-rev"/></animateMotion></g>
+        <g><rect x="-8" y="-2.8" width="16" height="5.6" rx="2" fill="#6B7A90"/><animateMotion rotate="auto" dur="14s" begin="6s" repeatCount="indefinite"><mpath href="#rV-rev"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#7C8AA0"/><animateMotion rotate="auto" dur="15s" begin="0s" repeatCount="indefinite"><mpath href="#rD"/></animateMotion></g>
+        <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2" fill="#5C6B80"/><animateMotion rotate="auto" dur="18s" begin="5s" repeatCount="indefinite"><mpath href="#rD"/></animateMotion></g>
+        <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="1.8" fill="#8896A8"/><animateMotion rotate="auto" dur="16s" begin="10s" repeatCount="indefinite"><mpath href="#rD"/></animateMotion></g>
+      </g>
+
+      <g opacity=".9">
+        <circle cx="150" cy="510" r="4" fill="#F59E0B"/>
+        <g transform="translate(145.5 505.5)" style="color:#fff"><svg width="9" height="9" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-cafe"/></svg></g>
+      </g>
+      <g opacity=".9">
+        <circle cx="270" cy="480" r="4" fill="#3B82F6"/>
+        <g transform="translate(265.5 475.5)" style="color:#fff"><svg width="9" height="9" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-fuel"/></svg></g>
+      </g>
+      <g opacity=".9">
+        <circle cx="330" cy="660" r="5" fill="#0B2A5B"/>
+        <g transform="translate(324.5 654.5)" style="color:#fff"><svg width="11" height="11" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-metro"/></svg></g>
+      </g>
+
+      <g id="routeLayer" style="display:none">
+        <path d="M 120 560 Q 190 440 240 500 T 340 660" stroke="#0B2A5B" stroke-width="14" fill="none" stroke-linecap="round" class="draw" opacity=".12"/>
+        <path d="M 120 560 Q 190 440 240 500 T 340 660" stroke="#0B2A5B" stroke-width="2.8" fill="none" stroke-linecap="round" class="draw"/>
+      </g>
+
+      <g id="rippleLayer" style="display:none">
+        <circle cx="120" cy="560" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" class="ripple"/>
+        <circle cx="120" cy="560" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" class="ripple2"/>
+        <circle cx="120" cy="560" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" class="ripple3"/>
+      </g>
+
+      <g>
+        <circle cx="120" cy="560" r="16" fill="#0B2A5B" opacity=".14"/>
+        <circle cx="120" cy="560" r="9" fill="#fff" stroke="#0B2A5B" stroke-width="2"/>
+        <circle cx="120" cy="560" r="3.5" fill="#0B2A5B"/>
+        <circle cx="120" cy="560" fill="#0B2A5B" opacity=".45"><animate attributeName="r" values="9;14;9" dur="2.4s" repeatCount="indefinite"/></circle>
+      </g>
+      <g>
+        <circle cx="340" cy="660" r="15" fill="#22A06B" opacity=".15"/>
+        <circle cx="340" cy="660" r="7" fill="#fff" stroke="#22A06B" stroke-width="2"/>
+        <circle cx="340" cy="660" r="3" fill="#22A06B"/>
+      </g>
+
+      <g id="driverCar" style="display:none">
+        <circle cx="260" cy="400" r="24" fill="#0B2A5B" opacity=".1"/>
+        <rect x="246" y="386" width="28" height="28" rx="9" fill="#0B2A5B" stroke="#fff" stroke-width="2"/>
+        <g transform="translate(252 392)"><svg width="16" height="16" viewBox="0 0 24 24" style="color:#fff"><use href="icons.svg?v=3#i-w"/></svg></g>
+        <circle cx="260" cy="400" r="24" fill="none" stroke="#0B2A5B" stroke-width="1" opacity=".5"><animate attributeName="r" values="20;32;20" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;0;.5" dur="2.4s" repeatCount="indefinite"/></circle>
+      </g>
     </svg>
-    <div class="glow glow-a"></div><div class="glow glow-b"></div>
+    <div class="glow glow-a"></div>
+    <div class="glow glow-b"></div>
   </div>
 
-  <!-- Top Bar -->
+  <div class="map-ctrl">
+    <button class="map-btn small" id="btnLocate" aria-label="Joylashuvim"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-locate"/></svg></button>
+    <button class="map-btn small" id="btnLayers" aria-label="Qatlamlar"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-layers"/></svg></button>
+    <button class="map-btn" id="btnZoomIn" aria-label="Kattalashtirish"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-zoom-in"/></svg></button>
+    <button class="map-btn" id="btnZoomOut" aria-label="Kichiklashtirish"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-zoom-out"/></svg></button>
+  </div>
+
   <div class="topbar fade-up">
     <div class="brand">
-      <svg class="brand-w" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="/static/icons.svg#i-w"/></svg>
+      <svg class="brand-w" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-w"/></svg>
       <span class="brand-txt">W<span class="dash">-</span>TAXI</span>
-      <span class="brand-ver">v3.0</span>
+      <span class="brand-ver" id="brandVer">v3.0</span>
     </div>
-    <div class="avatar" id="avatarBox">U</div>
+    <div class="avatar" id="avatarBtn">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-user"/></svg>
+    </div>
   </div>
 
   <div class="sheet sheet-in">
     <div class="handle"></div>
 
-    <!-- VIEW 1: ORDER -->
-    <div id="view-order">
+    <div id="state-idle">
       <div class="pills">
-        <button class="pill active" data-svc="passenger">
-          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-taxi-duo"/></svg></span>
+        <button class="pill active" data-svc="taxi">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-taxi-duo"/></svg></span>
           <span><span class="pill-label">Taxi</span><span class="pill-sub">2 daq</span></span>
         </button>
-        <button class="pill" data-svc="intercity">
-          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-van-duo"/></svg></span>
+        <button class="pill" data-svc="viloyat">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-van-duo"/></svg></span>
           <span><span class="pill-label">Viloyat</span><span class="pill-sub">1335</span></span>
         </button>
-        <button class="pill" data-svc="cargo">
-          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-parcel-duo"/></svg></span>
+        <button class="pill" data-svc="yuk">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-parcel-duo"/></svg></span>
           <span><span class="pill-label">Yuk</span><span class="pill-sub">pochta</span></span>
         </button>
       </div>
@@ -170,78 +441,149 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
             <input value="Samarqand, Registon" id="toInput" />
           </div>
         </div>
+        <div id="parcelFields" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--hair)">
+          <input type="text" id="parcelDesc" placeholder="Posilka turi va oluvchi raqami..." style="width:100%;background:#fff;border:1px solid var(--hair);padding:8px 10px;border-radius:10px;font-size:11px;outline:none;color:var(--ink)" />
+        </div>
         <div class="route-foot">
-          <div class="route-stats"><span class="mono">248 km</span><span style="width:4px;height:4px;border-radius:50%;background:#CBD5E1"></span><span class="mono">~3 soat</span></div>
+          <div class="route-stats"><span class="mono">248 km</span><span class="sep"></span><span class="mono">~3 soat</span></div>
           <span class="route-price">~<span class="num mono">145 000</span> so'm</span>
         </div>
       </div>
 
       <button class="cta" id="callBtn">
-        <svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="/static/icons.svg#i-taxi"/></svg>
-        <span>Haydovchilarni qidirish (Real DB)</span>
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-taxi"/></svg>
+        <span>Mashina chaqirish (Real DB)</span>
       </button>
-
-      <div id="resultsArea" class="drivers-list"></div>
     </div>
 
-    <!-- VIEW 2: ROADSIDE SERVICES -->
-    <div id="view-roadside" style="display:none">
-      <div style="font-size:13px;font-weight:800;margin-bottom:10px;color:var(--ink)">⛽️ Yo‘l bo‘yi xizmatlari markazi</div>
-      <div class="pills" id="roadsidePills">
-        <button class="pill active" data-type="gas"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-fuel"/></svg></span><span class="pill-label">Zapravka</span></button>
-        <button class="pill" data-type="food"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-cafe"/></svg></span><span class="pill-label">Ovqatlanish</span></button>
-        <button class="pill" data-type="hotel"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-metro"/></svg></span><span class="pill-label">Mehmonxona</span></button>
-        <button class="pill" data-type="service"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-layers"/></svg></span><span class="pill-label">Avtoservis</span></button>
-        <button class="pill" data-type="autosalon"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-star"/></svg></span><span class="pill-label">Avtosalon</span></button>
+    <div id="state-searching" style="display:none">
+      <div class="search-row">
+        <div class="search-pulse">
+          <div class="search-ring"></div><div class="search-ring"></div><div class="search-core"></div>
+        </div>
+        <div>
+          <div class="search-title">Real haydovchilar izlanmoqda</div>
+          <div class="search-sub"><span class="n">PostgreSQL</span> bazasidan tekshirilmoqda</div>
+        </div>
       </div>
-
-      <div style="margin-top:8px;">
-        <button id="showAdFormBtn" style="width:100%;padding:10px;border-radius:12px;background:#F1F5F9;border:1px solid var(--hair);font-size:11px;font-weight:700;color:var(--navy);cursor:pointer;">➕ O'z xizmatingizni qo'shish</button>
+      <div class="skels">
+        <div class="skel shimmer" style="width:100%"></div>
+        <div class="skel shimmer" style="width:85%"></div>
       </div>
-      <div id="adFormContainer" style="display:none;margin-top:10px;background:#F8FAFC;border:1px solid var(--hair);border-radius:16px;padding:12px;">
-        <div style="font-size:12px;font-weight:800;margin-bottom:8px;color:var(--ink)">Yangi e'lon joylashtirish</div>
-        <select id="adServiceType" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;">
-          <option value="gas">Zapravka (50,000 so'm)</option>
-          <option value="food">Ovqatlanish (50,000 so'm)</option>
-          <option value="hotel">Mehmonxona (70,000 so'm)</option>
-          <option value="service">Avtoservis (50,000 so'm)</option>
-          <option value="autosalon">Avtosalon (100,000 so'm)</option>
-        </select>
-        <input id="adName" placeholder="Nomi..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
-        <input id="adPhone" placeholder="Telefon (+99890...)" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
-        <textarea id="adDesc" placeholder="Tavsif..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;height:45px;resize:none;"></textarea>
-        <button id="submitAdBtn" style="width:100%;padding:10px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:700;font-size:11px;cursor:pointer;">Tasdiqlash uchun yuborish</button>
-      </div>
-
-      <div id="roadsideArea" class="drivers-list"></div>
     </div>
 
-    <!-- VIEW 3: PROFILE -->
-    <div id="view-profile" style="display:none">
+    <div id="state-driver" style="display:none">
+      <div class="offline-banner" id="offlineBanner" style="display:none">⚠️ Qamchiq dovoni · Internet yoʻq (Aqlli kesh kuzatuvi)</div>
+      <div class="status-row">
+        <div class="status-dot"></div>
+        <div class="status-txt" id="statusTxt">Haydovchi topildi</div>
+      </div>
+      <div class="driver-card">
+        <div class="driver-row">
+          <div class="driver-av"><span id="driverInitial">A</span><div class="driver-badge"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-check"/></svg></div></div>
+          <div class="driver-info">
+            <div class="driver-name" id="driverName">Aziz Karimov</div>
+            <div class="driver-car" id="driverCarTxt">Cobalt · 01 A 777 AA</div>
+            <div class="driver-meta">
+              <span class="star"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-star"/></svg><span id="driverStar">4.98</span></span>
+              <span class="sep"></span>
+              <span class="trips" id="driverTrips">2341 safar</span>
+            </div>
+          </div>
+          <div class="driver-eta">
+            <div class="eta-label">Yetib keladi</div>
+            <div><span class="eta-num" id="etaNum">3</span><span class="eta-unit">daq</span></div>
+          </div>
+        </div>
+        <div class="driver-actions">
+          <button id="btnChat"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-chat"/></svg>Xabar</button>
+          <button id="btnCall"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-phone"/></svg>Qo'ng'iroq</button>
+        </div>
+      </div>
+      <div class="progress-wrap" id="progressWrap" style="display:none">
+        <div class="progress-labels"><span>Yo'lda</span><span class="mono" id="progressPct">0%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <button class="btn-ghost" id="cancelBtn">Bekor qilish</button>
+    </div>
+
+    <div id="state-rating" style="display:none">
+      <div class="rating">
+        <div class="rating-emoji pop"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="icons.svg?v=3#i-check"/></svg></div>
+        <div class="rating-title">Safaringiz yakunlandi</div>
+        <div class="rating-sub">Haydovchini baholang</div>
+        <div class="stars" id="stars">
+          <button data-v="1"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-star"/></svg></button>
+          <button data-v="2"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-star"/></svg></button>
+          <button data-v="3"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-star"/></svg></button>
+          <button data-v="4"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-star"/></svg></button>
+          <button data-v="5"><svg class="ic" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-star"/></svg></button>
+        </div>
+        <button class="cta" id="againBtn"><span>Yana chaqirish</span></button>
+      </div>
+    </div>
+
+    <div id="state-history" style="display:none">
+      <div style="font-size:13px;font-weight:800;margin-bottom:12px;color:var(--ink)">Safarlar tarixi</div>
+      <div class="history-list">
+        <div class="history-item">
+          <div class="hi-left">
+            <span class="hi-route">Chilonzor → Samarqand</span>
+            <span class="hi-date">Bugun, 14:20</span>
+            <span class="hi-status">Yakunlandi</span>
+          </div>
+          <div class="hi-right"><div class="hi-price">145 000 so'm</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="state-profile" style="display:none">
       <div style="font-size:13px;font-weight:800;margin-bottom:12px;color:var(--ink)">Mening profilim</div>
       <div class="profile-card">
-        <div id="pName" style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">Yuklanmoqda...</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="pId">Telegram ID</div>
+        <div id="profileName" style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px">Foydalanuvchi</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="profilePhone">Telegram profil</div>
         <div style="font-size:11px;color:var(--muted)">Balansdagi mablag'</div>
-        <div class="pc-bal">124 500 so'm</div>
-        <div id="pStatus" style="font-size:11px;color:var(--green);margin-top:10px;font-weight:700"></div>
+        <div class="pc-bal" id="userBalance">124 500 so'm</div>
+        <div class="pc-row"><span>Status:</span><span id="pStatus" style="color:var(--green)">Faol</span></div>
       </div>
     </div>
 
-    <!-- TABS -->
+    <div id="state-chat" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:800;color:var(--ink)">Haydovchi bilan chat</div>
+        <button onclick="goStateFromChat()" style="background:none;border:none;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer">← Orqaga</button>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="msg driver">Assalomu alaykum! Men yo'ldaman, 3 daqiqada yetib boraman.</div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Xabar yozing..." />
+        <button id="sendChatBtn">Yuborish</button>
+      </div>
+    </div>
+
     <div class="tabs">
       <div class="tab-indicator" id="tabIndicator" style="left:0%;width:33.33%"></div>
       <div class="tabs-row">
-        <button class="tab active" data-target="order">
-          <span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass-filled"/></svg></span>
+        <button class="tab active" data-tab="order">
+          <span class="tab-ic-wrap">
+            <svg class="ic ic-o" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-compass"/></svg>
+            <svg class="ic ic-f" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-compass-filled"/></svg>
+          </span>
           <span class="tab-label">Buyurtma</span>
         </button>
-        <button class="tab" data-target="roadside">
-          <span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-road-duo"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass-filled"/></svg></span>
-          <span class="tab-label">Xizmatlar</span>
+        <button class="tab" data-tab="history">
+          <span class="tab-ic-wrap">
+            <svg class="ic ic-o" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-trips"/></svg>
+            <svg class="ic ic-f" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-trips-filled"/></svg>
+          </span>
+          <span class="tab-label">Safarlar</span>
         </button>
-        <button class="tab" data-target="profile">
-          <span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user-filled"/></svg></span>
+        <button class="tab" data-tab="profile">
+          <span class="tab-ic-wrap">
+            <svg class="ic ic-o" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-user"/></svg>
+            <svg class="ic ic-f" viewBox="0 0 24 24"><use href="icons.svg?v=3#i-user-filled"/></svg>
+          </span>
           <span class="tab-label">Profil</span>
         </button>
       </div>
@@ -249,176 +591,155 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
   </div>
 </div>
 
-<script src="/static/telegram.js"></script>
+<div class="tg-badge" id="tgBadge">railway ✓</div>
+
+<script src="telegram.js"></script>
 <script>
 (function(){
   'use strict';
   WT.init();
   const $ = id => document.getElementById(id);
 
+  // Load real profile from backend
   async function loadMe() {
     const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
     try {
       const res = await fetch('/api/me', {headers: {'X-Init-Data': initData}});
       if(res.ok) {
         const data = await res.json();
-        $('pName').textContent = data.first_name || 'Foydalanuvchi';
-        $('pId').textContent = 'ID: ' + data.id;
-        $('avatarBox').textContent = (data.first_name || 'U')[0].toUpperCase();
-        $('pStatus').textContent = data.has_driver_profile ? '🚗 Haydovchi maqomi faol' : '🙋‍♂️ Yoʻlovchi rejimida';
+        $('profileName').textContent = data.first_name || (WT.user ? WT.user.name : 'Foydalanuvchi');
+        $('profilePhone').textContent = 'ID: ' + data.id;
+        $('pStatus').textContent = data.has_driver_profile ? '🚗 Haydovchi' : '🙋‍♂️ Mijoz';
       }
-    } catch(e) { $('pName').textContent = 'Foydalanuvchi'; }
+    } catch(e) {}
   }
   loadMe();
 
-  let currentService = 'passenger';
-  document.querySelectorAll('#view-order .pill').forEach(p=>{
-    p.addEventListener('click', ()=>{
-      WT.tap();
-      document.querySelectorAll('#view-order .pill').forEach(x=>x.classList.remove('active'));
-      p.classList.add('active');
-      currentService = p.dataset.svc;
-    });
-  });
+  const driver = {name:'Aziz Karimov', car:'Cobalt · 01 A 777 AA', rating:'4.98', trips:'2341'};
+  const states = {idle:$('state-idle'), searching:$('state-searching'), driver:$('state-driver'), rating:$('state-rating'), history:$('state-history'), profile:$('state-profile'), chat:$('state-chat')};
+  const routeLayer = $('routeLayer'), rippleLayer = $('rippleLayer');
+  const driverCar = $('driverCar'), progressWrap = $('progressWrap');
 
-  $('callBtn').addEventListener('click', async ()=>{
+  let timers = [];
+  function clearTimers(){ timers.forEach(t=>{ clearTimeout(t); clearInterval(t); }); timers = []; }
+  function showState(name){
+    Object.keys(states).forEach(k=>{
+      states[k].style.display = (k===name) ? 'block' : 'none';
+    });
+  }
+  function goIdle(){ clearTimers(); showState('idle'); routeLayer.style.display='none'; rippleLayer.style.display='none'; driverCar.style.display='none'; progressWrap.style.display='none'; }
+  function goSearching(){
+    WT.impact(); clearTimers(); showState('searching');
+    routeLayer.style.display='none'; driverCar.style.display='none'; progressWrap.style.display='none'; rippleLayer.style.display='block';
+    timers.push(setTimeout(goFound, 2400));
+  }
+  function goFound(){
+    WT.success(); clearTimers(); showState('driver');
+    rippleLayer.style.display='none'; routeLayer.style.display='block'; driverCar.style.display='block';
+    $('statusTxt').textContent='Haydovchi topildi'; $('etaNum').textContent='3';
+    $('driverInitial').textContent = driver.name[0];
+    $('driverName').textContent = driver.name;
+    $('driverCarTxt').textContent = driver.car;
+    timers.push(setTimeout(goTrip, 3000));
+  }
+  function goTrip(){
+    clearTimers(); showState('driver'); progressWrap.style.display='block';
+    let eta = 3;
+    const path = document.querySelector('#routeLayer path:nth-child(2)');
+    const carEl = document.getElementById('driverCar');
+    if(path && carEl){
+      carEl.style.display = 'block';
+      const pathLen = path.getTotalLength();
+      let startTime = null;
+      function animateCar(timestamp){
+        if(!startTime) startTime = timestamp;
+        let progress = (timestamp - startTime) / 3500;
+        if(progress > 1) progress = 1;
+        const pt = path.getPointAtLength(progress * pathLen);
+        const nextPt = path.getPointAtLength(Math.min(pathLen, (progress + 0.01) * pathLen));
+        const angle = Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x) * 180 / Math.PI;
+        carEl.setAttribute('transform', `translate(${pt.x}, ${pt.y}) rotate(${angle})`);
+        if(progress < 1) requestAnimationFrame(animateCar);
+      }
+      requestAnimationFrame(animateCar);
+    }
+    function tick(){
+      eta = Math.max(0, eta-1); WT.tap();
+      $('etaNum').textContent = eta;
+      $('statusTxt').textContent = 'Yetib kelmoqda · ' + eta + ' daq';
+      const pct = 100 - Math.round(eta/3*100);
+      $('progressFill').style.width = pct + '%';
+      $('progressPct').textContent = pct + '%';
+    }
+    tick(); timers.push(setInterval(tick, 900));
+    timers.push(setTimeout(()=>{ clearTimers(); showState('rating'); progressWrap.style.display='none'; }, 4200));
+  }
+
+  // Real API integration on Call Button
+  $('callBtn').addEventListener('click', async () => {
     WT.impact();
-    const area = $('resultsArea');
-    area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">PostgreSQL bazasidan haydovchilar izlanmoqda...</div>';
+    const fromLoc = $('fromInput').value;
+    const toLoc = $('toInput').value;
+    const activePill = document.querySelector('.pill.active');
+    const serviceType = activePill ? activePill.dataset.svc : 'taxi';
     const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
+
+    goSearching();
+
     try {
-      const res = await fetch('/api/drivers/search', {
+      const searchRes = await fetch('/api/drivers/search', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
-        body: JSON.stringify({from_loc: $('fromInput').value, to_loc: $('toInput').value, service_type: currentService})
+        body: JSON.stringify({from_loc: fromLoc, to_loc: toLoc, service_type: serviceType})
       });
-      const data = await res.json();
+      const searchData = await searchRes.json();
 
       await fetch('/api/orders', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
         body: JSON.stringify({
-          from_loc: $('fromInput').value,
-          to_loc: $('toInput').value,
-          service_type: currentService,
-          full_name: $('pName').textContent,
+          from_loc: fromLoc,
+          to_loc: toLoc,
+          service_type: serviceType,
+          full_name: WT.user ? WT.user.name : 'Veb Foydalanuvchi',
           phone: '+998901234567'
         })
       });
 
-      if(data.matches && data.matches.length > 0) {
-        area.innerHTML = '';
-        data.matches.forEach(drv=>{
-          const card = document.createElement('div');
-          card.className = 'driver-card';
-          card.innerHTML = `
-            <div class="driver-top">
-              <div class="driver-info">
-                <div class="driver-avatar">${drv.full_name[0]}</div>
-                <div>
-                  <div class="driver-name">${drv.full_name}</div>
-                  <div class="driver-car">${drv.car_model} · ${drv.car_number}</div>
-                </div>
-              </div>
-              <button class="book-btn" onclick="alert('✅ Buyurtma yuborildi!')">Tanlash</button>
-            </div>
-            <div style="font-size:10px;color:var(--muted)">📞 Tel: ${drv.phone || 'Yoʻq'} | Boʻsh joy: ${drv.seats || 4} ta</div>
-          `;
-          area.appendChild(card);
-        });
-      } else {
-        area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Haydovchi topilmadi. Buyurtmangiz bazaga yozildi!</div>';
+      if (searchData.matches && searchData.matches.length > 0) {
+        const drv = searchData.matches[0];
+        driver.name = drv.full_name;
+        driver.car = drv.car_model + ' · ' + drv.car_number;
       }
-    } catch(e) { area.innerHTML = '<div style="text-align:center;padding:12px;color:red;font-size:11px">Xatolik!</div>'; }
+    } catch (e) {
+      console.error(e);
+    }
   });
 
-  let currentRoadsideType = 'gas';
-  async function loadRoadside(type) {
-    currentRoadsideType = type;
-    const area = $('roadsideArea');
-    area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Xizmatlar qidirilmoqda...</div>';
-    try {
-      const res = await fetch(`/api/roadside?type=${type}&lat=41.3111&lon=69.2797`);
-      const items = await res.json();
-      if(items && items.length > 0) {
-        area.innerHTML = '';
-        items.forEach(item=>{
-          const card = document.createElement('div');
-          card.className = 'driver-card';
-          card.innerHTML = `
-            <div style="font-weight:700;font-size:12px;color:var(--ink)">${item.name}</div>
-            <div style="font-size:10px;color:var(--muted)">${item.description || ''}</div>
-            <div style="font-size:10px;color:var(--navy);font-family:'JetBrains Mono',monospace">📞 ${item.phone || 'Yoʻq'} | 📍 ${(item.distance || 0).toFixed(1)} km</div>
-          `;
-          area.appendChild(card);
-        });
-      } else {
-        area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Bu turdagi xizmatlar topilmadi.</div>';
-      }
-    } catch(e) { area.innerHTML = '<div style="text-align:center;padding:12px;color:red;font-size:11px">Xatolik!</div>'; }
-  }
+  $('cancelBtn').addEventListener('click', ()=>{ WT.warning(); goIdle(); });
+  $('againBtn').addEventListener('click', ()=>{ WT.tap(); goIdle(); });
+  $('btnChat').addEventListener('click', ()=>{ WT.tap(); showState('chat'); });
+  $('btnCall').addEventListener('click', ()=>{ WT.tap(); WT.showAlert('Qo\'ng\'iroq: ' + driver.name); });
 
-  document.querySelectorAll('#roadsidePills .pill').forEach(p=>{
-    p.addEventListener('click', ()=>{
-      WT.tap();
-      document.querySelectorAll('#roadsidePills .pill').forEach(x=>x.classList.remove('active'));
-      p.classList.add('active');
-      loadRoadside(p.dataset.type);
-    });
-  });
+  window.goStateFromChat = function(){ WT.tap(); showState('driver'); };
 
-  // Ad form toggle & submit
-  const showAdBtn = $('showAdFormBtn');
-  const adForm = $('adFormContainer');
-  if(showAdBtn && adForm) {
-    showAdBtn.addEventListener('click', ()=>{
-      WT.tap();
-      adForm.style.display = adForm.style.display === 'none' ? 'block' : 'none';
-    });
-  }
-
-  const submitAdBtn = $('submitAdBtn');
-  if(submitAdBtn) {
-    submitAdBtn.addEventListener('click', async ()=>{
-      WT.impact();
-      const type = $('adServiceType').value;
-      const name = $('adName').value;
-      const phone = $('adPhone').value;
-      const desc = $('adDesc').value;
-      if(!name || !phone) { alert('Nom va telefonni kiriting!'); return; }
-      
-      const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
-      const res = await fetch('/api/ads', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
-        body: JSON.stringify({service_type: type, name: name, phone: phone, description: desc, latitude: 41.3111, longitude: 69.2797, fuel_types: 'AI-92'})
-      });
-      if(res.ok) {
-        WT.success();
-        alert('✅ E'loningiz adminga yuborildi!');
-        adForm.style.display = 'none';
-      } else { alert('❌ Xatolik yuz berdi'); }
-    });
-  }
-
-  // Tabs switching with indicator animation
-  const views = {order:$('view-order'), roadside:$('view-roadside'), profile:$('view-profile')};
-  const tabKeys = ['order', 'roadside', 'profile'];
-
+  // Tabs
+  const tabOrder = ['order','history','profile'];
   document.querySelectorAll('.tab').forEach(t=>{
     t.addEventListener('click', ()=>{
       WT.tap();
       document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
       t.classList.add('active');
-      const target = t.dataset.target;
-      $('tabIndicator').style.left = (tabKeys.indexOf(target) * 33.333) + '%';
-      
-      Object.keys(views).forEach(k=>{
-        views[k].style.display = (k === target) ? 'block' : 'none';
-      });
-      if(target === 'roadside') loadRoadside(currentRoadsideType);
+      const tabName = t.dataset.tab;
+      $('tabIndicator').style.left = (tabOrder.indexOf(tabName) * 33.333) + '%';
+      if(tabName === 'order'){
+        if(states.driver.style.display !== 'block' && states.searching.style.display !== 'block') showState('idle');
+      } else if(tabName === 'history'){ showState('history'); }
+      else if(tabName === 'profile'){ showState('profile'); }
     });
   });
+
+  goIdle();
 })();
 </script>
 </body>
