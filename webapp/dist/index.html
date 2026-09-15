@@ -93,6 +93,24 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
         <button class="pill" data-type="autosalon">Avtosalon</button>
       </div>
       <div id="roadsideArea" class="service-list"></div>
+      <div style="margin-top:12px;">
+        <button id="showAdFormBtn" style="width:100%;padding:10px;border-radius:12px;background:#F1F5F9;border:1px solid rgba(11,42,91,.08);font-size:11px;font-weight:700;color:#0B2A5B;cursor:pointer;">➕ O'z xizmatingizni qo'shish</button>
+      </div>
+      <div id="adFormContainer" style="display:none;margin-top:12px;background:#F8FAFC;border:1px solid rgba(11,42,91,.08);border-radius:16px;padding:12px;">
+        <div style="font-size:12px;font-weight:800;margin-bottom:8px;color:#0B2A5B">Yangi e'lon joylashtirish</div>
+        <select id="adServiceType" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;">
+          <option value="gas">Zapravka (50,000 so'm)</option>
+          <option value="food">Ovqatlanish (50,000 so'm)</option>
+          <option value="hotel">Mehmonxona (70,000 so'm)</option>
+          <option value="service">Avtoservis (50,000 so'm)</option>
+          <option value="autosalon">Avtosalon (100,000 so'm)</option>
+        </select>
+        <input id="adName" placeholder="Nomi (masalan: Ipak Yo'li Zapravka)" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
+        <input id="adPhone" placeholder="Telefon raqami (+99890...)" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
+        <textarea id="adDesc" placeholder="Qisqacha tavsif va qulayliklar..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;height:50px;resize:none;"></textarea>
+        <button id="submitAdBtn" style="width:100%;padding:10px;border-radius:10px;background:#22A06B;color:#fff;border:none;font-weight:700;font-size:11px;cursor:pointer;">Tasdiqlash uchun yuborish</button>
+      </div>
+    
     </div>
 
     <!-- VIEW 3: PROFILE -->
@@ -221,6 +239,56 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
       if(target === 'roadside') loadRoadside(currentRoadsideType);
     });
   });
+
+      const showAdBtn = document.getElementById("showAdFormBtn");
+      const adForm = document.getElementById("adFormContainer");
+      if(showAdBtn && adForm) {
+        showAdBtn.addEventListener("click", () => {
+          adForm.style.display = adForm.style.display === "none" ? "block" : "none";
+        });
+      }
+
+      const submitAdBtn = document.getElementById("submitAdBtn");
+      if(submitAdBtn) {
+        submitAdBtn.addEventListener("click", async () => {
+          const type = document.getElementById("adServiceType").value;
+          const name = document.getElementById("adName").value;
+          const phone = document.getElementById("adPhone").value;
+          const desc = document.getElementById("adDesc").value;
+
+          if(!name || !phone) {
+            alert("Iltimos, nom va telefon raqamini kiriting!");
+            return;
+          }
+
+          const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
+          try {
+            const res = await fetch("/api/ads", {
+              method: "POST",
+              headers: {"Content-Type": "application/json", "X-Init-Data": initData},
+              body: JSON.stringify({
+                service_type: type,
+                name: name,
+                phone: phone,
+                description: desc,
+                latitude: 41.3111,
+                longitude: 69.2797,
+                fuel_types: "AI-92, Metan"
+              })
+            });
+            const data = await res.json();
+            if(res.ok) {
+              alert("✅ E'loningiz muvaffaqiyatli qabul qilindi va adminga yuborildi!");
+              adForm.style.display = "none";
+            } else {
+              alert("❌ Xatolik: " + (data.error || "Noma'lum"));
+            }
+          } catch(e) {
+            alert("Server bilan aloqada xatolik!");
+          }
+        });
+      }
+    
 })();
 </script>
 </body>
