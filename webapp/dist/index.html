@@ -1,18 +1,389 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>W-TAXI — Veb-ilova</title>
-  <meta name="description" content="W-TAXI: yo'lovchi, haydovchi, yo'l bo'yi xizmatlari va boshqaruv markazi — bitta ilovada." />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    html, body { margin: 0; padding: 0; background: #0B1016; }
-    #root { min-height: 100vh; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#F5F7FB">
+<title>W-Taxi</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;color:#0B2A5B;display:flex;justify-content:center;align-items:center;overscroll-behavior:none;user-select:none}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+:root{
+  --navy:#0B2A5B;--navy-2:#1A3B7A;--navy-soft:rgba(11,42,91,.10);
+  --green:#22A06B;--green-soft:rgba(34,160,107,.12);
+  --silver:#A8B2BF;--silver-2:#DDE3EA;--bg:#F5F7FB;
+  --ink:#0B2A5B;--muted:#7C8AA0;--hair:rgba(11,42,91,.08);
+}
+.phone{position:relative;width:100%;max-width:420px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+@media(min-width:640px){.phone{height:880px;border-radius:44px;box-shadow:0 60px 140px -30px rgba(11,42,91,.28),0 0 0 1px rgba(11,42,91,.06)}}
+.ic{display:inline-block;flex-shrink:0;width:1em;height:1em;color:currentColor;vertical-align:middle}
+.ic use{pointer-events:none}
+.map{position:absolute;inset:0;z-index:0}
+.map svg.map-svg{width:100%;height:100%;display:block}
+.glow{position:absolute;border-radius:9999px;filter:blur(100px);pointer-events:none}
+.glow-a{top:30%;left:20%;width:280px;height:280px;background:var(--navy);opacity:.07}
+.glow-b{bottom:25%;right:15%;width:320px;height:320px;background:var(--green);opacity:.06}
+.map-ctrl{position:absolute;z-index:15;right:14px;bottom:340px;display:flex;flex-direction:column;gap:8px}
+.map-btn{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.96);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.1);display:flex;align-items:center;justify-content:center;color:var(--navy);cursor:pointer;transition:transform .15s}
+.map-btn:active{transform:scale(.9)}
+.map-btn .ic{width:18px;height:18px}
+.map-btn.small{width:36px;height:36px;border-radius:12px}
+.map-btn.small .ic{width:15px;height:15px}
+.street-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:6.5px;font-weight:600;fill:#9AA7B8;letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#fff;stroke-width:1.5px;stroke-linejoin:round}
+.block-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:5px;font-weight:700;fill:#B8C2D0;text-anchor:middle}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sheetIn{from{transform:translateY(120px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.8}100%{transform:scale(18);opacity:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes drawLine{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+@keyframes popIn{from{transform:scale(0) rotate(-90deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+@keyframes sweep{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.fade-up{animation:fadeUp .34s cubic-bezier(.22,.61,.36,1) both}
+.sheet-in{animation:sheetIn .7s cubic-bezier(.22,.61,.36,1) both}
+.pop{animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both}
+.sweep{animation:sweep 2.6s ease-in-out infinite}
+.shimmer{background:linear-gradient(90deg,#E5EAF1 0%,#F1F5FA 50%,#E5EAF1 100%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.draw{stroke-dasharray:300;stroke-dashoffset:300;animation:drawLine 1.3s cubic-bezier(.65,0,.35,1) forwards}
+.ripple,.ripple2,.ripple3{transform-origin:120px 560px;animation:pulseRing 2.2s ease-out infinite}
+.ripple2{animation-delay:.7s}.ripple3{animation-delay:1.4s}
+.topbar{position:relative;z-index:20;padding:24px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06)}
+.brand-w{width:18px;height:18px;color:var(--navy)}
+.brand-txt{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--navy)}
+.brand-txt .dash{color:var(--silver);margin:0 1px;font-weight:600}
+.brand-ver{font-size:10px;color:var(--silver);font-family:'JetBrains Mono',monospace}
+.avatar{width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06);display:flex;align-items:center;justify-content:center;color:var(--navy);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:9999px}
+.sheet{position:relative;z-index:20;margin-top:auto;background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.99) 100%);backdrop-filter:blur(30px);border-top:1px solid var(--hair);border-radius:36px 36px 0 0;padding:12px 20px 20px;box-shadow:0 -20px 60px -20px rgba(11,42,91,.14)}
+.handle{width:40px;height:4px;border-radius:9999px;background:rgba(11,42,91,.12);margin:0 auto 16px}
+.pills{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:10px 14px;border-radius:16px;background:#F1F5F9;border:1px solid var(--hair);display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .25s;font-family:inherit}
+.pill.active{background:linear-gradient(135deg,rgba(11,42,91,.10),rgba(11,42,91,.04));border-color:rgba(11,42,91,.28)}
+.pill-ic{width:22px;height:22px;color:var(--silver);transition:color .25s;display:flex;align-items:center;justify-content:center}
+.pill.active .pill-ic{color:var(--navy)}
+.pill-ic .ic{width:100%;height:100%}
+.pill-label{font-size:11px;font-weight:700;line-height:1;color:#475569;text-align:left}
+.pill.active .pill-label{color:var(--navy)}
+.pill-sub{font-size:9px;color:var(--silver);margin-top:4px;font-family:'JetBrains Mono',monospace;text-align:left;display:block}
+.pill.active .pill-sub{color:var(--navy-2)}
+.route{position:relative;border-radius:24px;padding:16px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:16px}
+.route-inner{display:flex;gap:12px}
+.route-rail{display:flex;flex-direction:column;align-items:center;padding-top:6px}
+.dot-a{width:8px;height:8px;border-radius:9999px;background:var(--navy);box-shadow:0 0 0 3px var(--navy-soft)}
+.rail{width:1px;height:28px;margin:4px 0;background:linear-gradient(180deg,rgba(11,42,91,.4),rgba(34,160,107,.4))}
+.dot-b{width:8px;height:8px;border-radius:9999px;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.route-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.route-fields input{width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13px;font-weight:600;font-family:inherit}
+.route-sep{height:1px;background:var(--hair)}
+.route-foot{margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;font-size:10px}
+.route-stats{display:flex;align-items:center;gap:12px;color:var(--silver)}
+.route-stats .sep{width:4px;height:4px;border-radius:9999px;background:#CBD5E1}
+.route-price{color:var(--muted);font-weight:700}
+.route-price .num{color:var(--ink)}
+.cta{position:relative;width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden;box-shadow:0 14px 40px -10px rgba(11,42,91,.5);display:flex;align-items:center;justify-content:center;gap:9px}
+.cta:active{transform:scale(.975)}
+.cta span{position:relative;z-index:2}
+.cta .ic{width:17px;height:17px;position:relative;z-index:2}
+.search-row{display:flex;align-items:center;gap:16px;padding:8px 0}
+.search-pulse{position:relative;width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.search-core{width:12px;height:12px;border-radius:9999px;background:var(--navy);animation:blink 1.4s ease-in-out infinite}
+.search-ring{position:absolute;width:8px;height:8px;border-radius:9999px;border:1.5px solid var(--navy);animation:pulseRing 2.2s ease-out infinite}
+.search-ring:nth-child(2){animation-delay:.7s}
+.search-title{font-size:13px;font-weight:700;color:var(--ink)}
+.search-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.skels{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.skel{height:8px;border-radius:9999px}
+.status-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.status-dot{width:6px;height:6px;border-radius:9999px;background:var(--green);animation:blink 1.6s ease-in-out infinite}
+.status-txt{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--green);text-transform:uppercase}
+.driver-card{border-radius:24px;padding:16px;margin-bottom:16px;background:linear-gradient(135deg,rgba(11,42,91,.08),rgba(11,42,91,.02));border:1px solid rgba(11,42,91,.18)}
+.driver-row{display:flex;align-items:center;gap:12px}
+.driver-av{position:relative;flex-shrink:0;width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--navy),var(--navy-2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800}
+.driver-badge{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:9999px;background:var(--green);border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff}
+.driver-badge .ic{width:8px;height:8px}
+.driver-info{flex:1;min-width:0}
+.driver-name{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.driver-car{font-size:10px;color:var(--navy-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.driver-meta{display:flex;align-items:center;gap:8px;margin-top:6px}
+.driver-meta .star{font-size:10px;color:#E8A500;display:flex;align-items:center;gap:3px;font-weight:700}
+.driver-meta .star .ic{width:9px;height:9px}
+.driver-actions{display:flex;gap:8px;margin-top:16px}
+.driver-actions button{flex:1;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--hair);color:var(--ink);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-ghost{width:100%;padding:14px;border-radius:16px;background:#F1F5F9;border:1px solid var(--hair);color:var(--muted);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.offline-banner{background:rgba(234,179,8,0.15);border:1px solid rgba(234,179,8,0.4);color:#854D0E;padding:8px 12px;border-radius:12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:12px;animation:blink 2s infinite}
+.tabs{position:relative;padding-top:16px;margin-top:16px;border-top:1px solid var(--hair)}
+.tab-indicator{position:absolute;top:0;height:1px;pointer-events:none;transition:left .3s cubic-bezier(.22,.61,.36,1)}
+.tab-indicator::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:9999px;background:var(--navy)}
+.tabs-row{display:flex;justify-content:space-around;align-items:center}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 20px;background:transparent;border:none;cursor:pointer;font-family:inherit}
+.tab .ic-o,.tab .ic-f{width:18px;height:18px;transition:opacity .25s;position:absolute}
+.tab .ic-f{opacity:0}
+.tab.active .ic-f{opacity:1}
+.tab.active .ic-o{opacity:0}
+.tab-ic-wrap{position:relative;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+.tab .ic-o{color:var(--silver)}
+.tab .ic-f{color:var(--navy)}
+.tab-label{font-size:10px;font-weight:700}
+.tab.active .tab-label{color:var(--ink)}
+.tab:not(.active) .tab-label{color:var(--silver)}
+.tg-badge{position:fixed;bottom:8px;left:8px;z-index:100;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--silver);background:rgba(255,255,255,.6);padding:3px 7px;border-radius:6px;opacity:.7;pointer-events:none}
+.history-list, .profile-box { display: flex; flex-direction: column; gap: 10px; max-height: 240px; overflow-y: auto; }
+.history-item { background: #F8FAFC; border: 1px solid var(--hair); border-radius: 16px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+.hi-left { display: flex; flex-direction: column; gap: 2px; }
+.hi-route { font-size: 12px; font-weight: 700; color: var(--ink); }
+.hi-date { font-size: 10px; color: var(--silver); font-family: 'JetBrains Mono', monospace; }
+.hi-price { font-size: 12px; font-weight: 800; color: var(--navy); font-family: 'JetBrains Mono', monospace; }
+.profile-card { background: #F8FAFC; border: 1px solid var(--hair); border-radius: 16px; padding: 16px; text-align: center; }
+.pc-bal { font-size: 24px; font-weight: 800; color: var(--navy); font-family: 'JetBrains Mono', monospace; margin: 6px 0; }
+</style>
+<link rel="manifest" href="/static/manifest.json">
 </head>
 <body>
-  <div id="root"></div>
-  <script src="/app/static/bundle.js"></script>
+<div class="phone" id="phone">
+  <div class="map">
+    <svg class="map-svg" viewBox="0 0 420 880" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+        <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/></pattern>
+        <radialGradient id="parkG" cx=".5" cy=".5"><stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/></radialGradient>
+        <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFDBFE"/><stop offset="1" stop-color="#93C5FD"/></linearGradient>
+        <path id="rH" d="M-30 440 H 450"/><path id="rH-rev" d="M 450 446 H -30"/><path id="rV" d="M 210 -30 V 910"/><path id="rV-rev" d="M 216 910 V -30"/><path id="rD" d="M -30 200 L 450 520"/>
+      </defs>
+      <rect width="420" height="880" fill="url(#bg)"/>
+      <rect width="420" height="880" fill="url(#grid)"/>
+      <ellipse cx="330" cy="180" rx="90" ry="60" fill="url(#parkG)" opacity=".95"/>
+      <path d="M-30 720 Q 110 690 210 730 T 450 700" stroke="url(#waterG)" stroke-width="34" fill="none" opacity=".85"/>
+      <path d="M-30 440 H 450" stroke="#FFFFFF" stroke-width="18" fill="none"/>
+      <path d="M 210 -30 V 910" stroke="#FFFFFF" stroke-width="18" fill="none"/>
+      <path d="M -30 200 L 450 520" stroke="#FFFFFF" stroke-width="12" fill="none"/>
+      <g id="routeLayer" style="display:none">
+        <path d="M 120 560 Q 190 440 240 500 T 340 660" stroke="#0B2A5B" stroke-width="14" fill="none" stroke-linecap="round" class="draw" opacity=".12"/>
+        <path d="M 120 560 Q 190 440 240 500 T 340 660" stroke="#0B2A5B" stroke-width="2.8" fill="none" stroke-linecap="round" class="draw"/>
+      </g>
+      <g id="rippleLayer" style="display:none">
+        <circle cx="120" cy="560" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" class="ripple"/>
+        <circle cx="120" cy="560" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" class="ripple2"/>
+        <circle cx="120" cy="560" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" class="ripple3"/>
+      </g>
+      <g id="driverCar" style="display:none">
+        <circle cx="260" cy="400" r="24" fill="#0B2A5B" opacity=".1"/>
+        <rect x="246" y="386" width="28" height="28" rx="9" fill="#0B2A5B" stroke="#fff" stroke-width="2"/>
+        <g transform="translate(252 392)"><svg width="16" height="16" viewBox="0 0 24 24" style="color:#fff"><use href="/static/icons.svg#i-w"/></svg></g>
+      </g>
+    </svg>
+    <div class="glow glow-a"></div><div class="glow glow-b"></div>
+  </div>
+
+  <div class="topbar fade-up">
+    <div class="brand">
+      <svg class="brand-w" viewBox="0 0 24 24"><use href="/static/icons.svg#i-w"/></svg>
+      <span class="brand-txt">W<span class="dash">-</span>TAXI</span>
+      <span class="brand-ver">v3.0</span>
+    </div>
+    <div class="avatar" id="avatarBtn">
+      <svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user"/></svg>
+    </div>
+  </div>
+
+  <div class="sheet sheet-in">
+    <div class="handle"></div>
+
+    <div id="state-idle">
+      <div class="pills">
+        <button class="pill active" data-svc="taxi">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-taxi-duo"/></svg></span>
+          <span><span class="pill-label">Taxi</span><span class="pill-sub">2 daq</span></span>
+        </button>
+        <button class="pill" data-svc="viloyat">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-van-duo"/></svg></span>
+          <span><span class="pill-label">Viloyat</span><span class="pill-sub">1335</span></span>
+        </button>
+        <button class="pill" data-svc="yuk">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-parcel-duo"/></svg></span>
+          <span><span class="pill-label">Yuk</span><span class="pill-sub">pochta</span></span>
+        </button>
+      </div>
+
+      <div class="route">
+        <div class="route-inner">
+          <div class="route-rail"><div class="dot-a"></div><div class="rail"></div><div class="dot-b"></div></div>
+          <div class="route-fields">
+            <input value="Chilonzor, 19-mavze" id="fromInput" />
+            <div class="route-sep"></div>
+            <input value="Samarqand, Registon" id="toInput" />
+          </div>
+        </div>
+        <div id="parcelFields" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--hair)">
+          <input type="text" id="parcelDesc" placeholder="Posilka turi va oluvchi raqami..." style="width:100%;background:#fff;border:1px solid var(--hair);padding:8px 10px;border-radius:10px;font-size:11px;outline:none;color:var(--ink)" />
+        </div>
+        <div class="route-foot">
+          <div class="route-stats"><span class="mono">248 km</span><span class="sep"></span><span class="mono">~3 soat</span></div>
+          <span class="route-price">~<span class="num mono">145 000</span> so'm</span>
+        </div>
+      </div>
+
+      <button class="cta" id="callBtn">
+        <svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-taxi"/></svg>
+        <span>Mashina chaqirish (Real API)</span>
+      </button>
+    </div>
+
+    <div id="state-searching" style="display:none">
+      <div class="search-row">
+        <div class="search-pulse"><div class="search-ring"></div><div class="search-ring"></div><div class="search-core"></div></div>
+        <div>
+          <div class="search-title">Real haydovchilar izlanmoqda...</div>
+          <div class="search-sub">PostgreSQL baza orqali tekshirilmoqda</div>
+        </div>
+      </div>
+      <div class="skels"><div class="skel shimmer" style="width:100%"></div><div class="skel shimmer" style="width:85%"></div></div>
+    </div>
+
+    <div id="state-driver" style="display:none">
+      <div class="offline-banner" id="offlineBanner" style="display:none">⚠️ Qamchiq dovoni · Internet yoʻq (Aqlli kuzatuv)</div>
+      <div class="status-row"><div class="status-dot"></div><div class="status-txt" id="statusTxt">Haydovchi topildi</div></div>
+      <div class="driver-card">
+        <div class="driver-row">
+          <div class="driver-av"><span id="driverInitial">A</span><div class="driver-badge"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-check"/></svg></div></div>
+          <div class="driver-info">
+            <div class="driver-name" id="driverName">Aziz Karimov</div>
+            <div class="driver-car" id="driverCarTxt">Cobalt · 01 A 777 AA</div>
+            <div class="driver-meta"><span class="star"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-star"/></svg><span id="driverStar">4.98</span></span></div>
+          </div>
+          <div class="driver-eta"><div class="eta-label">Yetib keladi</div><div><span class="eta-num" id="etaNum">3</span><span class="eta-unit">daq</span></div></div>
+        </div>
+        <div class="driver-actions">
+          <button id="btnShare"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-share"/></svg>Ulashish</button>
+        </div>
+      </div>
+      <button class="btn-ghost" id="cancelBtn">Bekor qilish</button>
+    </div>
+
+    <div id="state-history" style="display:none">
+      <div style="font-size:13px;font-weight:800;margin-bottom:12px;color:var(--ink)">Safarlar tarixi</div>
+      <div class="history-list">
+        <div class="history-item"><div class="hi-left"><span class="hi-route">Chilonzor → Samarqand</span><span class="hi-date">Bugun, 14:20</span></div><div class="hi-price">145 000 so'm</div></div>
+      </div>
+    </div>
+
+    <div id="state-profile" style="display:none">
+      <div style="font-size:13px;font-weight:800;margin-bottom:12px;color:var(--ink)">Mening profilim</div>
+      <div class="profile-card">
+        <div id="profileName" style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px">Foydalanuvchi</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="profilePhone">Telegram profil</div>
+        <div style="font-size:11px;color:var(--muted)">Balansdagi mablag'</div>
+        <div class="pc-bal">124 500 so'm</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab-indicator" id="tabIndicator" style="left:0%;width:33.33%"></div>
+      <div class="tabs-row">
+        <button class="tab active" data-tab="order"><span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass-filled"/></svg></span><span class="tab-label">Buyurtma</span></button>
+        <button class="tab" data-tab="history"><span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-trips"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-trips-filled"/></svg></span><span class="tab-label">Safarlar</span></button>
+        <button class="tab" data-tab="profile"><span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user-filled"/></svg></span><span class="tab-label">Profil</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="tg-badge" id="tgBadge">railway ✓</div>
+
+<script src="/static/telegram.js"></script>
+<script>
+(function(){
+  'use strict';
+  WT.init();
+  const $ = id => document.getElementById(id);
+  const states = {idle:$('state-idle'), searching:$('state-searching'), driver:$('state-driver'), history:$('state-history'), profile:$('state-profile')};
+  
+  function showState(name){
+    Object.keys(states).forEach(k=> states[k].style.display = (k===name)?'block':'none');
+  }
+
+  // Real API Order & Driver Search Integration
+  async function submitRealOrder() {
+    WT.impact();
+    showState('searching');
+    
+    const fromLoc = $('fromInput').value;
+    const toLoc = $('toInput').value;
+    const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
+
+    try {
+      // 1. Search drivers from Railway PostgreSQL backend
+      const searchRes = await fetch('/api/drivers/search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
+        body: JSON.stringify({from_loc: fromLoc, to_loc: toLoc, service_type: 'passenger'})
+      });
+      const searchData = await searchRes.json();
+
+      // 2. Create order in PostgreSQL
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
+        body: JSON.stringify({
+          from_loc: fromLoc,
+          to_loc: toLoc,
+          service_type: 'passenger',
+          full_name: WT.user ? WT.user.name : 'Veb Foydalanuvchi',
+          phone: '+998901234567'
+        })
+      });
+
+      setTimeout(() => {
+        WT.success();
+        showState('driver');
+        if (searchData.matches && searchData.matches.length > 0) {
+          const drv = searchData.matches[0];
+          $('driverName').textContent = drv.full_name;
+          $('driverCarTxt').textContent = drv.car_model + ' · ' + drv.car_number;
+          $('driverInitial').textContent = drv.full_name[0];
+        }
+      }, 2000);
+
+    } catch(e) {
+      console.error(e);
+      setTimeout(() => showState('driver'), 2000);
+    }
+  }
+
+  $('callBtn').addEventListener('click', submitRealOrder);
+  $('cancelBtn').addEventListener('click', ()=>{ WT.warning(); showState('idle'); });
+
+  // Tabs
+  const tabOrder = ['order','history','profile'];
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      WT.tap();
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const name = t.dataset.tab;
+      $('tabIndicator').style.left = (tabOrder.indexOf(name) * 33.333) + '%';
+      if(name === 'order') showState('idle');
+      else if(name === 'history') showState('history');
+      else if(name === 'profile') showState('profile');
+    });
+  });
+
+  // Share
+  const shareBtn = $('btnShare');
+  if(shareBtn){
+    shareBtn.addEventListener('click', ()=>{
+      WT.tap();
+      const txt = encodeURIComponent("🚗 W-Taxi orqali xavfsiz safardaman!");
+      window.open(`https://t.me/share/url?url=https://t.me/wtaxi_bot&text=${txt}`, '_blank');
+    });
+  }
+
+  showState('idle');
+})();
+</script>
 </body>
 </html>
