@@ -18,4 +18,4 @@ if not _admin_id_raw or not _admin_id_raw.isdigit():
 
 ADMIN_ID = int(_admin_id_raw)  # Super Admin ID (endi hardcode emas, faqat .env dan)
 
-WEBAPP_URL = "https://democrat-spanking-made-deluxe.trycloudflare.com/app"
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://w-taxi-production.up.railway.app")

@@ -29,7 +29,7 @@ def get_main_menu(is_super: bool = False, is_sub: bool = False, webapp_url: str 
         [KeyboardButton(text="🗺 Yo‘l bo‘yi xizmatlari")]
     ]
     if webapp_url:
-        keyboard.append([KeyboardButton(text="🌐 Veb-ilova", web_app=WebAppInfo(url=f"{webapp_url}/app"))])
+        keyboard.append([KeyboardButton(text="🌐 Veb-ilova", web_app=WebAppInfo(url=webapp_url if webapp_url.endswith('/app') else f"{webapp_url.rstrip("/")}/app"))])
     if is_super:
         keyboard.append([KeyboardButton(text="👑 Super Admin Panel")])
     elif is_sub:
