@@ -16,6 +16,9 @@ if not _admin_id_raw or not _admin_id_raw.isdigit():
         "(o'zingizning Telegram ID'ingiz) qatorini qo'shing."
     )
 
-ADMIN_ID = int(_admin_id_raw)  # Super Admin ID (endi hardcode emas, faqat .env dan)
+ADMIN_ID = int(_admin_id_raw)
 
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://w-taxi-production.up.railway.app")
+_raw = (os.getenv("WEBAPP_URL") or "https://wtaxi-production.up.railway.app").rstrip("/")
+if _raw.endswith("/app"):
+    _raw = _raw[:-4].rstrip("/")
+WEBAPP_URL = _raw
