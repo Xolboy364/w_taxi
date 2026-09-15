@@ -11,7 +11,18 @@ from aiohttp import web
 import database as db
 from config import ADMIN_ID, BOT_TOKEN
 
+
 STATIC_DIR = Path(__file__).parent / "webapp" / "dist"
+print(f"[DEBUG] STATIC_DIR yo'li: {STATIC_DIR}, Mavjudmi: {STATIC_DIR.exists()}")
+if STATIC_DIR.exists():
+    print(f"[DEBUG] dist ichidagilar: {list(STATIC_DIR.iterdir())}")
+else:
+    # Ehtimol dist papkasi boshqa joydadir, qidirib ko'ramiz
+    parent_dist = Path(__file__).parent.parent / "webapp" / "dist"
+    if parent_dist.exists():
+        STATIC_DIR = parent_dist
+        print(f"[DEBUG] Topildi (parent): {STATIC_DIR}")
+
 
 MAX_ORDERS_PER_HOUR = 3  # handlers.py bilan bir xil qiymat
 
