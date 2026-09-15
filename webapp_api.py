@@ -626,7 +626,41 @@ async def admin_broadcast(request: web.Request):
 #  Route registration                                                 #
 # ------------------------------------------------------------------ #
 
+@require_auth
+async def get_history(request: web.Request):
+    """Foydalanuvchining buyurtmalar tarixi."""
+    uid = request["user"]["id"]
+    async with db.pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT id, from_loc, to_loc, service_type, is_active,
+                   to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at_str
+            FROM passenger_orders
+            WHERE user_id = $1
+            ORDER BY id DESC
+            LIMIT 30
+        """, uid)
+    return web.json_response([dict(r) for r in rows])
+
+
+@require_auth
+async def get_profile(request: web.Request):
+    """Foydalanuvchi profili + haydovchi ma'lumotlari."""
+    uid = request["user"]["id"]
+    driver = await db.get_driver(uid)
+    is_sub = await db.is_driver_subscribed(uid) if driver else False
+    routes_count = await db.get_driver_routes_count(uid) if driver else 0
+    return web.json_response({
+        "user_id": uid,
+        "first_name": request["user"].get("first_name", ""),
+        "driver": dict(driver) if driver else None,
+        "is_subscribed": is_sub,
+        "routes_count": routes_count,
+        "balance": 0,
+    })
+
+
 def register_webapp_routes(app: web.Application, bot):
+
     app["bot"] = bot
 
     app.router.add_post("/api/auth/login-widget", auth_login_widget)
@@ -642,6 +676,8 @@ def register_webapp_routes(app: web.Application, bot):
     app.router.add_post("/api/driver/routes", driver_add_routes)
     app.router.add_delete("/api/driver/routes", driver_clear_routes)
     app.router.add_get("/api/driver/orders", driver_orders)
+    app.router.add_get("/api/history", get_history)
+    app.router.add_get("/api/profile", get_profile)
     app.router.add_post("/api/ads", submit_ad)
 
     app.router.add_get("/api/admin/stats", admin_stats)
