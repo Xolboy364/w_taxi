@@ -656,10 +656,15 @@ def register_webapp_routes(app: web.Application, bot):
     app.router.add_post("/api/admin/ads/{ad_id}/reject", admin_ads_reject)
     app.router.add_post("/api/admin/broadcast", admin_broadcast)
 
-    if STATIC_DIR.exists():
-        async def spa_index(request):
-            return web.FileResponse(STATIC_DIR / "index.html")
+    async def spa_index(request):
+        idx_file = STATIC_DIR / "index.html"
+        if idx_file.exists():
+            return web.FileResponse(idx_file)
+        return web.Response(text=f"W-Taxi build fayli topilmadi: {idx_file}", status=404)
 
-        app.router.add_get("/app", spa_index)
-        app.router.add_get("/app/", spa_index)
+    app.router.add_get("/", spa_index)
+    app.router.add_get("/app", spa_index)
+    app.router.add_get("/app/", spa_index)
+    if STATIC_DIR.exists():
         app.router.add_static("/app/static", STATIC_DIR, show_index=False)
+        app.router.add_static("/static", STATIC_DIR, show_index=False)
