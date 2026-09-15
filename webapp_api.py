@@ -699,8 +699,31 @@ def register_webapp_routes(app: web.Application, bot):
         return web.Response(text=f"W-Taxi build fayli topilmadi: {idx_file}", status=404)
 
     app.router.add_get("/", spa_index)
+    
+    # Added root static routes
+    app.router.add_get('/manifest.json', serve_manifest)
+    app.router.add_get('/icons.svg', serve_icons)
+    app.router.add_get('/telegram.js', serve_telegram_js)
+
     app.router.add_get("/app", spa_index)
+    
+    # Added root static routes
+    app.router.add_get('/manifest.json', serve_manifest)
+    app.router.add_get('/icons.svg', serve_icons)
+    app.router.add_get('/telegram.js', serve_telegram_js)
+
     app.router.add_get("/app/", spa_index)
     if STATIC_DIR.exists():
         app.router.add_static("/app/static", STATIC_DIR, show_index=False)
         app.router.add_static("/static", STATIC_DIR, show_index=False)
+
+
+# Root static file routes for PWA and assets
+async def serve_manifest(request):
+    return web.FileResponse('webapp/dist/manifest.json')
+
+async def serve_icons(request):
+    return web.FileResponse('webapp/dist/icons.svg')
+
+async def serve_telegram_js(request):
+    return web.FileResponse('webapp/dist/telegram.js')
