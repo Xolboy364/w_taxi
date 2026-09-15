@@ -20,7 +20,7 @@ async def handle_ping(request):
 
 async def start_web_server(bot: Bot):
     app = web.Application()
-    app.add_routes([web.get('/', handle_ping), web.get('/ping', handle_ping)])
+    app.add_routes([web.get('/ping', handle_ping)])
     register_webapp_routes(app, bot)
     port = int(os.getenv("PORT", 8080))
     runner = web.AppRunner(app)
