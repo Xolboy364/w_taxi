@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#F5F7FB">
-<title>W-Taxi Production v3.0</title>
+<title>W-Taxi Production v3.0 Masterpiece</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -20,54 +20,147 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
 }
 .phone{position:relative;width:100%;max-width:420px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 @media(min-width:640px){.phone{height:880px;border-radius:44px;box-shadow:0 60px 140px -30px rgba(11,42,91,.28),0 0 0 1px rgba(11,42,91,.06)}}
+.ic{display:inline-block;flex-shrink:0;width:1em;height:1em;color:currentColor;vertical-align:middle}
+.ic use{pointer-events:none}
+
+/* Map Layer (Google/Yandex style) */
 .map{position:absolute;inset:0;z-index:0}
 .map svg.map-svg{width:100%;height:100%;display:block}
+.glow{position:absolute;border-radius:9999px;filter:blur(100px);pointer-events:none}
+.glow-a{top:30%;left:20%;width:280px;height:280px;background:var(--navy);opacity:.07}
+.glow-b{bottom:25%;right:15%;width:320px;height:320px;background:var(--green);opacity:.06}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sheetIn{from{transform:translateY(120px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.8}100%{transform:scale(18);opacity:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.fade-up{animation:fadeUp .34s cubic-bezier(.22,.61,.36,1) both}
+.sheet-in{animation:sheetIn .7s cubic-bezier(.22,.61,.36,1) both}
+.ripple,.ripple2,.ripple3{transform-origin:120px 560px;animation:pulseRing 2.2s ease-out infinite}
+.ripple2{animation-delay:.7s}.ripple3{animation-delay:1.4s}
+
 .topbar{position:relative;z-index:20;padding:24px 20px 0;display:flex;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06)}
+.brand-w{width:18px;height:18px;color:var(--navy)}
 .brand-txt{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--navy)}
-.avatar{width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06);display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:700}
+.brand-txt .dash{color:var(--silver);margin:0 1px;font-weight:600}
+.brand-ver{font-size:10px;color:var(--silver);font-family:'JetBrains Mono',monospace}
+
+.avatar{width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06);display:flex;align-items:center;justify-content:center;color:var(--navy);overflow:hidden;font-weight:700}
+
 .sheet{position:relative;z-index:20;margin-top:auto;background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.99) 100%);backdrop-filter:blur(30px);border-top:1px solid var(--hair);border-radius:36px 36px 0 0;padding:12px 20px 20px;box-shadow:0 -20px 60px -20px rgba(11,42,91,.14);max-height:70vh;overflow-y:auto}
 .handle{width:40px;height:4px;border-radius:9999px;background:rgba(11,42,91,.12);margin:0 auto 16px}
+
 .pills{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px}
-.pill{flex-shrink:0;padding:10px 14px;border-radius:16px;background:#F1F5F9;border:1px solid var(--hair);cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;color:#475569}
-.pill.active{background:var(--navy);color:#fff}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:10px 14px;border-radius:16px;background:#F1F5F9;border:1px solid var(--hair);display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .25s;font-family:inherit}
+.pill.active{background:linear-gradient(135deg,rgba(11,42,91,.10),rgba(11,42,91,.04));border-color:rgba(11,42,91,.28)}
+.pill-ic{width:22px;height:22px;color:var(--silver);display:flex;align-items:center;justify-content:center}
+.pill.active .pill-ic{color:var(--navy)}
+.pill-label{font-size:11px;font-weight:700;color:#475569}
+.pill.active .pill-label{color:var(--navy)}
+.pill-sub{font-size:9px;color:var(--silver);margin-top:4px;font-family:'JetBrains Mono',monospace;display:block}
+.pill.active .pill-sub{color:var(--navy-2)}
+
 .route{position:relative;border-radius:24px;padding:16px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:16px}
 .route-inner{display:flex;gap:12px}
 .route-rail{display:flex;flex-direction:column;align-items:center;padding-top:6px}
 .dot-a{width:8px;height:8px;border-radius:9999px;background:var(--navy)}
-.rail{width:1px;height:28px;margin:4px 0;background:#DDE3EA}
-.dot-b{width:8px;height:8px;border-radius:9999px;background:#22A06B}
+.rail{width:1px;height:28px;margin:4px 0;background:var(--silver-2)}
+.dot-b{width:8px;height:8px;border-radius:9999px;background:var(--green)}
 .route-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
-.route-fields input{width:100%;background:transparent;border:none;outline:none;color:#0B2A5B;font-size:13px;font-weight:600;font-family:inherit}
-.route-sep{height:1px;background:rgba(11,42,91,.08)}
-.cta{width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,#0B2A5B,#1A3B7A);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 14px 40px -10px rgba(11,42,91,.5);display:flex;align-items:center;justify-content:center}
-.service-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.service-card{background:#F8FAFC;border:1px solid rgba(11,42,91,.08);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px}
-.tabs{position:relative;padding-top:16px;margin-top:16px;border-top:1px solid rgba(11,42,91,.08);display:flex;justify-content:space-around}
-.tab{background:none;border:none;cursor:pointer;font-size:10px;font-weight:700;color:#7C8AA0;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px}
-.tab.active{color:#0B2A5B}
-.profile-card{background:#F8FAFC;border:1px solid rgba(11,42,91,.08);border-radius:16px;padding:16px;text-align:center}
-.pc-bal{font-size:22px;font-weight:800;color:#0B2A5B;font-family:'JetBrains Mono',monospace;margin:6px 0}
+.route-fields input{width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-size:13px;font-weight:600;font-family:inherit}
+.route-sep{height:1px;background:var(--hair)}
+.route-foot{margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;font-size:10px}
+.route-stats{display:flex;align-items:center;gap:12px;color:var(--silver)}
+.route-price{color:var(--muted);font-weight:700}
+.route-price .num{color:var(--ink)}
+
+.cta{width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 14px 40px -10px rgba(11,42,91,.5);display:flex;align-items:center;justify-content:center;gap:9px}
+.cta:active{transform:scale(.975)}
+
+.drivers-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.driver-card{background:#F8FAFC;border:1px solid var(--hair);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.driver-top{display:flex;align-items:center;justify-content:space-between}
+.driver-info{display:flex;align-items:center;gap:10px}
+.driver-avatar{width:40px;height:40px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.driver-name{font-size:12px;font-weight:700;color:var(--ink)}
+.driver-car{font-size:10px;color:var(--muted)}
+.book-btn{padding:8px 14px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:700;font-size:11px;cursor:pointer}
+
+/* Tabs & Custom Icons */
+.tabs{position:relative;padding-top:16px;margin-top:16px;border-top:1px solid var(--hair)}
+.tab-indicator{position:absolute;top:0;height:1px;pointer-events:none;transition:left .3s cubic-bezier(.22,.61,.36,1)}
+.tab-indicator::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:9999px;background:var(--navy)}
+.tabs-row{display:flex;justify-content:space-around;align-items:center}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 16px;background:transparent;border:none;cursor:pointer;font-family:inherit}
+.tab .ic-o,.tab .ic-f{width:18px;height:18px;transition:opacity .25s;position:absolute}
+.tab .ic-f{opacity:0}
+.tab.active .ic-f{opacity:1}
+.tab.active .ic-o{opacity:0}
+.tab-ic-wrap{position:relative;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+.tab .ic-o{color:var(--silver)}
+.tab .ic-f{color:var(--navy)}
+.tab-label{font-size:10px;font-weight:700}
+.tab.active .tab-label{color:var(--ink)}
+.tab:not(.active) .tab-label{color:var(--silver)}
+
+.profile-card{background:#F8FAFC;border:1px solid var(--hair);border-radius:16px;padding:16px;text-align:center}
+.pc-bal{font-size:22px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;margin:6px 0}
 </style>
 <link rel="manifest" href="/static/manifest.json">
 </head>
 <body>
-<div class="phone">
-  <div class="map"><svg class="map-svg" viewBox="0 0 420 880"><rect width="420" height="880" fill="#EEF2F8"/></svg></div>
-  <div class="topbar">
-    <div style="font-size:12px;font-weight:800;color:#0B2A5B">W-TAXI PRO v3.0</div>
+<div class="phone" id="phone">
+  <!-- Google/Yandex Style Map Background -->
+  <div class="map">
+    <svg class="map-svg" viewBox="0 0 420 880" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+        <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/></pattern>
+        <radialGradient id="parkG" cx=".5" cy=".5"><stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/></radialGradient>
+        <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFDBFE"/><stop offset="1" stop-color="#93C5FD"/></linearGradient>
+      </defs>
+      <rect width="420" height="880" fill="url(#bg)"/>
+      <rect width="420" height="880" fill="url(#grid)"/>
+      <ellipse cx="330" cy="180" rx="90" ry="60" fill="url(#parkG)" opacity=".95"/>
+      <path d="M-30 720 Q 110 690 210 730 T 450 700" stroke="url(#waterG)" stroke-width="34" fill="none" opacity=".85"/>
+      <path d="M-30 440 H 450" stroke="#FFFFFF" stroke-width="18" fill="none"/>
+      <path d="M 210 -30 V 910" stroke="#FFFFFF" stroke-width="18" fill="none"/>
+    </svg>
+    <div class="glow glow-a"></div><div class="glow glow-b"></div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="topbar fade-up">
+    <div class="brand">
+      <svg class="brand-w" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="/static/icons.svg#i-w"/></svg>
+      <span class="brand-txt">W<span class="dash">-</span>TAXI</span>
+      <span class="brand-ver">v3.0</span>
+    </div>
     <div class="avatar" id="avatarBox">U</div>
   </div>
-  <div class="sheet">
+
+  <div class="sheet sheet-in">
     <div class="handle"></div>
 
     <!-- VIEW 1: ORDER -->
     <div id="view-order">
       <div class="pills">
-        <button class="pill active" data-svc="passenger">Taxi</button>
-        <button class="pill" data-svc="intercity">Viloyat</button>
-        <button class="pill" data-svc="cargo">Yuk / Pochta</button>
+        <button class="pill active" data-svc="passenger">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-taxi-duo"/></svg></span>
+          <span><span class="pill-label">Taxi</span><span class="pill-sub">2 daq</span></span>
+        </button>
+        <button class="pill" data-svc="intercity">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-van-duo"/></svg></span>
+          <span><span class="pill-label">Viloyat</span><span class="pill-sub">1335</span></span>
+        </button>
+        <button class="pill" data-svc="cargo">
+          <span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-parcel-duo"/></svg></span>
+          <span><span class="pill-label">Yuk</span><span class="pill-sub">pochta</span></span>
+        </button>
       </div>
+
       <div class="route">
         <div class="route-inner">
           <div class="route-rail"><div class="dot-a"></div><div class="rail"></div><div class="dot-b"></div></div>
@@ -77,27 +170,36 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
             <input value="Samarqand, Registon" id="toInput" />
           </div>
         </div>
+        <div class="route-foot">
+          <div class="route-stats"><span class="mono">248 km</span><span style="width:4px;height:4px;border-radius:50%;background:#CBD5E1"></span><span class="mono">~3 soat</span></div>
+          <span class="route-price">~<span class="num mono">145 000</span> so'm</span>
+        </div>
       </div>
-      <button class="cta" id="callBtn">Haydovchilarni qidirish (Real DB)</button>
-      <div id="resultsArea" class="service-list"></div>
+
+      <button class="cta" id="callBtn">
+        <svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="/static/icons.svg#i-taxi"/></svg>
+        <span>Haydovchilarni qidirish (Real DB)</span>
+      </button>
+
+      <div id="resultsArea" class="drivers-list"></div>
     </div>
 
     <!-- VIEW 2: ROADSIDE SERVICES -->
     <div id="view-roadside" style="display:none">
-      <div style="font-size:13px;font-weight:800;margin-bottom:10px;color:#0B2A5B">⛽️ Yo‘l bo‘yi xizmatlari markazi</div>
+      <div style="font-size:13px;font-weight:800;margin-bottom:10px;color:var(--ink)">⛽️ Yo‘l bo‘yi xizmatlari markazi</div>
       <div class="pills" id="roadsidePills">
-        <button class="pill active" data-type="gas">Zapravka</button>
-        <button class="pill" data-type="food">Ovqatlanish</button>
-        <button class="pill" data-type="hotel">Mehmonxona</button>
-        <button class="pill" data-type="service">Avtoservis</button>
-        <button class="pill" data-type="autosalon">Avtosalon</button>
+        <button class="pill active" data-type="gas"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-fuel"/></svg></span><span class="pill-label">Zapravka</span></button>
+        <button class="pill" data-type="food"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-cafe"/></svg></span><span class="pill-label">Ovqatlanish</span></button>
+        <button class="pill" data-type="hotel"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-metro"/></svg></span><span class="pill-label">Mehmonxona</span></button>
+        <button class="pill" data-type="service"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-layers"/></svg></span><span class="pill-label">Avtoservis</span></button>
+        <button class="pill" data-type="autosalon"><span class="pill-ic"><svg class="ic" viewBox="0 0 24 24"><use href="/static/icons.svg#i-star"/></svg></span><span class="pill-label">Avtosalon</span></button>
       </div>
-      <div id="roadsideArea" class="service-list"></div>
-      <div style="margin-top:12px;">
-        <button id="showAdFormBtn" style="width:100%;padding:10px;border-radius:12px;background:#F1F5F9;border:1px solid rgba(11,42,91,.08);font-size:11px;font-weight:700;color:#0B2A5B;cursor:pointer;">➕ O'z xizmatingizni qo'shish</button>
+
+      <div style="margin-top:8px;">
+        <button id="showAdFormBtn" style="width:100%;padding:10px;border-radius:12px;background:#F1F5F9;border:1px solid var(--hair);font-size:11px;font-weight:700;color:var(--navy);cursor:pointer;">➕ O'z xizmatingizni qo'shish</button>
       </div>
-      <div id="adFormContainer" style="display:none;margin-top:12px;background:#F8FAFC;border:1px solid rgba(11,42,91,.08);border-radius:16px;padding:12px;">
-        <div style="font-size:12px;font-weight:800;margin-bottom:8px;color:#0B2A5B">Yangi e'lon joylashtirish</div>
+      <div id="adFormContainer" style="display:none;margin-top:10px;background:#F8FAFC;border:1px solid var(--hair);border-radius:16px;padding:12px;">
+        <div style="font-size:12px;font-weight:800;margin-bottom:8px;color:var(--ink)">Yangi e'lon joylashtirish</div>
         <select id="adServiceType" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;">
           <option value="gas">Zapravka (50,000 so'm)</option>
           <option value="food">Ovqatlanish (50,000 so'm)</option>
@@ -105,31 +207,44 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
           <option value="service">Avtoservis (50,000 so'm)</option>
           <option value="autosalon">Avtosalon (100,000 so'm)</option>
         </select>
-        <input id="adName" placeholder="Nomi (masalan: Ipak Yo'li Zapravka)" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
-        <input id="adPhone" placeholder="Telefon raqami (+99890...)" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
-        <textarea id="adDesc" placeholder="Qisqacha tavsif va qulayliklar..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;height:50px;resize:none;"></textarea>
-        <button id="submitAdBtn" style="width:100%;padding:10px;border-radius:10px;background:#22A06B;color:#fff;border:none;font-weight:700;font-size:11px;cursor:pointer;">Tasdiqlash uchun yuborish</button>
+        <input id="adName" placeholder="Nomi..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
+        <input id="adPhone" placeholder="Telefon (+99890...)" style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;" />
+        <textarea id="adDesc" placeholder="Tavsif..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #DDE3EA;margin-bottom:8px;font-size:11px;background:#fff;height:45px;resize:none;"></textarea>
+        <button id="submitAdBtn" style="width:100%;padding:10px;border-radius:10px;background:var(--green);color:#fff;border:none;font-weight:700;font-size:11px;cursor:pointer;">Tasdiqlash uchun yuborish</button>
       </div>
-    
+
+      <div id="roadsideArea" class="drivers-list"></div>
     </div>
 
     <!-- VIEW 3: PROFILE -->
     <div id="view-profile" style="display:none">
-      <div style="font-size:13px;font-weight:800;margin-bottom:12px;color:#0B2A5B">Mening profilim</div>
+      <div style="font-size:13px;font-weight:800;margin-bottom:12px;color:var(--ink)">Mening profilim</div>
       <div class="profile-card">
-        <div id="pName" style="font-size:13px;font-weight:700;color:#0B2A5B;margin-bottom:2px">Yuklanmoqda...</div>
-        <div style="font-size:11px;color:#7C8AA0;margin-bottom:10px" id="pId">Telegram ID</div>
-        <div style="font-size:11px;color:#7C8AA0">Balansdagi mablag'</div>
+        <div id="pName" style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px">Yuklanmoqda...</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px" id="pId">Telegram ID</div>
+        <div style="font-size:11px;color:var(--muted)">Balansdagi mablag'</div>
         <div class="pc-bal">124 500 so'm</div>
-        <div id="pStatus" style="font-size:11px;color:#22A06B;margin-top:10px;font-weight:700"></div>
+        <div id="pStatus" style="font-size:11px;color:var(--green);margin-top:10px;font-weight:700"></div>
       </div>
     </div>
 
     <!-- TABS -->
     <div class="tabs">
-      <button class="tab active" data-target="order">Buyurtma</button>
-      <button class="tab" data-target="roadside">Xizmatlar</button>
-      <button class="tab" data-target="profile">Profil</button>
+      <div class="tab-indicator" id="tabIndicator" style="left:0%;width:33.33%"></div>
+      <div class="tabs-row">
+        <button class="tab active" data-target="order">
+          <span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass-filled"/></svg></span>
+          <span class="tab-label">Buyurtma</span>
+        </button>
+        <button class="tab" data-target="roadside">
+          <span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-road-duo"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-compass-filled"/></svg></span>
+          <span class="tab-label">Xizmatlar</span>
+        </button>
+        <button class="tab" data-target="profile">
+          <span class="tab-ic-wrap"><svg class="ic ic-o" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user"/></svg><svg class="ic ic-f" viewBox="0 0 24 24"><use href="/static/icons.svg#i-user-filled"/></svg></span>
+          <span class="tab-label">Profil</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -150,7 +265,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
         $('pName').textContent = data.first_name || 'Foydalanuvchi';
         $('pId').textContent = 'ID: ' + data.id;
         $('avatarBox').textContent = (data.first_name || 'U')[0].toUpperCase();
-        $('pStatus').textContent = data.has_driver_profile ? '🚗 Haydovchi' : '🙋‍♂️ Mijoz';
+        $('pStatus').textContent = data.has_driver_profile ? '🚗 Haydovchi maqomi faol' : '🙋‍♂️ Yoʻlovchi rejimida';
       }
     } catch(e) { $('pName').textContent = 'Foydalanuvchi'; }
   }
@@ -159,6 +274,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
   let currentService = 'passenger';
   document.querySelectorAll('#view-order .pill').forEach(p=>{
     p.addEventListener('click', ()=>{
+      WT.tap();
       document.querySelectorAll('#view-order .pill').forEach(x=>x.classList.remove('active'));
       p.classList.add('active');
       currentService = p.dataset.svc;
@@ -166,8 +282,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
   });
 
   $('callBtn').addEventListener('click', async ()=>{
+    WT.impact();
     const area = $('resultsArea');
-    area.innerHTML = '<div style="text-align:center;padding:12px;color:#7C8AA0;font-size:11px">Bazadan haydovchilar izlanmoqda...</div>';
+    area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">PostgreSQL bazasidan haydovchilar izlanmoqda...</div>';
     const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
     try {
       const res = await fetch('/api/drivers/search', {
@@ -176,21 +293,41 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
         body: JSON.stringify({from_loc: $('fromInput').value, to_loc: $('toInput').value, service_type: currentService})
       });
       const data = await res.json();
+
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
+        body: JSON.stringify({
+          from_loc: $('fromInput').value,
+          to_loc: $('toInput').value,
+          service_type: currentService,
+          full_name: $('pName').textContent,
+          phone: '+998901234567'
+        })
+      });
+
       if(data.matches && data.matches.length > 0) {
         area.innerHTML = '';
         data.matches.forEach(drv=>{
           const card = document.createElement('div');
-          card.className = 'service-card';
-          card.innerHTML = `<div style="font-weight:700;font-size:12px">${drv.full_name}</div><div style="font-size:10px;color:#7C8AA0">${drv.car_model} · ${drv.car_number} | 📞 ${drv.phone || 'Yoʻq'}</div>`;
+          card.className = 'driver-card';
+          card.innerHTML = `
+            <div class="driver-top">
+              <div class="driver-info">
+                <div class="driver-avatar">${drv.full_name[0]}</div>
+                <div>
+                  <div class="driver-name">${drv.full_name}</div>
+                  <div class="driver-car">${drv.car_model} · ${drv.car_number}</div>
+                </div>
+              </div>
+              <button class="book-btn" onclick="alert('✅ Buyurtma yuborildi!')">Tanlash</button>
+            </div>
+            <div style="font-size:10px;color:var(--muted)">📞 Tel: ${drv.phone || 'Yoʻq'} | Boʻsh joy: ${drv.seats || 4} ta</div>
+          `;
           area.appendChild(card);
         });
       } else {
-        area.innerHTML = '<div style="text-align:center;padding:12px;color:#7C8AA0;font-size:11px">Haydovchi topilmadi, buyurtmangiz bazaga yozildi!</div>';
-        await fetch('/api/orders', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
-          body: JSON.stringify({from_loc: $('fromInput').value, to_loc: $('toInput').value, service_type: currentService, full_name: $('pName').textContent, phone: '+998901234567'})
-        });
+        area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Haydovchi topilmadi. Buyurtmangiz bazaga yozildi!</div>';
       }
     } catch(e) { area.innerHTML = '<div style="text-align:center;padding:12px;color:red;font-size:11px">Xatolik!</div>'; }
   });
@@ -199,7 +336,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
   async function loadRoadside(type) {
     currentRoadsideType = type;
     const area = $('roadsideArea');
-    area.innerHTML = '<div style="text-align:center;padding:12px;color:#7C8AA0;font-size:11px">Yuklanmoqda...</div>';
+    area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Xizmatlar qidirilmoqda...</div>';
     try {
       const res = await fetch(`/api/roadside?type=${type}&lat=41.3111&lon=69.2797`);
       const items = await res.json();
@@ -207,88 +344,81 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;col
         area.innerHTML = '';
         items.forEach(item=>{
           const card = document.createElement('div');
-          card.className = 'service-card';
+          card.className = 'driver-card';
           card.innerHTML = `
-            <div style="font-weight:700;font-size:12px;color:#0B2A5B">${item.name}</div>
-            <div style="font-size:10px;color:#7C8AA0">${item.description || ''}</div>
-            <div style="font-size:10px;color:#0B2A5B;font-family:'JetBrains Mono',monospace">📞 ${item.phone || 'Yoʻq'} | 📍 ${(item.distance || 0).toFixed(1)} km</div>
+            <div style="font-weight:700;font-size:12px;color:var(--ink)">${item.name}</div>
+            <div style="font-size:10px;color:var(--muted)">${item.description || ''}</div>
+            <div style="font-size:10px;color:var(--navy);font-family:'JetBrains Mono',monospace">📞 ${item.phone || 'Yoʻq'} | 📍 ${(item.distance || 0).toFixed(1)} km</div>
           `;
           area.appendChild(card);
         });
       } else {
-        area.innerHTML = '<div style="text-align:center;padding:12px;color:#7C8AA0;font-size:11px">Bu turdagi xizmatlar topilmadi.</div>';
+        area.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);font-size:11px">Bu turdagi xizmatlar topilmadi.</div>';
       }
     } catch(e) { area.innerHTML = '<div style="text-align:center;padding:12px;color:red;font-size:11px">Xatolik!</div>'; }
   }
 
   document.querySelectorAll('#roadsidePills .pill').forEach(p=>{
     p.addEventListener('click', ()=>{
+      WT.tap();
       document.querySelectorAll('#roadsidePills .pill').forEach(x=>x.classList.remove('active'));
       p.classList.add('active');
       loadRoadside(p.dataset.type);
     });
   });
 
+  // Ad form toggle & submit
+  const showAdBtn = $('showAdFormBtn');
+  const adForm = $('adFormContainer');
+  if(showAdBtn && adForm) {
+    showAdBtn.addEventListener('click', ()=>{
+      WT.tap();
+      adForm.style.display = adForm.style.display === 'none' ? 'block' : 'none';
+    });
+  }
+
+  const submitAdBtn = $('submitAdBtn');
+  if(submitAdBtn) {
+    submitAdBtn.addEventListener('click', async ()=>{
+      WT.impact();
+      const type = $('adServiceType').value;
+      const name = $('adName').value;
+      const phone = $('adPhone').value;
+      const desc = $('adDesc').value;
+      if(!name || !phone) { alert('Nom va telefonni kiriting!'); return; }
+      
+      const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : '';
+      const res = await fetch('/api/ads', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-Init-Data': initData},
+        body: JSON.stringify({service_type: type, name: name, phone: phone, description: desc, latitude: 41.3111, longitude: 69.2797, fuel_types: 'AI-92'})
+      });
+      if(res.ok) {
+        WT.success();
+        alert('✅ E'loningiz adminga yuborildi!');
+        adForm.style.display = 'none';
+      } else { alert('❌ Xatolik yuz berdi'); }
+    });
+  }
+
+  // Tabs switching with indicator animation
   const views = {order:$('view-order'), roadside:$('view-roadside'), profile:$('view-profile')};
+  const tabKeys = ['order', 'roadside', 'profile'];
+
   document.querySelectorAll('.tab').forEach(t=>{
     t.addEventListener('click', ()=>{
+      WT.tap();
       document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
       t.classList.add('active');
       const target = t.dataset.target;
-      Object.keys(views).forEach(k=> views[k].style.display = (k === target)?'block':'none');
+      $('tabIndicator').style.left = (tabKeys.indexOf(target) * 33.333) + '%';
+      
+      Object.keys(views).forEach(k=>{
+        views[k].style.display = (k === target) ? 'block' : 'none';
+      });
       if(target === 'roadside') loadRoadside(currentRoadsideType);
     });
   });
-
-      const showAdBtn = document.getElementById("showAdFormBtn");
-      const adForm = document.getElementById("adFormContainer");
-      if(showAdBtn && adForm) {
-        showAdBtn.addEventListener("click", () => {
-          adForm.style.display = adForm.style.display === "none" ? "block" : "none";
-        });
-      }
-
-      const submitAdBtn = document.getElementById("submitAdBtn");
-      if(submitAdBtn) {
-        submitAdBtn.addEventListener("click", async () => {
-          const type = document.getElementById("adServiceType").value;
-          const name = document.getElementById("adName").value;
-          const phone = document.getElementById("adPhone").value;
-          const desc = document.getElementById("adDesc").value;
-
-          if(!name || !phone) {
-            alert("Iltimos, nom va telefon raqamini kiriting!");
-            return;
-          }
-
-          const initData = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp.initData : "";
-          try {
-            const res = await fetch("/api/ads", {
-              method: "POST",
-              headers: {"Content-Type": "application/json", "X-Init-Data": initData},
-              body: JSON.stringify({
-                service_type: type,
-                name: name,
-                phone: phone,
-                description: desc,
-                latitude: 41.3111,
-                longitude: 69.2797,
-                fuel_types: "AI-92, Metan"
-              })
-            });
-            const data = await res.json();
-            if(res.ok) {
-              alert("✅ E'loningiz muvaffaqiyatli qabul qilindi va adminga yuborildi!");
-              adForm.style.display = "none";
-            } else {
-              alert("❌ Xatolik: " + (data.error || "Noma'lum"));
-            }
-          } catch(e) {
-            alert("Server bilan aloqada xatolik!");
-          }
-        });
-      }
-    
 })();
 </script>
 </body>
