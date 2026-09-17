@@ -176,11 +176,15 @@ async def init_db():
                 description TEXT,
                 photo_id TEXT,
                 is_active INT DEFAULT 0,
+                status TEXT DEFAULT 'pending',
                 expires_at TIMESTAMP,
+                last_expiry_reminder TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
         await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS fuel_types TEXT;")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending';")
+        await db.execute("ALTER TABLE service_ads ADD COLUMN IF NOT EXISTS last_expiry_reminder TIMESTAMP;")
         await db.execute("""
             CREATE TABLE IF NOT EXISTS service_payments (
                 id SERIAL PRIMARY KEY,
