@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import hmac
 import json
@@ -129,8 +130,13 @@ def require_admin(handler):
     return wrapper
 
 
+def _serialize(v):
+    if isinstance(v, (datetime.datetime, datetime.date)):
+        return v.isoformat()
+    return v
+
 def row_list(rows):
-    return [dict(r) for r in rows]
+    return [{k: _serialize(v) for k, v in dict(r).items()} for r in rows]
 
 
 # ------------------------------------------------------------------ #
