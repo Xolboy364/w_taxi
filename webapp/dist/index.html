@@ -189,7 +189,15 @@ textarea.field-input{resize:none;height:64px}
 .toast .ic{width:15px;height:15px;color:var(--green);flex-shrink:0}
 .tg-badge{position:fixed;bottom:8px;left:8px;z-index:100;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--silver);background:rgba(255,255,255,.6);padding:3px 7px;border-radius:6px;opacity:.7;pointer-events:none}
 #tgLoginWrap{display:flex;justify-content:center;padding:8px 0}
+#rsMap{height:320px;border-radius:16px;overflow:hidden;margin-bottom:14px;position:relative;flex-shrink:0}
+.vtab-row{display:flex;gap:6px;margin-bottom:12px;flex-shrink:0}
+.vtab{flex:1;padding:9px;border-radius:10px;text-align:center;font-size:11.5px;font-weight:700;cursor:pointer;border:1px solid var(--hair);color:var(--muted);background:#F8FAFC;transition:all .2s}
+.vtab.active{background:var(--navy);color:#fff;border-color:transparent}
+.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 8px 24px -8px rgba(11,42,91,.18)!important}
+.leaflet-popup-content{margin:10px 12px!important;font-size:12px;line-height:1.5}
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -723,7 +731,8 @@ function renderDriverRegister(){
 /* ============================================================= */
 /* SECTION: ROADSIDE + HEAVY EQUIPMENT + ADS                        */
 /* ============================================================= */
-const RS = {mode:'search', cat:'gas', fuel:'', items:[]};
+const RS = {mode:'search', cat:'gas', fuel:'', items:[], view:'list', coords:null};
+let _rsMap = null;
 function renderRoadside(){
   clearPillTabs();
   $('content').innerHTML = `
@@ -741,9 +750,12 @@ function renderRoadsideSearch(){
     <div class="cat-grid" id="catGrid">${SERVICE_TYPES.map(s=>`<div class="cat-cell ${RS.cat===s.key?'active':''}" data-c="${s.key}"><div class="cat-ic"><svg class="ic" viewBox="0 0 24 24"><use href="#${s.icon}"/></svg></div><div class="cat-label">${s.label}</div></div>`).join('')}</div>
     ${RS.cat==='gas' ? `<div class="field-label">Yoqilg'i turi</div><div class="chip-row" id="fuelChips"><div class="chip ${!RS.fuel?'active':''}" data-f="">Barchasi</div>${FUEL_TYPES.map(f=>`<div class="chip ${RS.fuel===f.key?'active':''}" data-f="${f.key}"><span class="dot" style="background:${f.c}"></span>${f.label}</div>`).join('')}</div>` : ''}
     <div class="sec-head"><span class="sec-title">Natijalar</span><span class="sec-action" id="rsCount"></span></div>
+    <div class="vtab-row"><div class="vtab ${RS.view==='list'?'active':''}" id="vtabList">&#9776; Ro'yxat</div><div class="vtab ${RS.view==='map'?'active':''}" id="vtabMap">&#9711; Xarita</div></div>
     <div id="rsResults"><div class="empty-note">Yuklanmoqda...</div></div>`;
   $('catGrid').addEventListener('click', e=>{ const c=e.target.closest('.cat-cell'); if(!c) return; WT.select(); RS.cat=c.dataset.c; RS.fuel=''; renderRoadsideSearch(); loadRoadside(); });
   $('fuelChips') && $('fuelChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); RS.fuel=c.dataset.f; renderRoadsideSearch(); loadRoadside(); });
+  $('vtabList').addEventListener('click', ()=>{ if(RS.view==='list') return; RS.view='list'; if(_rsMap){_rsMap.remove();_rsMap=null;} $('vtabList').classList.add('active'); $('vtabMap').classList.remove('active'); renderRoadsideListView(RS.items); });
+  $('vtabMap').addEventListener('click', ()=>{ if(RS.view==='map') return; RS.view='map'; $('vtabMap').classList.add('active'); $('vtabList').classList.remove('active'); renderRoadsideMapView(RS.items); });
   loadRoadside();
 }
 async function loadRoadside(){
@@ -755,13 +767,45 @@ async function loadRoadside(){
       if(!navigator.geolocation) return res(null);
       navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lon:p.coords.longitude}), ()=>res(null), {timeout:3000});
     });
+    RS.coords = coords;
     const params = new URLSearchParams({type: apiCat}); if(RS.fuel) params.set('fuel', RS.fuel);
     if(coords){ params.set('lat', coords.lat); params.set('lon', coords.lon); }
     const items = await apiGet('/api/roadside?' + params.toString());
     RS.items = items;
-    $('rsCount').textContent = items.length + ' ta';
-    box.innerHTML = items.length ? items.map(i=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy)"><svg class="ic" viewBox="0 0 24 24"><use href="#${SERVICE_TYPES.find(s=>s.key===RS.cat).icon}"/></svg></div><div class="tx"><div class="nm">${esc(i.name)}</div><div class="sub">${esc(i.description||i.phone)}</div></div>${typeof i.distance==='number'?`<div class="side"><div class="num">${i.distance.toFixed(1)}</div><div class="unit">km</div></div>`:''}</div>`).join('') : '<div class="empty-note">Bu filtr bo\'yicha xizmat topilmadi.</div>';
+    const cnt = $('rsCount'); if(cnt) cnt.textContent = items.length + ' ta';
+    if(RS.view === 'map') renderRoadsideMapView(items);
+    else renderRoadsideListView(items);
   }catch(e){ box.innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
+}
+function renderRoadsideListView(items){
+  const box = $('rsResults'); if(!box) return;
+  if(_rsMap){_rsMap.remove();_rsMap=null;}
+  box.innerHTML = items.length ? items.map(i=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy)"><svg class="ic" viewBox="0 0 24 24"><use href="#${SERVICE_TYPES.find(s=>s.key===RS.cat).icon}"/></svg></div><div class="tx"><div class="nm">${esc(i.name)}</div><div class="sub">${esc(i.description||i.phone)}</div></div>${typeof i.distance==='number'?`<div class="side"><div class="num">${i.distance.toFixed(1)}</div><div class="unit">km</div></div>`:''}</div>`).join('') : '<div class="empty-note">Bu filtr bo\'yicha xizmat topilmadi.</div>';
+}
+function renderRoadsideMapView(items){
+  const box = $('rsResults'); if(!box) return;
+  if(_rsMap){_rsMap.remove();_rsMap=null;}
+  box.innerHTML = '<div id="rsMap"></div>';
+  if(typeof L === 'undefined'){ box.innerHTML = '<div class="empty-note">Xarita yuklanmadi. Internetni tekshiring.</div>'; return; }
+  const center = RS.coords ? [RS.coords.lat, RS.coords.lon] : [41.2995, 69.2401];
+  _rsMap = L.map('rsMap',{zoomControl:true,attributionControl:false}).setView(center,13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(_rsMap);
+  if(RS.coords){
+    L.circleMarker([RS.coords.lat,RS.coords.lon],{radius:9,fillColor:'#0B2A5B',fillOpacity:1,color:'#fff',weight:2.5}).addTo(_rsMap).bindPopup('<b>Siz bu yerdasiz</b>');
+  }
+  const ST_COLORS={gas:'#22A06B',food:'#E8A500',hotel:'#0B2A5B',service:'#C2560B',autosalon:'#1A3B7A',heavy:'#7C8AA0'};
+  const color=ST_COLORS[RS.cat]||'#22A06B';
+  const validItems=items.filter(i=>i.latitude!=null&&i.longitude!=null);
+  validItems.forEach((item,idx)=>{
+    const icon=L.divIcon({className:'',html:`<div style="background:${color};width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-family:monospace;font-size:10px;font-weight:800">${idx+1}</div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-18]});
+    L.marker([item.latitude,item.longitude],{icon}).addTo(_rsMap).bindPopup(`<div style="min-width:130px"><b>${esc(item.name)}</b><br><span style="color:#64748B;font-size:11px">${esc(item.phone||'')}</span>${typeof item.distance==='number'?`<br><span style="color:${color};font-weight:700">${item.distance.toFixed(1)} km</span>`:''}</div>`);
+  });
+  if(validItems.length>0){
+    const pts=validItems.map(i=>[i.latitude,i.longitude]);
+    if(RS.coords) pts.push([RS.coords.lat,RS.coords.lon]);
+    if(pts.length>1) _rsMap.fitBounds(L.latLngBounds(pts),{padding:[24,24],maxZoom:14});
+  }
+  setTimeout(()=>_rsMap&&_rsMap.invalidateSize(),150);
 }
 function renderRoadsidePost(){
   if(!S.me){ $('rsBody').innerHTML = '<div class="empty-note">E\'lon joylashtirish uchun tizimga kiring.</div>'; return; }
