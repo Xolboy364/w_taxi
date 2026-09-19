@@ -767,6 +767,11 @@ def register_webapp_routes(app: web.Application, bot):
         async def spa_index(request):
             return web.FileResponse(STATIC_DIR / "index.html")
 
+        async def landing_index(request):
+            return web.FileResponse(STATIC_DIR / "landing.html")
+
+        app.router.add_get("/", landing_index)
+        app.router.add_get("/landing", landing_index)
         app.router.add_get("/app", spa_index)
         app.router.add_get("/app/", spa_index)
         app.router.add_static("/app/static", STATIC_DIR, show_index=False)
