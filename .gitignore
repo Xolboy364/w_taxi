@@ -1,9 +1,37 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+venv/
+env/
+*.egg-info/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+bot.db
+
+# Backups
+*.bak
+*.before-fix
+*.old
+*~
+
+# Redis
 dump.rdb
-__pycache__/
-*.pyc
-dump.rdb
-__pycache__/
-*.pyc
-dump.rdb
+
+# Archive
+_archive*/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
