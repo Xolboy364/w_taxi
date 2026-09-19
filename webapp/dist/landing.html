@@ -632,10 +632,10 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
 <div class="stats-strip">
   <div class="container">
     <div class="stats-grid">
-      <div class="stat-item"><div class="stat-val" data-count="1335">0</div><div class="stat-lbl">Yo'nalish</div></div>
+      <div class="stat-item"><div class="stat-val" id="stat-routes" data-count="1335">0</div><div class="stat-lbl">Yo'nalish</div></div>
       <div class="stat-item"><div class="stat-val" data-count="14">0</div><div class="stat-lbl">Viloyat</div></div>
-      <div class="stat-item"><div class="stat-val" data-count="12458">0</div><div class="stat-lbl">Foydalanuvchilar</div></div>
-      <div class="stat-item"><div class="stat-val" data-count="8932">0</div><div class="stat-lbl">Buyurtmalar</div></div>
+      <div class="stat-item"><div class="stat-val" id="stat-drivers" data-count="12458">0</div><div class="stat-lbl">Haydovchilar</div></div>
+      <div class="stat-item"><div class="stat-val" id="stat-orders" data-count="8932">0</div><div class="stat-lbl">Buyurtmalar</div></div>
       <div class="stat-item"><div class="stat-val">98%</div><div class="stat-lbl">Mamnun mijozlar</div></div>
     </div>
   </div>
@@ -1121,7 +1121,7 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
         <div class="admin-top">
           <div class="metric">
             <div class="metric-label">Foydalanuvchilar</div>
-            <div class="metric-value" data-count="12458">0</div>
+            <div class="metric-value" id="metric-drivers" data-count="12458">0</div>
             <span class="metric-delta up">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14l5-5 5 5"/></svg>
               +12%
@@ -1129,7 +1129,7 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
           </div>
           <div class="metric">
             <div class="metric-label">Buyurtmalar</div>
-            <div class="metric-value" data-count="8932">0</div>
+            <div class="metric-value" id="metric-orders" data-count="8932">0</div>
             <span class="metric-delta up">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14l5-5 5 5"/></svg>
               +18%
@@ -1137,7 +1137,7 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
           </div>
           <div class="metric">
             <div class="metric-label">Haydovchilar</div>
-            <div class="metric-value" data-count="482">0</div>
+            <div class="metric-value" id="metric-drivers-2" data-count="482">0</div>
             <span class="metric-delta up">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14l5-5 5 5"/></svg>
               +8%
@@ -1423,7 +1423,27 @@ var counterObs = new IntersectionObserver(function(entries){
     }
   });
 }, { threshold: 0.5 });
-document.querySelectorAll('[data-count]').forEach(function(m){ counterObs.observe(m); });
+function startCounters() {
+  document.querySelectorAll('[data-count]').forEach(function(m){ counterObs.observe(m); });
+}
+fetch('/api/stats/public')
+  .then(function(r){ return r.json(); })
+  .then(function(s){
+    var map = {
+      'stat-routes': s.routes,
+      'stat-drivers': s.drivers,
+      'stat-orders': s.orders,
+      'metric-drivers': s.drivers,
+      'metric-orders': s.orders,
+      'metric-drivers-2': s.drivers
+    };
+    Object.keys(map).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && map[id] != null) el.dataset.count = map[id];
+    });
+  })
+  .catch(function(){})
+  .finally(startCounters);
 
 // Live orders
 var mockOrders = [
