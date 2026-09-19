@@ -11,18 +11,7 @@ from aiohttp import web
 import database as db
 from config import ADMIN_ID, BOT_TOKEN
 
-
 STATIC_DIR = Path(__file__).parent / "webapp" / "dist"
-print(f"[DEBUG] STATIC_DIR yo'li: {STATIC_DIR}, Mavjudmi: {STATIC_DIR.exists()}")
-if STATIC_DIR.exists():
-    print(f"[DEBUG] dist ichidagilar: {list(STATIC_DIR.iterdir())}")
-else:
-    # Ehtimol dist papkasi boshqa joydadir, qidirib ko'ramiz
-    parent_dist = Path(__file__).parent.parent / "webapp" / "dist"
-    if parent_dist.exists():
-        STATIC_DIR = parent_dist
-        print(f"[DEBUG] Topildi (parent): {STATIC_DIR}")
-
 
 MAX_ORDERS_PER_HOUR = 3  # handlers.py bilan bir xil qiymat
 
@@ -449,6 +438,47 @@ async def submit_ad(request: web.Request):
     return web.json_response({"ad_id": ad_id, "amount": amount})
 
 
+@require_auth
+async def my_orders(request: web.Request):
+    """database.py da 'foydalanuvchining o'z buyurtmalari' funksiyasi yo'q
+    (faqat haydovchi tomoni bor), shuning uchun database.py ga tegmasdan
+    shu yerda to'g'ridan-to'g'ri (faqat o'qish) so'rov yuboriladi."""
+    uid = request["user"]["id"]
+    async with db.pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT id, from_loc, to_loc, phone, service_type, is_active, created_at
+            FROM passenger_orders WHERE user_id = $1
+            ORDER BY id DESC LIMIT 20
+        """, uid)
+    return web.json_response(row_list(rows))
+
+
+@require_auth
+async def my_ads(request: web.Request):
+    uid = request["user"]["id"]
+    rows = await db.get_user_service_ads(uid)
+    return web.json_response(row_list(rows))
+
+
+@require_auth
+async def my_settings_get(request: web.Request):
+    uid = request["user"]["id"]
+    phone = await db.get_user_phone(uid)
+    return web.json_response({"phone": phone})
+
+
+@require_auth
+async def my_settings_save(request: web.Request):
+    uid = request["user"]["id"]
+    body = await request.json()
+    phone = (body.get("phone") or "").strip()
+    if not phone:
+        return web.json_response({"error": "phone_required"}, status=400)
+    full_name = request["user"].get("first_name") or "Veb foydalanuvchi"
+    await db.save_user_phone(uid, full_name, phone)
+    return web.json_response({"ok": True})
+
+
 # ------------------------------------------------------------------ #
 #  Admin-only endpoints                                                #
 # ------------------------------------------------------------------ #
@@ -622,45 +652,77 @@ async def admin_broadcast(request: web.Request):
     return web.json_response({"sent": sent})
 
 
+@require_admin
+async def admin_get_admins(request: web.Request):
+    rows = await db.get_all_admins()
+    return web.json_response(row_list(rows))
+
+
+@require_admin
+async def admin_add_admin(request: web.Request):
+    body = await request.json()
+    tid = body.get("telegram_id")
+    name = (body.get("full_name") or "").strip()
+    if not tid or not name:
+        return web.json_response({"error": "missing_fields"}, status=400)
+    await db.add_admin(int(tid), name, request["user"]["id"])
+    await db.log_activity(request["user"]["id"], "Admin", "ADD_ADMIN_WEB", f"Admin qo'shildi: {tid}")
+    return web.json_response({"ok": True})
+
+
+@require_admin
+async def admin_remove_admin(request: web.Request):
+    tid = int(request.match_info["admin_id"])
+    await db.remove_admin(tid)
+    await db.log_activity(request["user"]["id"], "Admin", "REMOVE_ADMIN_WEB", f"Admin o'chirildi: {tid}")
+    return web.json_response({"ok": True})
+
+
+@require_admin
+async def admin_get_bans(request: web.Request):
+    """database.py da 'barcha bloklanganlar' funksiyasi yo'q, shuning uchun
+    (o'zgartirmasdan) shu yerda to'g'ridan-to'g'ri o'qish so'rovi yuboriladi."""
+    async with db.pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT telegram_id, ban_reason, ban_until FROM users
+            WHERE is_banned = 1 ORDER BY telegram_id DESC LIMIT 50
+        """)
+    return web.json_response(row_list(rows))
+
+
+@require_admin
+async def admin_get_card(request: web.Request):
+    card = await db.get_setting("p2p_card_number", "8600123456789012")
+    return web.json_response({"card_number": card})
+
+
+@require_admin
+async def admin_set_card(request: web.Request):
+    body = await request.json()
+    card = "".join(ch for ch in (body.get("card_number") or "") if ch.isdigit())
+    if len(card) != 16:
+        return web.json_response({"error": "invalid_card"}, status=400)
+    await db.set_setting("p2p_card_number", card)
+    await db.log_activity(request["user"]["id"], "Admin", "ADMIN_CHANGE_CARD_WEB", f"Yangi karta: {card}")
+    return web.json_response({"ok": True})
+
+
+@require_admin
+async def admin_set_password(request: web.Request):
+    body = await request.json()
+    new_pass = body.get("new_password") or ""
+    if len(new_pass) < 4:
+        return web.json_response({"error": "password_too_short"}, status=400)
+    await db.set_super_admin_password(new_pass)
+    await db.log_activity(request["user"]["id"], "Admin", "ADMIN_CHANGE_PASSWORD_WEB", "Parol o'zgartirildi (veb orqali)")
+    return web.json_response({"ok": True})
+
+
 # ------------------------------------------------------------------ #
 #  Route registration                                                 #
 # ------------------------------------------------------------------ #
 
-@require_auth
-async def get_history(request: web.Request):
-    """Foydalanuvchining buyurtmalar tarixi."""
-    uid = request["user"]["id"]
-    async with db.pool.acquire() as conn:
-        rows = await conn.fetch("""
-            SELECT id, from_loc, to_loc, service_type, is_active,
-                   to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at_str
-            FROM passenger_orders
-            WHERE user_id = $1
-            ORDER BY id DESC
-            LIMIT 30
-        """, uid)
-    return web.json_response([dict(r) for r in rows])
-
-
-@require_auth
-async def get_profile(request: web.Request):
-    """Foydalanuvchi profili + haydovchi ma'lumotlari."""
-    uid = request["user"]["id"]
-    driver = await db.get_driver(uid)
-    is_sub = await db.is_driver_subscribed(uid) if driver else False
-    routes_count = await db.get_driver_routes_count(uid) if driver else 0
-    return web.json_response({
-        "user_id": uid,
-        "first_name": request["user"].get("first_name", ""),
-        "driver": dict(driver) if driver else None,
-        "is_subscribed": is_sub,
-        "routes_count": routes_count,
-        "balance": 0,
-    })
-
-
 def register_webapp_routes(app: web.Application, bot):
-
     app["bot"] = bot
 
     app.router.add_post("/api/auth/login-widget", auth_login_widget)
@@ -676,9 +738,11 @@ def register_webapp_routes(app: web.Application, bot):
     app.router.add_post("/api/driver/routes", driver_add_routes)
     app.router.add_delete("/api/driver/routes", driver_clear_routes)
     app.router.add_get("/api/driver/orders", driver_orders)
-    app.router.add_get("/api/history", get_history)
-    app.router.add_get("/api/profile", get_profile)
     app.router.add_post("/api/ads", submit_ad)
+    app.router.add_get("/api/me/orders", my_orders)
+    app.router.add_get("/api/me/ads", my_ads)
+    app.router.add_get("/api/me/settings", my_settings_get)
+    app.router.add_post("/api/me/settings", my_settings_save)
 
     app.router.add_get("/api/admin/stats", admin_stats)
     app.router.add_get("/api/admin/logs", admin_logs)
@@ -687,43 +751,22 @@ def register_webapp_routes(app: web.Application, bot):
     app.router.add_post("/api/admin/ban", admin_ban)
     app.router.add_post("/api/admin/unban", admin_unban)
     app.router.add_get("/api/admin/drivers", admin_drivers)
+    app.router.add_get("/api/admin/admins", admin_get_admins)
+    app.router.add_post("/api/admin/admins", admin_add_admin)
+    app.router.add_delete("/api/admin/admins/{admin_id}", admin_remove_admin)
+    app.router.add_get("/api/admin/bans", admin_get_bans)
+    app.router.add_get("/api/admin/settings/card", admin_get_card)
+    app.router.add_post("/api/admin/settings/card", admin_set_card)
+    app.router.add_post("/api/admin/settings/password", admin_set_password)
     app.router.add_get("/api/admin/ads/pending", admin_ads_pending)
     app.router.add_post("/api/admin/ads/{ad_id}/approve", admin_ads_approve)
     app.router.add_post("/api/admin/ads/{ad_id}/reject", admin_ads_reject)
     app.router.add_post("/api/admin/broadcast", admin_broadcast)
 
-    async def spa_index(request):
-        idx_file = STATIC_DIR / "index.html"
-        if idx_file.exists():
-            return web.FileResponse(idx_file)
-        return web.Response(text=f"W-Taxi build fayli topilmadi: {idx_file}", status=404)
-
-    app.router.add_get("/", spa_index)
-    
-    # Added root static routes
-    app.router.add_get('/manifest.json', serve_manifest)
-    app.router.add_get('/icons.svg', serve_icons)
-    app.router.add_get('/telegram.js', serve_telegram_js)
-
-    app.router.add_get("/app", spa_index)
-    
-    # Added root static routes
-    app.router.add_get('/manifest.json', serve_manifest)
-    app.router.add_get('/icons.svg', serve_icons)
-    app.router.add_get('/telegram.js', serve_telegram_js)
-
-    app.router.add_get("/app/", spa_index)
     if STATIC_DIR.exists():
+        async def spa_index(request):
+            return web.FileResponse(STATIC_DIR / "index.html")
+
+        app.router.add_get("/app", spa_index)
+        app.router.add_get("/app/", spa_index)
         app.router.add_static("/app/static", STATIC_DIR, show_index=False)
-        app.router.add_static("/static", STATIC_DIR, show_index=False)
-
-
-# Root static file routes for PWA and assets
-async def serve_manifest(request):
-    return web.FileResponse('webapp/dist/manifest.json')
-
-async def serve_icons(request):
-    return web.FileResponse('webapp/dist/icons.svg')
-
-async def serve_telegram_js(request):
-    return web.FileResponse('webapp/dist/telegram.js')
