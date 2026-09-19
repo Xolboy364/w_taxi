@@ -1,18 +1,973 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#0B2A5B" />
-  <title>W-Taxi</title>
-  <link rel="manifest" href="/static/manifest.json" />
-  <!-- CSS dizayn faylini ulaymiz -->
-  <link rel="stylesheet" href="/static/styles.css" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#F5F7FB">
+<title>W-Taxi</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#F5F7FB;color:#0B2A5B;display:flex;justify-content:center;align-items:center;overscroll-behavior:none;user-select:none}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+:root{--navy:#0B2A5B;--navy-2:#1A3B7A;--navy-soft:rgba(11,42,91,.10);--green:#22A06B;--green-soft:rgba(34,160,107,.12);--amber:#E8A500;--amber-soft:rgba(232,165,0,.12);--rust:#C2560B;--red:#E5484D;--red-soft:rgba(229,72,77,.12);--silver:#A8B2BF;--silver-2:#DDE3EA;--bg:#F5F7FB;--ink:#0B2A5B;--muted:#7C8AA0;--hair:rgba(11,42,91,.08)}
+.phone{position:relative;width:100%;max-width:420px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+@media(min-width:640px){.phone{height:880px;border-radius:44px;box-shadow:0 60px 140px -30px rgba(11,42,91,.28),0 0 0 1px rgba(11,42,91,.06)}}
+.ic{display:inline-block;flex-shrink:0;width:1em;height:1em;color:currentColor;vertical-align:middle}
+.ic use{pointer-events:none}
+.map{position:absolute;inset:0;z-index:0;transition:opacity .3s}
+.map svg{width:100%;height:100%;display:block}
+.bgpanel{position:absolute;inset:0;z-index:0;background:linear-gradient(160deg,#0E1B33 0%,#0B2A5B 55%,#123661 100%);display:none}
+.bgpanel::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px;opacity:.5}
+.glow{position:absolute;border-radius:9999px;filter:blur(100px);pointer-events:none}
+.street-label{font-size:6.5px;font-weight:600;fill:#9AA7B8;letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#fff;stroke-width:1.5px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sheetIn{from{transform:translateY(80px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes sweep{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes modalIn{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fade-up{animation:fadeUp .3s cubic-bezier(.22,.61,.36,1) both}
+.sheet-in{animation:sheetIn .5s cubic-bezier(.22,.61,.36,1) both}
+.pop{animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both}
+.sweep{animation:sweep 2.6s ease-in-out infinite}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:9999px;animation:spin .7s linear infinite}
+.topbar{position:relative;z-index:20;padding:22px 20px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:9px;padding:8px 14px;border-radius:9999px;background:rgba(255,255,255,.94);backdrop-filter:blur(20px);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06)}
+.brand-w{width:17px;height:17px;color:var(--navy)}
+.brand-txt{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--navy)}
+.brand-txt .dash{color:var(--silver);margin:0 1px;font-weight:600}
+.brand-tag{font-size:9.5px;color:var(--silver);font-weight:600}
+.topbar.dark .brand{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.14)}
+.topbar.dark .brand-w,.topbar.dark .brand-txt{color:#fff}
+.topbar.dark .brand-tag{color:rgba(255,255,255,.55)}
+.avatar{width:38px;height:38px;border-radius:9999px;background:rgba(255,255,255,.94);border:1px solid var(--hair);box-shadow:0 4px 16px rgba(11,42,91,.06);display:flex;align-items:center;justify-content:center;color:var(--navy);overflow:hidden}
+.avatar .ic{width:17px;height:17px}
+.crown-badge{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9999px;background:rgba(232,165,0,.18);border:1px solid rgba(232,165,0,.35);color:var(--amber);font-size:10px;font-weight:800}
+.crown-badge .ic{width:12px;height:12px}
+.sheet{position:relative;z-index:20;margin-top:auto;background:linear-gradient(180deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.99) 100%);backdrop-filter:blur(30px);border-top:1px solid var(--hair);border-radius:32px 32px 0 0;padding:12px 18px 0;box-shadow:0 -20px 60px -20px rgba(11,42,91,.14);flex:1;display:flex;flex-direction:column;min-height:0}
+.handle{width:38px;height:4px;border-radius:9999px;background:rgba(11,42,91,.12);margin:0 auto 12px;flex-shrink:0}
+.scroll-area{overflow-y:auto;flex:1;min-height:0;padding-bottom:14px}
+.scroll-area::-webkit-scrollbar{display:none}
+.login-banner{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--amber-soft);border:1px solid rgba(232,165,0,.28);margin-bottom:12px;flex-shrink:0}
+.login-banner .ic{width:15px;height:15px;color:var(--amber);flex-shrink:0}
+.login-banner .txt{flex:1;font-size:10.5px;font-weight:700;color:#9A6B00;line-height:1.4}
+.pill-tabs{display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;flex-shrink:0}
+.pill-tabs::-webkit-scrollbar{display:none}
+.ptab{flex-shrink:0;padding:9px 15px;border-radius:9999px;background:#F1F5F9;border:1px solid var(--hair);font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.ptab.active{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-color:transparent}
+.mode-toggle{display:flex;background:#EEF2F8;border-radius:16px;padding:4px;position:relative;margin-bottom:14px;flex-shrink:0}
+.mode-bg{position:absolute;top:4px;bottom:4px;width:calc(50% - 4px);border-radius:12px;background:#fff;box-shadow:0 4px 14px rgba(11,42,91,.12);transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+.mode-toggle.b .mode-bg{transform:translateX(calc(100% + 4px))}
+.mode-opt{flex:1;position:relative;z-index:1;padding:11px 8px;text-align:center;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:color .3s}
+.mode-opt.sel{color:var(--ink)}
+.mode-opt .dot{width:6px;height:6px;border-radius:9999px;background:currentColor;display:inline-block;margin-right:6px}
+.mode-opt.sel .dot{background:var(--green)}
+.chip-row{display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;flex-wrap:wrap}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:9px 13px;border-radius:9999px;background:#F1F5F9;border:1px solid var(--hair);font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.chip.active{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--navy),var(--navy-2))}
+.chip .dot{width:6px;height:6px;border-radius:9999px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.cat-cell{border-radius:16px;padding:12px 6px;background:#F8FAFC;border:1px solid var(--hair);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .2s}
+.cat-cell.active{background:linear-gradient(135deg,var(--navy),var(--navy-2));border-color:transparent}
+.cat-ic{width:24px;height:24px;border-radius:9px;background:var(--navy-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cat-cell.active .cat-ic{background:rgba(255,255,255,.18);color:#fff}
+.cat-ic .ic{width:13px;height:13px}
+.cat-label{font-size:9px;font-weight:700;color:var(--muted);text-align:center;line-height:1.2}
+.cat-cell.active .cat-label{color:#fff}
+.field{margin-bottom:13px}
+.field-label{font-size:10.5px;font-weight:700;color:var(--muted);margin-bottom:7px;display:block}
+.field-input,.field-select,textarea.field-input{width:100%;padding:13px 14px;border-radius:14px;background:#F8FAFC;border:1px solid var(--hair);color:var(--ink);font-size:13px;font-weight:600;font-family:inherit;outline:none}
+textarea.field-input{resize:none;height:64px}
+.field-input::placeholder{color:var(--silver);font-weight:500}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.route-box{border-radius:22px;padding:15px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:14px}
+.route-inner{display:flex;gap:11px}
+.route-rail{display:flex;flex-direction:column;align-items:center;padding-top:6px}
+.dot-a{width:8px;height:8px;border-radius:9999px;background:var(--navy);box-shadow:0 0 0 3px var(--navy-soft)}
+.rail{width:1px;height:26px;margin:4px 0;background:linear-gradient(180deg,rgba(11,42,91,.4),rgba(34,160,107,.4))}
+.dot-b{width:8px;height:8px;border-radius:9999px;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.route-fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.route-sep{height:1px;background:var(--hair)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.stat-box{background:#F8FAFC;border:1px solid var(--hair);border-radius:16px;padding:12px 8px;text-align:center}
+.stat-num{font-size:16px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:8.5px;color:var(--muted);margin-top:3px;font-weight:700}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:16px}
+.sec-head:first-child{margin-top:0}
+.sec-title{font-size:12px;font-weight:800;color:var(--ink)}
+.sec-action{font-size:11px;font-weight:700;color:var(--navy-2);cursor:pointer}
+.card-row{display:flex;align-items:center;gap:11px;padding:12px;border-radius:18px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:8px}
+.card-row .ic-box{flex-shrink:0;width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center}
+.card-row .ic-box .ic{width:16px;height:16px}
+.card-row .tx{flex:1;min-width:0}
+.card-row .nm{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-row .sub{font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-row .side{flex-shrink:0;text-align:right}
+.card-row .side .num{font-size:13px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace}
+.card-row .side .unit{font-size:9px;color:var(--silver);font-weight:700}
+.empty-note{text-align:center;padding:26px 10px;color:var(--silver);font-size:11.5px;font-weight:600}
+.profile-card{border-radius:22px;padding:16px;margin-bottom:14px;background:linear-gradient(135deg,rgba(11,42,91,.08),rgba(11,42,91,.02));border:1px solid rgba(11,42,91,.18)}
+.profile-row{display:flex;align-items:center;gap:12px}
+.profile-av{position:relative;flex-shrink:0;width:50px;height:50px;border-radius:17px;background:linear-gradient(135deg,var(--navy),var(--navy-2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:800}
+.profile-crown{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:9999px;background:var(--amber);border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff}
+.profile-crown .ic{width:10px;height:10px}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-sub{font-size:11px;color:var(--navy-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status-toggle{margin-top:14px;display:flex;background:#EEF2F8;border-radius:16px;padding:4px;position:relative}
+.status-toggle-bg{position:absolute;top:4px;bottom:4px;width:calc(50% - 4px);border-radius:12px;background:#fff;box-shadow:0 4px 14px rgba(11,42,91,.12);transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+.status-toggle.on .status-toggle-bg{transform:translateX(calc(100% + 4px))}
+.status-opt{flex:1;position:relative;z-index:1;padding:11px 8px;text-align:center;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.status-opt.sel{color:var(--ink)}
+.sub-card{border-radius:20px;padding:15px;background:linear-gradient(135deg,rgba(232,165,0,.10),rgba(232,165,0,.02));border:1px solid rgba(232,165,0,.28)}
+.sub-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.sub-title{font-size:12px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px}
+.sub-title .ic{width:13px;height:13px;color:var(--amber)}
+.badge{font-size:9.5px;font-weight:800;padding:4px 9px;border-radius:9999px}
+.badge.on{background:var(--green-soft);color:var(--green)}
+.badge.off{background:var(--red-soft);color:var(--red)}
+.ctrl-card{border-radius:20px;padding:15px;background:#F8FAFC;border:1px solid var(--hair);margin-bottom:10px}
+.ctrl-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ctrl-title{font-size:12.5px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px}
+.ctrl-ic{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ctrl-ic .ic{width:12px;height:12px}
+.ctrl-desc{font-size:10.5px;color:var(--muted);line-height:1.5;margin:8px 0 12px}
+.btn-sm{width:100%;padding:11px;border-radius:12px;border:none;font-family:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:transform .12s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-sm:active{transform:scale(.97)}
+.btn-sm.ghost{background:#EEF2F8;color:var(--ink)}
+.btn-sm.danger{background:var(--red-soft);color:var(--red)}
+.btn-sm .ic{width:12px;height:12px}
+.rm-btn{flex-shrink:0;width:26px;height:26px;border-radius:9999px;background:var(--red-soft);color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.rm-btn .ic{width:12px;height:12px}
+.log-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--hair)}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:7px;height:7px;border-radius:9999px;margin-top:5px;flex-shrink:0}
+.log-tx{flex:1;min-width:0}
+.log-action{font-size:11px;font-weight:700;color:var(--ink)}
+.log-detail{font-size:10px;color:var(--muted);margin-top:2px}
+.log-time{font-size:8.5px;color:var(--silver);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.loc-pill{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:14px;background:var(--green-soft);border:1px solid rgba(34,160,107,.28);color:var(--green);font-size:12px;font-weight:700;cursor:pointer}
+.loc-pill .ic{width:14px;height:14px}
+.price-band{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-radius:16px;background:linear-gradient(135deg,rgba(11,42,91,.06),rgba(11,42,91,.02));border:1px solid var(--hair);margin:4px 0 14px}
+.price-band .lbl{font-size:10.5px;color:var(--muted);font-weight:700}
+.price-band .val{font-size:16px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace}
+.cta{position:relative;width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);border:none;color:#fff;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;overflow:hidden;transition:transform .12s;box-shadow:0 14px 40px -10px rgba(11,42,91,.5);display:flex;align-items:center;justify-content:center;gap:8px}
+.cta:active{transform:scale(.975)}
+.cta .ic{width:14px;height:14px}
+.cta::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);animation:sweep 2.6s ease-in-out infinite}
+.cta:disabled{opacity:.45;pointer-events:none}
+.cta.red{background:linear-gradient(135deg,#E5484D,#C23138);box-shadow:0 14px 40px -10px rgba(229,72,77,.4)}
+.pending-card{border-radius:20px;padding:16px;background:linear-gradient(135deg,rgba(232,165,0,.10),rgba(232,165,0,.02));border:1px solid rgba(232,165,0,.28);text-align:center}
+.pending-ic{width:42px;height:42px;border-radius:9999px;background:var(--amber-soft);color:var(--amber);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.pending-title{font-size:13px;font-weight:800;color:var(--ink)}
+.pending-desc{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.err-msg{font-size:11.5px;color:var(--red);font-weight:700;margin:6px 0;text-align:center}
+.bottom-nav{position:relative;z-index:25;flex-shrink:0;background:rgba(255,255,255,.98);border-top:1px solid var(--hair);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:space-around}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 10px;background:transparent;border:none;cursor:pointer;font-family:inherit;border-radius:14px;transition:background .2s}
+.nav-item.active{background:var(--navy-soft)}
+.nav-item .ic{width:19px;height:19px;color:var(--silver);transition:color .2s}
+.nav-item.active .ic{color:var(--navy)}
+.nav-label{font-size:9px;font-weight:700;color:var(--silver);transition:color .2s}
+.nav-item.active .nav-label{color:var(--ink)}
+.modal-overlay{position:absolute;inset:0;z-index:50;background:rgba(11,20,35,.55);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{width:100%;background:#fff;border-radius:28px 28px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom));animation:modalIn .35s cubic-bezier(.22,.61,.36,1)}
+.modal-ic{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:13px}
+.modal-ic .ic{width:20px;height:20px}
+.modal-title{font-size:14.5px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.modal-desc{font-size:11.5px;color:var(--muted);line-height:1.55;margin-bottom:18px}
+.modal-actions{display:flex;gap:10px}
+.modal-actions button{flex:1}
+.toast{position:absolute;left:20px;right:20px;bottom:86px;z-index:60;background:var(--ink);color:#fff;padding:13px 16px;border-radius:14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:9px;box-shadow:0 16px 40px -10px rgba(11,42,91,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;transform:translateY(8px)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast .ic{width:15px;height:15px;color:var(--green);flex-shrink:0}
+.tg-badge{position:fixed;bottom:8px;left:8px;z-index:100;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--silver);background:rgba(255,255,255,.6);padding:3px 7px;border-radius:6px;opacity:.7;pointer-events:none}
+#tgLoginWrap{display:flex;justify-content:center;padding:8px 0}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <!-- React dasturini ulaymiz -->
-  <script src="/static/bundle.js"></script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-w" viewBox="0 0 24 24"><path d="M3 6 L8 18 L12 10 L16 18 L21 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 20 C4.5 16.2 8 14 12 14 C16 14 19.5 16.2 19.5 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 18 L4 9 L8.5 13 L12 6 L15.5 13 L20 9 L20 18 Z" fill="currentColor"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 L22 20 H2 Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9.5 V14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 20 C3 16.5 5.7 15 9 15 C12.3 15 15 16.5 15 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.2 7 C11 9 8 15 15.8 17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5 L12 3 L21 7.5 V16.5 L12 21 L3 16.5 Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M3 7.5 L12 12 L21 7.5 M12 12 V21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3 V8 H19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 L20 6.5 V12 C20 16.5 16.5 20 12 21.5 C7.5 20 4 16.5 4 12 V6.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-shield-filled" viewBox="0 0 24 24"><path d="M12 3 L20 6.5 V12 C20 16.5 16.5 20 12 21.5 C7.5 20 4 16.5 4 12 V6.5 Z" fill="currentColor"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 5.5 L18.5 18.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3 V12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7 6 A8 8 0 1 0 17 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+<symbol id="i-diamond" viewBox="0 0 24 24"><path d="M4 9 L8 4 H16 L20 9 L12 21 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5 V19 M5 12 H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12 H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7 H19 M9 7 V5 A1 1 0 0 1 10 4 H14 A1 1 0 0 1 15 5 V7 M7 7 L7.7 19 A1.5 1.5 0 0 0 9.2 20.4 H14.8 A1.5 1.5 0 0 0 16.3 19 L17 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 9.5 H21" stroke="currentColor" stroke-width="1.6"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="14" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 11.5 L20 2 M17 5 L19.5 7.5 M14.5 7.5 L16.5 9.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-megaphone" viewBox="0 0 24 24"><path d="M3 10 V14 H6 L14 18 V6 L6 10 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M17 9 A4 4 0 0 1 17 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-fuel" viewBox="0 0 24 24"><path d="M4 21 V5 A2 2 0 0 1 6 3 H12 A2 2 0 0 1 14 5 V21" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 10 H14" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 8 H17 A2 2 0 0 1 19 10 V18 A1.5 1.5 0 0 0 22 18 V12 L20 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+<symbol id="i-cafe" viewBox="0 0 24 24"><path d="M4 8 H17 V15 A4 4 0 0 1 13 19 H8 A4 4 0 0 1 4 15 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M17 10 H19 A2.5 2.5 0 0 1 19 15 H17" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+<symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18 V8 A2 2 0 0 1 5 6 H19 A2 2 0 0 1 21 8 V18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 14 H21 M6 14 V11 A1.5 1.5 0 0 1 7.5 9.5 H10.5 A1.5 1.5 0 0 1 12 11 V14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3 A4 4 0 1 0 17.7 12.3 L21 15.6 L18.6 18 L15.3 14.7 A4 4 0 0 1 9.3 8.7 L11.4 10.8 L13.4 8.8 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M3 15.5 L5.2 10.2 C5.7 9.1 6.7 8.4 7.9 8.4 H14.4 C15.6 8.4 16.6 9.1 17.1 10.2 L19.3 15.5 V17.5 H3 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="16.2" r="1.15" fill="currentColor"/><circle cx="15.3" cy="16.2" r="1.15" fill="currentColor"/></symbol>
+<symbol id="i-excavator" viewBox="0 0 24 24"><rect x="3" y="13" width="10" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="6" cy="20" r="1.4" fill="currentColor"/><circle cx="11" cy="20" r="1.4" fill="currentColor"/><path d="M9 13 L14 8 L19 9 L17 13 L21 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 2 V5 M12 19 V22 M2 12 H5 M19 12 H22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7 V12 L16 14.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M4.5 4.5 H8 L9.5 9 L7.5 10.5 A12 12 0 0 0 13.5 16.5 L15 14.5 L19.5 16 V19.5 C19.5 20.3 18.8 21 18 21 A16.5 16.5 0 0 1 3 6 C3 5.2 3.7 4.5 4.5 4.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3 V15 M7 10.5 L12 15.5 L17 10.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18.5 H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3 V5.5 M12 18.5 V21 M21 12 H18.5 M5.5 12 H3 M18.4 5.6 L16.6 7.4 M7.4 16.6 L5.6 18.4 M18.4 18.4 L16.6 16.6 M7.4 7.4 L5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+</defs>
+</svg>
+
+<div class="phone" id="phone">
+  <div class="map" id="mapWrap">
+    <svg viewBox="0 0 420 880" preserveAspectRatio="xMidYMid slice">
+      <defs><linearGradient id="bgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+      <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/></pattern>
+      <filter id="bld" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#0B2A5B" flood-opacity=".08"/></filter></defs>
+      <rect width="420" height="880" fill="url(#bgg)"/><rect width="420" height="880" fill="url(#grid)"/>
+      <g filter="url(#bld)">
+        <rect x="30" y="80" width="40" height="28" rx="3" fill="#fff" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="90" y="60" width="32" height="44" rx="3" fill="#fff" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="260" y="70" width="36" height="40" rx="3" fill="#fff" stroke="#CBD5E1" stroke-width=".6"/>
+        <rect x="150" y="480" width="52" height="26" rx="3" fill="#fff" stroke="#CBD5E1" stroke-width=".6"/>
+      </g>
+      <path d="M-30 260 H 450" stroke="#fff" stroke-width="16"/><path d="M-30 260 H 450" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10"/>
+      <text x="60" y="256" class="street-label">BUYUK IPAK YO'LI</text>
+      <g><circle cx="150" cy="300" r="8" fill="#fff" stroke="#0B2A5B" stroke-width="2"/><circle cx="150" cy="300" r="3" fill="#0B2A5B"/><circle cx="150" cy="300" r="8" fill="none" stroke="#0B2A5B" stroke-width="1.2" opacity=".5"><animate attributeName="r" values="8;22;8" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".5;0;.5" dur="2.6s" repeatCount="indefinite"/></circle></g>
+    </svg>
+    <div class="glow" style="top:20%;left:15%;width:260px;height:260px;background:#0B2A5B;opacity:.06"></div>
+    <div class="glow" style="bottom:20%;right:10%;width:260px;height:260px;background:#22A06B;opacity:.05"></div>
+  </div>
+  <div class="bgpanel" id="darkBg"><div class="glow" style="top:-6%;right:-10%;width:260px;height:260px;background:#22A06B;opacity:.16"></div><div class="glow" style="bottom:6%;left:-10%;width:260px;height:260px;background:#E8A500;opacity:.10"></div></div>
+
+  <div class="topbar" id="topbar">
+    <div class="brand"><svg class="brand-w" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-w"/></svg><span class="brand-txt">W<span class="dash">-</span>TAXI</span><span class="brand-tag" id="brandTag">yo'lovchi</span></div>
+    <div id="topRight"><div class="avatar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-user"/></svg></div></div>
+  </div>
+
+  <div class="sheet sheet-in">
+    <div class="handle"></div>
+    <div id="loginBanner" class="login-banner" style="display:none">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg>
+      <span class="txt">Buyurtma berish, ro'yxatdan o'tish va e'lon joylashtirish uchun tizimga kiring.</span>
+    </div>
+    <div id="tgLoginWrap" style="display:none"></div>
+    <div id="pillTabsWrap"></div>
+    <div class="scroll-area" id="content"></div>
+  </div>
+
+  <div class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-sec="passenger"><svg class="ic" viewBox="0 0 24 24"><use href="#i-users"/></svg><span class="nav-label">Yo'lovchi</span></button>
+    <button class="nav-item" data-sec="driver"><svg class="ic" viewBox="0 0 24 24"><use href="#i-car"/></svg><span class="nav-label">Haydovchi</span></button>
+    <button class="nav-item" data-sec="roadside"><svg class="ic" viewBox="0 0 24 24"><use href="#i-fuel"/></svg><span class="nav-label">Yo'l & Texnika</span></button>
+    <button class="nav-item" data-sec="profile"><svg class="ic" viewBox="0 0 24 24"><use href="#i-user"/></svg><span class="nav-label">Profil</span></button>
+    <button class="nav-item" data-sec="admin" id="navAdmin" style="display:none"><svg class="ic" viewBox="0 0 24 24"><use href="#i-shield"/></svg><span class="nav-label">Admin</span></button>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-ic" id="modalIc"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alert"/></svg></div>
+      <div class="modal-title" id="modalTitle">Tasdiqlaysizmi?</div>
+      <div class="modal-desc" id="modalDesc">Bu amalni qaytarib bo'lmaydi.</div>
+      <div class="modal-actions"><button class="btn-sm ghost" id="modalCancel"><span>Bekor qilish</span></button><button class="cta red" id="modalConfirm" style="padding:11px"><span>Tasdiqlash</span></button></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check"/></svg><span id="toastTxt">Bajarildi</span></div>
+</div>
+<div class="tg-badge" id="tgBadge">browser</div>
+
+<script>
+/* ============================================================= */
+/* CONFIG                                                          */
+/* ============================================================= */
+const BOT_USERNAME = "w_taxibot"; // botingiz @username bo'lmasa shu qatorni to'g'irlang
+
+const REGIONS = {
+"Toshkent shahri": ["Yunusobod","Chilonzor","Mirzo Ulug'bek","Mirobod","Shayxontohur","Yakkasaroy","Sergeli","Yangi Hayot","Olmazor","Uchtepa","Bektemir","Yashnobod"],
+"Qoraqalpog'iston Resp.": ["Nukus sh.","Taxiatosh sh.","Amudaryo","Beruniy","Bo'zatov","Chimboy","Ellikqal'a","Kegeyli","Mo'ynoq","Nukus tumani","Qanliko'l","Qo'ng'irot","Qorao'zak","Shumanay","Taxtako'pir","To'rtko'l","Xo'jayli"],
+"Surxondaryo viloyati": ["Termiz sh.","Angor","Bandixon","Boysun","Denov","Jarqo'rg'on","Muzrabot","Oltinsoy","Qiziriq","Qumqo'rg'on","Sariosiyo","Sherobod","Sho'rchi","Termiz tumani","Uzun"],
+"Qashqadaryo viloyati": ["Qarshi sh.","Shahrisabz sh.","Chiroqchi","Dehqonobod","G'uzor","Kasbi","Kitob","Koson","Ko'kdala","Mirishkor","Muborak","Nishon","Qamashi","Qarshi tumani","Shahrisabz tumani","Yakkabog'"],
+"Samarqand viloyati": ["Samarqand sh.","Kattaqo'rg'on sh.","Bulung'ur","Ishtixon","Jomboy","Kattaqo'rg'on tumani","Narpay","Nurobod","Oqdaryo","Paxtachi","Payariq","Pastdarg'om","Qo'shrabot","Samarqand tumani","Toyloq","Urgut"],
+"Farg'ona viloyati": ["Farg'ona sh.","Qo'qon sh.","Marg'ilon sh.","Quvasoy sh.","Bag'dod","Beshariq","Buvayda","Dang'ara","Farg'ona tumani","Furqat","Oltiariq","Quva","Qo'shtepa","Rishton","So'x","Toshloq","Uchko'prik","O'zbekiston tum.","Yozyovon"],
+"Andijon viloyati": ["Andijon sh.","Xonobod sh.","Andijon tumani","Asaka","Baliqchi","Bo'ston","Buloqboshi","Izboskan","Jalaquduq","Xo'jaobod","Marhamat","Oltinko'l","Paxtaobod","Qo'rg'ontepa","Shahrixon","Ulug'nor"],
+"Namangan viloyati": ["Namangan sh.","Chortoq","Chust","Kosonsoy","Mingbuloq","Namangan tumani","Norin","Pop","To'raqo'rg'on","Uchqo'rg'on","Uychi","Yangiqo'rg'on","Davlatobod"],
+"Buxoro viloyati": ["Buxoro sh.","Kogon sh.","Olot","Buxoro tumani","G'ijduvon","Jondor","Kogon tumani","Qorako'l","Qorovulbozor","Peshku","Romitan","Shofirkon","Vobkent"],
+"Navoiy viloyati": ["Navoiy sh.","Zarafshon sh.","Kanimex","Karmana","Qiziltepa","Navbahor","Nurota","Tomdi","Uchquduq","Xatirchi"],
+"Jizzax viloyati": ["Jizzax sh.","Arnasoy","Baxmal","Do'stlik","Forish","G'allaorol","Sh.Rashidov","Mirzacho'l","Paxtakor","Yangiobod","Zafarobod","Zarbdor"],
+"Sirdaryo viloyati": ["Guliston sh.","Shirin sh.","Yangiyer sh.","Boyovut","Guliston tumani","Mirzaobod","Oqoltin","Sardoba","Sayxunobod","Sirdaryo tumani","Xovos"],
+"Xorazm viloyati": ["Urganch sh.","Xiva sh.","Bog'ot","Gurlan","Hazorasp","Qo'shko'pir","Shovot","Tuproqqal'a","Urganch tumani","Xiva tumani","Xonqa","Yangiariq","Yangibozor"],
+"Toshkent viloyati": ["Nurafshon sh.","Olmaliq sh.","Angren sh.","Chirchiq sh.","Bekobod sh.","Yangiyo'l sh.","Bo'stonliq","Chinoz","Qibray","Parkent","Piskent","Quyi Chirchiq","O'rta Chirchiq","Yuqori Chirchiq","Zangiota","Toshkent tumani","Bo'ka","Bekobod tumani"]
+};
+const SERVICE_TYPES = [
+  {key:"gas",label:"Zapravka",icon:"i-fuel",price:50000},
+  {key:"food",label:"Ovqatlanish",icon:"i-cafe",price:50000},
+  {key:"hotel",label:"Mehmonxona",icon:"i-bed",price:70000},
+  {key:"service",label:"Avtoservis",icon:"i-wrench",price:50000},
+  {key:"autosalon",label:"Avtosalon",icon:"i-car",price:100000},
+  {key:"heavy",label:"Maxsus texnika",icon:"i-excavator",price:100000}
+];
+const FUEL_TYPES = [{key:"metan",label:"Metan",c:"#3B82F6"},{key:"propan",label:"Propan",c:"#22A06B"},{key:"benzin",label:"Benzin",c:"#E8A500"},{key:"dizel",label:"Dizel",c:"#7C8AA0"}];
+const ERROR_MESSAGES = {
+  rate_limited:"Siz so'nggi 1 soat ichida yetarlicha buyurtma berdingiz. Birozdan so'ng qayta urinib ko'ring.",
+  route_limit_reached:"Bepul tarifda marshrut soni chegaralangan. Ko'proq marshrut uchun VIP obuna kerak.",
+  already_pending:"Sizda hozir ko'rib chiqilayotgan e'lon bor. Admin javobini kuting.",
+  phone_required:"Telefon raqamingizni kiriting.", missing_locations:"Manzillarni to'liq tanlang.",
+  missing_fields:"Barcha maydonlarni to'ldiring.", banned:"Profilingiz bloklangan.", unauthorized:"Iltimos, tizimga qiring.",
+  invalid_card:"Karta raqami 16 xonadan iborat bo'lishi kerak.", password_too_short:"Parol kamida 4 ta belgidan iborat bo'lishi kerak.",
+  already_processed:"Bu allaqachon ko'rib chiqilgan."
+};
+function friendlyError(m){ return ERROR_MESSAGES[m] || m || "Xatolik yuz berdi"; }
+
+/* ============================================================= */
+/* TELEGRAM WRAPPER                                                */
+/* ============================================================= */
+const tg = window.Telegram && window.Telegram.WebApp;
+const inTelegram = !!(tg && tg.initData);
+const WT = {
+  tap(){ inTelegram && tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); },
+  select(){ inTelegram && tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); },
+  success(){ inTelegram && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success'); },
+  warning(){ inTelegram && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('warning'); }
+};
+if(inTelegram){ try{ tg.ready(); tg.expand(); tg.disableVerticalSwipes && tg.disableVerticalSwipes(); }catch(e){} }
+
+/* ============================================================= */
+/* API CLIENT                                                      */
+/* ============================================================= */
+function authHeaders(){
+  if(inTelegram) return {"X-Init-Data": tg.initData};
+  const t = localStorage.getItem("wtaxi_session");
+  return t ? {"X-Session-Token": t} : {};
+}
+async function api(path, options={}){
+  const res = await fetch(path, {...options, headers:{"Content-Type":"application/json",...authHeaders(),...(options.headers||{})}});
+  if(!res.ok){ let e={}; try{ e = await res.json(); }catch(_){} const err = new Error(friendlyError(e.error)); err.code = e.error; throw err; }
+  if(res.status===204) return null;
+  return res.json();
+}
+const apiGet = p => api(p);
+const apiPost = (p,b) => api(p,{method:"POST",body:JSON.stringify(b||{})});
+const apiDelete = p => api(p,{method:"DELETE"});
+
+/* ============================================================= */
+/* STATE                                                           */
+/* ============================================================= */
+const $ = id => document.getElementById(id);
+const S = { me:null, section:"passenger", subTab:{driver:"cabinet", roadside:"search", admin:"overview", profile:"orders"}, driverData:null };
+let toastTimer;
+function toast(msg){ WT.success(); $('toastTxt').textContent = msg; $('toast').classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>$('toast').classList.remove('show'), 2000); }
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function initials(name){ return (name||"?").split(" ").map(p=>p[0]).slice(0,2).join("").toUpperCase(); }
+
+function confirmAction({icon, iconBg, iconColor, title, desc, danger, onConfirm}){
+  WT.warning();
+  $('modalIc').style.background = iconBg; $('modalIc').style.color = iconColor;
+  $('modalIc').innerHTML = '<svg class="ic" viewBox="0 0 24 24"><use href="#'+icon+'"/></svg>';
+  $('modalTitle').textContent = title; $('modalDesc').textContent = desc;
+  $('modalConfirm').className = danger ? 'cta red' : 'cta';
+  $('modalOverlay').classList.add('show');
+  const ok = async ()=>{ $('modalOverlay').classList.remove('show'); cleanup(); await onConfirm(); };
+  const no = ()=>{ $('modalOverlay').classList.remove('show'); cleanup(); };
+  function cleanup(){ $('modalConfirm').removeEventListener('click', ok); $('modalCancel').removeEventListener('click', no); }
+  $('modalConfirm').addEventListener('click', ok);
+  $('modalCancel').addEventListener('click', no);
+}
+
+/* ============================================================= */
+/* AUTH                                                             */
+/* ============================================================= */
+async function loadMe(){
+  try{ S.me = await apiGet('/api/me'); }
+  catch(e){ S.me = null; }
+  updateAuthUI();
+}
+function updateAuthUI(){
+  $('navAdmin').style.display = (S.me && S.me.is_admin) ? 'flex' : 'none';
+  if(S.section === 'admin' && !(S.me && S.me.is_admin)) setSection('passenger');
+  renderTgLogin();
+  render();
+}
+function renderTgLogin(){
+  const needsLogin = !S.me && !inTelegram;
+  $('loginBanner').style.display = needsLogin ? 'flex' : 'none';
+  $('tgLoginWrap').style.display = needsLogin ? 'flex' : 'none';
+  if(needsLogin && !$('tgLoginWrap').dataset.mounted){
+    $('tgLoginWrap').dataset.mounted = '1';
+    window.onTelegramAuth = async (user)=>{
+      try{ const res = await apiPost('/api/auth/login-widget', user); localStorage.setItem('wtaxi_session', res.token); await loadMe(); toast('Xush kelibsiz!'); }
+      catch(e){ toast(friendlyError(e.code)); }
+    };
+    const s = document.createElement('script');
+    s.src = "https://telegram.org/js/telegram-widget.js?22"; s.async = true;
+    s.setAttribute('data-telegram-login', BOT_USERNAME); s.setAttribute('data-size','medium');
+    s.setAttribute('data-radius','12'); s.setAttribute('data-onauth','onTelegramAuth(user)'); s.setAttribute('data-request-access','write');
+    $('tgLoginWrap').appendChild(s);
+  }
+}
+function requireAuth(){ if(!S.me){ toast('Avval tizimga kiring'); return false; } return true; }
+
+/* ============================================================= */
+/* SECTION SWITCH / TOP CHROME                                     */
+/* ============================================================= */
+const SECTION_META = {
+  passenger:{tag:"yo'lovchi", dark:false},
+  driver:{tag:"haydovchi", dark:false},
+  roadside:{tag:"yo'l & texnika", dark:false},
+  profile:{tag:"profil", dark:false},
+  admin:{tag:"boshqaruv", dark:true}
+};
+function setSection(sec){
+  WT.tap(); S.section = sec;
+  document.querySelectorAll('.nav-item').forEach(b=> b.classList.toggle('active', b.dataset.sec===sec));
+  const meta = SECTION_META[sec];
+  $('brandTag').textContent = meta.tag;
+  $('topbar').classList.toggle('dark', meta.dark);
+  $('mapWrap').style.display = meta.dark ? 'none' : 'block';
+  $('darkBg').style.display = meta.dark ? 'block' : 'none';
+  $('topRight').innerHTML = meta.dark
+    ? '<div class="crown-badge"><svg class="ic" viewBox="0 0 24 24"><use href="#i-crown"/></svg>Super Admin</div>'
+    : '<div class="avatar"><svg class="ic" viewBox="0 0 24 24"><use href="#i-user"/></svg></div>';
+  render();
+}
+document.querySelectorAll('.nav-item').forEach(b=> b.addEventListener('click', ()=> setSection(b.dataset.sec)));
+
+function render(){
+  if(S.section==='passenger') renderPassenger();
+  else if(S.section==='driver') renderDriver();
+  else if(S.section==='roadside') renderRoadside();
+  else if(S.section==='profile') renderProfile();
+  else if(S.section==='admin') renderAdmin();
+}
+
+/* ============================================================= */
+/* SHARED UI HELPERS                                                */
+/* ============================================================= */
+function pillTabs(tabs, active, onPick){
+  $('pillTabsWrap').innerHTML = '<div class="pill-tabs">' + tabs.map(t=>
+    `<div class="ptab ${t.key===active?'active':''}" data-k="${t.key}">${t.label}</div>`
+  ).join('') + '</div>';
+  $('pillTabsWrap').querySelectorAll('.ptab').forEach(el=> el.addEventListener('click', ()=>{ WT.select(); onPick(el.dataset.k); }));
+}
+function clearPillTabs(){ $('pillTabsWrap').innerHTML = ''; }
+function regionSelectHTML(id, placeholder, opts){
+  return `<select class="field-select" id="${id}"><option value="">${placeholder}</option>${(opts||[]).map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select>`;
+}
+
+/* ============================================================= */
+/* SECTION: PASSENGER                                               */
+/* ============================================================= */
+const PS = {scope:"intercity", service:"passenger", fromR:"", fromD:"", toR:"", toD:"", results:null, dispatch:null, phone:""};
+function renderPassenger(){
+  clearPillTabs();
+  const localRegions = Object.keys(REGIONS).filter(r=>r!=="Toshkent shahri");
+  let html = `
+    <div class="chip-row">
+      <div class="chip ${PS.scope==='intercity'?'active':''}" data-scope="intercity">Viloyatlararo</div>
+      <div class="chip ${PS.scope==='local'?'active':''}" data-scope="local">Mahalliy</div>
+    </div>
+    <div class="chip-row">
+      <div class="chip ${PS.service==='passenger'?'active':''}" data-svc="passenger">Yo'lovchi</div>
+      <div class="chip ${PS.service==='cargo'?'active':''}" data-svc="cargo">Pochta / Yuk</div>
+    </div>
+    <div class="route-box">`;
+  if(PS.scope==='local'){
+    html += `<div class="field-label">Viloyat</div>${regionSelectHTML('fromRegion','Tanlang', localRegions)}
+      <div class="field-row" style="margin-top:10px">
+        <div>${regionSelectHTML('fromDistrict','Qayerdan', PS.fromR?REGIONS[PS.fromR]:[])}</div>
+        <div>${regionSelectHTML('toDistrict','Qayerga', PS.fromR?REGIONS[PS.fromR]:[])}</div>
+      </div>`;
+  } else {
+    html += `<div class="route-inner">
+      <div class="route-rail"><div class="dot-a"></div><div class="rail"></div><div class="dot-b"></div></div>
+      <div class="route-fields">
+        ${regionSelectHTML('fromRegion','Qayerdan (viloyat)', Object.keys(REGIONS))}
+        ${PS.fromR && PS.fromR!=="Toshkent shahri" ? regionSelectHTML('fromDistrict','Tuman (ixtiyoriy)', REGIONS[PS.fromR]) : ''}
+        <div class="route-sep"></div>
+        ${regionSelectHTML('toRegion','Qayerga (viloyat)', Object.keys(REGIONS))}
+        ${PS.toR && PS.toR!=="Toshkent shahri" ? regionSelectHTML('toDistrict','Tuman (ixtiyoriy)', REGIONS[PS.toR]) : ''}
+      </div>
+    </div>`;
+  }
+  html += `</div>
+    <button class="cta" id="searchBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-locate"/></svg><span>Haydovchi qidirish</span></button>
+    <div id="psgErr"></div>
+    <div id="psgResults" style="margin-top:14px"></div>`;
+  $('content').innerHTML = html;
+
+  if(PS.scope==='local'){
+    $('fromRegion').value = PS.fromR; $('fromDistrict') && ($('fromDistrict').value = PS.fromD); $('toDistrict') && ($('toDistrict').value = PS.toD);
+    $('fromRegion').addEventListener('change', e=>{ PS.fromR=e.target.value; PS.toR=e.target.value; PS.fromD=""; PS.toD=""; renderPassenger(); });
+    $('fromDistrict') && $('fromDistrict').addEventListener('change', e=>{ PS.fromD=e.target.value; });
+    $('toDistrict') && $('toDistrict').addEventListener('change', e=>{ PS.toD=e.target.value; });
+  } else {
+    $('fromRegion').value = PS.fromR; $('toRegion').value = PS.toR;
+    $('fromRegion').addEventListener('change', e=>{ PS.fromR=e.target.value; PS.fromD=""; renderPassenger(); });
+    $('toRegion').addEventListener('change', e=>{ PS.toR=e.target.value; PS.toD=""; renderPassenger(); });
+    $('fromDistrict') && $('fromDistrict').addEventListener('change', e=> PS.fromD=e.target.value);
+    $('toDistrict') && $('toDistrict').addEventListener('change', e=> PS.toD=e.target.value);
+  }
+  document.querySelectorAll('[data-scope]').forEach(c=> c.addEventListener('click', ()=>{ WT.select(); PS.scope=c.dataset.scope; PS.fromR=PS.fromD=PS.toR=PS.toD=""; PS.results=null; PS.dispatch=null; renderPassenger(); }));
+  document.querySelectorAll('[data-svc]').forEach(c=> c.addEventListener('click', ()=>{ WT.select(); PS.service=c.dataset.svc; renderPassenger(); }));
+  $('searchBtn').addEventListener('click', passengerSearch);
+  renderPassengerResults();
+}
+function passengerLocs(){
+  const fromLoc = PS.scope==='local' ? (PS.fromR&&PS.fromD?`${PS.fromR}, ${PS.fromD}`:"") : (PS.fromR==="Toshkent shahri"?PS.fromR:(PS.fromR&&PS.fromD?`${PS.fromR}, ${PS.fromD}`:PS.fromR));
+  const toLoc = PS.scope==='local' ? (PS.toR&&PS.toD?`${PS.toR}, ${PS.toD}`:"") : (PS.toR==="Toshkent shahri"?PS.toR:(PS.toR&&PS.toD?`${PS.toR}, ${PS.toD}`:PS.toR));
+  return {fromLoc, toLoc};
+}
+async function passengerSearch(){
+  if(!requireAuth()) return;
+  const {fromLoc, toLoc} = passengerLocs();
+  if(!fromLoc || !toLoc || fromLoc===toLoc){ $('psgErr').innerHTML = '<div class="err-msg">Manzillarni to\'liq va turlicha tanlang</div>'; return; }
+  $('psgErr').innerHTML = '';
+  $('searchBtn').innerHTML = '<div class="spinner"></div>';
+  try{
+    const data = await apiPost('/api/drivers/search', {from_loc:fromLoc, to_loc:toLoc, service_type:PS.service});
+    PS.results = data.matches; PS.dispatch = null;
+  }catch(e){ $('psgErr').innerHTML = '<div class="err-msg">'+esc(e.message)+'</div>'; }
+  renderPassenger();
+}
+function renderPassengerResults(){
+  const box = $('psgResults'); if(!box) return;
+  if(PS.results === null){ box.innerHTML=''; return; }
+  if(PS.results.length > 0){
+    box.innerHTML = '<div class="sec-head"><span class="sec-title">Topilgan haydovchilar</span><span class="sec-action">'+PS.results.length+' ta</span></div>' +
+      PS.results.map(d=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy);font-weight:800;font-size:12px">${esc(initials(d.full_name))}</div><div class="tx"><div class="nm">${esc(d.full_name)}</div><div class="sub">${esc(d.car_model)} · ${esc(d.car_number)}</div></div><div class="side"><div class="num" style="font-size:11px">${esc(d.phone)}</div></div></div>`).join('');
+    return;
+  }
+  if(PS.dispatch){
+    box.innerHTML = `<div class="pending-card"><div class="pending-ic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
+      <div class="pending-title">Buyurtmangiz yuborildi</div>
+      <div class="pending-desc">${PS.dispatch.notified_now} ta haydovchiga darhol, ${PS.dispatch.notified_later} ta haydovchiga 5 daqiqadan keyin yetkazildi.</div></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="ctrl-card"><div class="ctrl-desc" style="margin:0 0 10px">To'g'ridan-to'g'ri haydovchi topilmadi. Telefon raqamingizni qoldiring — mos haydovchilarga yuboramiz.</div>
+    <input class="field-input" id="psgPhone" placeholder="+998 90 123 45 67" value="${esc(PS.phone)}" style="margin-bottom:10px">
+    <button class="cta" id="psgOrderBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg><span>Yuborish</span></button></div>`;
+  $('psgPhone').addEventListener('input', e=> PS.phone = e.target.value);
+  $('psgOrderBtn').addEventListener('click', async ()=>{
+    if(!PS.phone.trim()){ toast('Telefon raqamingizni kiriting'); return; }
+    const {fromLoc, toLoc} = passengerLocs();
+    try{
+      const data = await apiPost('/api/orders', {from_loc:fromLoc, to_loc:toLoc, service_type:PS.service, phone:PS.phone.trim(), full_name:(S.me&&S.me.first_name)||"Veb foydalanuvchi"});
+      PS.dispatch = data; renderPassengerResults();
+    }catch(e){ toast(e.message); }
+  });
+}
+
+/* ============================================================= */
+/* SECTION: DRIVER                                                  */
+/* ============================================================= */
+async function renderDriver(){
+  pillTabs([{key:'cabinet',label:'Kabinet'},{key:'routes',label:'Marshrutlar'},{key:'register',label:"Ma'lumotlar"}], S.subTab.driver, k=>{ S.subTab.driver=k; renderDriver(); });
+  if(!S.me){ $('content').innerHTML = '<div class="empty-note">Davom etish uchun tizimga kiring.</div>'; return; }
+  $('content').innerHTML = '<div class="empty-note">Yuklanmoqda...</div>';
+  if(!S.driverData){ try{ S.driverData = await apiGet('/api/driver/me'); }catch(e){ S.driverData = {driver:null}; } }
+  if(S.subTab.driver === 'cabinet') renderDriverCabinet();
+  else if(S.subTab.driver === 'routes') renderDriverRoutes();
+  else renderDriverRegister();
+}
+function renderDriverCabinet(){
+  const d = S.driverData.driver;
+  if(!d){ $('content').innerHTML = '<div class="empty-note">Siz hali ro\'yxatdan o\'tmagansiz. "Ma\'lumotlar" bo\'limidan o\'ting.</div>'; return; }
+  const sub = S.driverData.is_subscribed;
+  $('content').innerHTML = `
+    <div class="profile-card">
+      <div class="profile-row">
+        <div class="profile-av">${esc(initials(d.full_name))}${sub?'<div class="profile-crown pop"><svg class="ic" viewBox="0 0 24 24"><use href="#i-crown"/></svg></div>':''}</div>
+        <div class="profile-info"><div class="profile-name">${esc(d.full_name)}</div><div class="profile-sub">${esc(d.car_model)} · ${esc(d.car_number)}</div></div>
+      </div>
+      <div class="status-toggle ${d.status==='on_way'?'on':''}" id="statusToggle">
+        <div class="status-toggle-bg"></div>
+        <div class="status-opt ${d.status==='waiting'?'sel':''}" data-st="waiting">Kutmoqdaman</div>
+        <div class="status-opt ${d.status==='on_way'?'sel':''}" data-st="on_way">Yo'lda</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-num">${S.driverData.routes_count}</div><div class="stat-label">Marshrut</div></div>
+      <div class="stat-box"><div class="stat-num" style="font-size:11px">${d.service_type==='cargo'?'Yuk':"Yo'lovchi"}</div><div class="stat-label">Xizmat</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:${sub?'var(--green)':'var(--red)'};font-size:12px">${sub?'Faol':"Yo'q"}</div><div class="stat-label">Obuna</div></div>
+    </div>
+    <div class="sec-head"><span class="sec-title">Kelgan buyurtmalar</span></div>
+    <div id="driverOrders"><div class="empty-note">Yuklanmoqda...</div></div>
+    <div class="sec-head"><span class="sec-title">Tarif va obuna</span></div>
+    <div class="sub-card">
+      <div class="sub-top"><span class="sub-title"><svg class="ic" viewBox="0 0 24 24"><use href="#i-crown"/></svg>VIP obuna</span><span class="badge ${sub?'on':'off'}">${sub?'Faol':"Yo'q"}</span></div>
+      <div class="ctrl-desc" style="margin:0 0 10px">Oylik obuna: 30 000 so'm / 30 kun. To'lov chekini hozircha bot chatiga yuboring.</div>
+      <button class="btn-sm ghost" id="payBotBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-phone"/></svg><span>Bot orqali to'lash</span></button>
+    </div>`;
+  const toggle = $('statusToggle');
+  toggle.querySelectorAll('.status-opt').forEach(opt=> opt.addEventListener('click', async ()=>{
+    WT.select();
+    const status = opt.dataset.st;
+    if(status === d.status) return;
+    try{ await apiPost('/api/driver/status', {status}); S.driverData = null; await renderDriver(); }
+    catch(e){ toast(e.message); }
+  }));
+  $('payBotBtn').addEventListener('click', ()=> window.open('https://t.me/'+BOT_USERNAME, '_blank'));
+  apiGet('/api/driver/orders').then(orders=>{
+    const box = $('driverOrders'); if(!box) return;
+    box.innerHTML = orders.length ? orders.map(o=> `<div class="card-row"><div class="ic-box" style="background:var(--green-soft);color:var(--green)"><svg class="ic" viewBox="0 0 24 24"><use href="#i-route"/></svg></div><div class="tx"><div class="nm">${esc(o.from_loc)} → ${esc(o.to_loc)}</div><div class="sub">${esc(o.phone)}</div></div></div>`).join('') : '<div class="empty-note">Hozircha buyurtma yo\'q.</div>';
+  }).catch(()=>{});
+}
+function renderDriverRoutes(){
+  if(!S.driverData.driver){ $('content').innerHTML = '<div class="empty-note">Avval ro\'yxatdan o\'ting.</div>'; return; }
+  let mode = 'intercity', fromSel = [], toSel = [];
+  $('content').innerHTML = `
+    <div class="chip-row"><div class="chip active" data-m="intercity">Viloyatlararo</div><div class="chip" data-m="local">Mahalliy</div></div>
+    <div id="routeFormArea"></div>
+    <div class="sec-head"><span class="sec-title">Faol yo'nalishlar (${S.driverData.routes_count})</span>${S.driverData.routes_count>0?'<span class="sec-action" id="clearRoutesBtn">Tozalash</span>':''}</div>
+    <div class="ctrl-desc" style="margin-top:0">Har bir yo'nalishni alohida o'chirish hozircha faqat bot chatidan mavjud.</div>`;
+  document.querySelectorAll('[data-m]').forEach(c=> c.addEventListener('click', ()=>{ WT.select(); document.querySelectorAll('[data-m]').forEach(x=>x.classList.remove('active')); c.classList.add('active'); mode=c.dataset.m; drawForm(); }));
+  function drawForm(){
+    const area = $('routeFormArea');
+    if(mode==='local'){
+      const localRegions = Object.keys(REGIONS).filter(r=>r!=="Toshkent shahri");
+      area.innerHTML = `<div class="field">${regionSelectHTML('locRegion','Viloyat', localRegions)}</div>
+        <div class="field-row"><div>${regionSelectHTML('locFrom','Qayerdan',[])}</div><div>${regionSelectHTML('locTo','Qayerga',[])}</div></div>
+        <button class="cta" id="addLocalBtn" style="margin-bottom:16px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg><span>Marshrut qo'shish</span></button>`;
+      $('locRegion').addEventListener('change', e=>{
+        const opts = REGIONS[e.target.value]||[];
+        $('locFrom').innerHTML = '<option value="">Qayerdan</option>'+opts.map(o=>`<option>${esc(o)}</option>`).join('');
+        $('locTo').innerHTML = '<option value="">Qayerga</option>'+opts.map(o=>`<option>${esc(o)}</option>`).join('');
+      });
+      $('addLocalBtn').addEventListener('click', async ()=>{
+        const reg=$('locRegion').value, f=$('locFrom').value, t=$('locTo').value;
+        if(!reg||!f||!t||f===t){ toast('To\'liq va turlicha tanlang'); return; }
+        try{ await apiPost('/api/driver/routes', {category:'local', from_loc:`${reg}, ${f}`, to_loc:`${reg}, ${t}`}); S.driverData=null; toast('Marshrut qo\'shildi'); await renderDriver(); }
+        catch(e){ toast(e.message); }
+      });
+    } else {
+      area.innerHTML = `<div class="field-label">Qayerdan (bir nechtasi)</div><div class="chip-row" id="fromChips">${Object.keys(REGIONS).map(r=>`<div class="chip" data-r="${esc(r)}">${esc(r)}</div>`).join('')}</div>
+        <div class="field-label">Qayerga (bir nechtasi)</div><div class="chip-row" id="toChips">${Object.keys(REGIONS).map(r=>`<div class="chip" data-r="${esc(r)}">${esc(r)}</div>`).join('')}</div>
+        <button class="cta" id="addInterBtn" style="margin-bottom:16px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg><span id="addInterTxt">Marshrutlarni saqlash</span></button>`;
+      $('fromChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c)return; WT.select(); c.classList.toggle('active'); const r=c.dataset.r; fromSel = fromSel.includes(r)?fromSel.filter(x=>x!==r):[...fromSel,r]; updateCount(); });
+      $('toChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c)return; WT.select(); c.classList.toggle('active'); const r=c.dataset.r; toSel = toSel.includes(r)?toSel.filter(x=>x!==r):[...toSel,r]; updateCount(); });
+      function updateCount(){ $('addInterTxt').textContent = `Marshrutlarni saqlash (${fromSel.length*toSel.filter(t=>!fromSel.includes(t)).length} ta)`; }
+      $('addInterBtn').addEventListener('click', async ()=>{
+        const validTo = toSel.filter(t=>!fromSel.includes(t));
+        if(!fromSel.length || !validTo.length){ toast('Kamida bittadan tanlang'); return; }
+        try{ await apiPost('/api/driver/routes', {category:'intercity', from_list:fromSel, to_list:validTo}); S.driverData=null; toast('Marshrutlar saqlandi'); await renderDriver(); }
+        catch(e){ toast(e.message); }
+      });
+    }
+  }
+  drawForm();
+  $('clearRoutesBtn') && $('clearRoutesBtn').addEventListener('click', ()=> confirmAction({
+    icon:'i-trash', iconBg:'var(--red-soft)', iconColor:'var(--red)', title:"Barcha marshrutlarni tozalash", desc:"Bu amalni qaytarib bo'lmaydi.", danger:true,
+    async onConfirm(){ try{ await apiDelete('/api/driver/routes'); S.driverData=null; toast('Tozalandi'); await renderDriver(); }catch(e){ toast(e.message); } }
+  }));
+}
+function renderDriverRegister(){
+  const ex = S.driverData.driver;
+  let serviceType = (ex && ex.service_type) || 'passenger';
+  $('content').innerHTML = `
+    <div class="field"><span class="field-label">To'liq ism</span><input class="field-input" id="rgName" value="${esc(ex?ex.full_name:'')}" placeholder="Ism Familiya"></div>
+    <div class="field"><span class="field-label">Xizmat turi</span><div class="chip-row" id="rgSvc"><div class="chip ${serviceType==='passenger'?'active':''}" data-s="passenger">Odam tashish</div><div class="chip ${serviceType==='cargo'?'active':''}" data-s="cargo">Yuk / Pochta</div></div></div>
+    <div class="field"><span class="field-label">Avtomobil modeli</span><select class="field-select" id="rgCar"></select></div>
+    <div class="field"><span class="field-label">Davlat raqami</span><input class="field-input" id="rgPlate" value="${esc(ex?ex.car_number:'')}" placeholder="01 A 777 AA"></div>
+    <div class="field" style="margin-bottom:16px"><span class="field-label">Telefon raqam</span><input class="field-input" id="rgPhone" value="${esc(ex?ex.phone:'')}" placeholder="+998 90 123 45 67"></div>
+    <div id="rgErr"></div>
+    <button class="cta" id="rgSubmit"><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg><span>${ex?"Ma'lumotlarni yangilash":"Ro'yxatdan o'tish — 30 kun VIP sovg'a"}</span></button>`;
+  function carOptions(){ return serviceType==='passenger' ? ["Cobalt","Gentra","Nexia 3","Damas","Tracker","Captiva"] : ["Labo","Porter","Isuzu","Gazel","Fura"]; }
+  function drawCars(){ $('rgCar').innerHTML = carOptions().map(c=>`<option ${ex&&ex.car_model===c?'selected':''}>${c}</option>`).join(''); }
+  drawCars();
+  $('rgSvc').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); $('rgSvc').querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); serviceType=c.dataset.s; drawCars(); });
+  $('rgSubmit').addEventListener('click', async ()=>{
+    const body = {full_name:$('rgName').value.trim(), service_type:serviceType, car_model:$('rgCar').value, car_number:$('rgPlate').value.trim(), phone:$('rgPhone').value.trim()};
+    if(!body.full_name||!body.car_model||!body.car_number||!body.phone){ $('rgErr').innerHTML='<div class="err-msg">Barcha maydonlarni to\'ldiring</div>'; return; }
+    try{ await apiPost('/api/driver/register', body); S.driverData=null; toast('Saqlandi'); S.subTab.driver='cabinet'; await renderDriver(); }
+    catch(e){ $('rgErr').innerHTML='<div class="err-msg">'+esc(e.message)+'</div>'; }
+  });
+}
+
+/* ============================================================= */
+/* SECTION: ROADSIDE + HEAVY EQUIPMENT + ADS                        */
+/* ============================================================= */
+const RS = {mode:'search', cat:'gas', fuel:'', items:[]};
+function renderRoadside(){
+  clearPillTabs();
+  $('content').innerHTML = `
+    <div class="mode-toggle ${RS.mode==='post'?'b':''}" id="rsMode"><div class="mode-bg"></div>
+      <div class="mode-opt ${RS.mode==='search'?'sel':''}" data-m="search">Qidirish</div>
+      <div class="mode-opt ${RS.mode==='post'?'sel':''}" data-m="post">E'lon joylashtirish</div>
+    </div>
+    <div id="rsBody"></div>`;
+  $('rsMode').querySelectorAll('.mode-opt').forEach(o=> o.addEventListener('click', ()=>{ WT.select(); RS.mode=o.dataset.m; renderRoadside(); }));
+  if(RS.mode==='search') renderRoadsideSearch(); else renderRoadsidePost();
+}
+function renderRoadsideSearch(){
+  const body = $('rsBody');
+  body.innerHTML = `
+    <div class="cat-grid" id="catGrid">${SERVICE_TYPES.map(s=>`<div class="cat-cell ${RS.cat===s.key?'active':''}" data-c="${s.key}"><div class="cat-ic"><svg class="ic" viewBox="0 0 24 24"><use href="#${s.icon}"/></svg></div><div class="cat-label">${s.label}</div></div>`).join('')}</div>
+    ${RS.cat==='gas' ? `<div class="field-label">Yoqilg'i turi</div><div class="chip-row" id="fuelChips"><div class="chip ${!RS.fuel?'active':''}" data-f="">Barchasi</div>${FUEL_TYPES.map(f=>`<div class="chip ${RS.fuel===f.key?'active':''}" data-f="${f.key}"><span class="dot" style="background:${f.c}"></span>${f.label}</div>`).join('')}</div>` : ''}
+    <div class="sec-head"><span class="sec-title">Natijalar</span><span class="sec-action" id="rsCount"></span></div>
+    <div id="rsResults"><div class="empty-note">Yuklanmoqda...</div></div>`;
+  $('catGrid').addEventListener('click', e=>{ const c=e.target.closest('.cat-cell'); if(!c) return; WT.select(); RS.cat=c.dataset.c; RS.fuel=''; renderRoadsideSearch(); loadRoadside(); });
+  $('fuelChips') && $('fuelChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); RS.fuel=c.dataset.f; renderRoadsideSearch(); loadRoadside(); });
+  loadRoadside();
+}
+async function loadRoadside(){
+  const box = $('rsResults'); if(!box) return;
+  box.innerHTML = '<div class="empty-note">Yuklanmoqda...</div>';
+  const apiCat = RS.cat === 'heavy' ? 'heavy' : RS.cat;
+  try{
+    const coords = await new Promise(res=>{
+      if(!navigator.geolocation) return res(null);
+      navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lon:p.coords.longitude}), ()=>res(null), {timeout:3000});
+    });
+    const params = new URLSearchParams({type: apiCat}); if(RS.fuel) params.set('fuel', RS.fuel);
+    if(coords){ params.set('lat', coords.lat); params.set('lon', coords.lon); }
+    const items = await apiGet('/api/roadside?' + params.toString());
+    RS.items = items;
+    $('rsCount').textContent = items.length + ' ta';
+    box.innerHTML = items.length ? items.map(i=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy)"><svg class="ic" viewBox="0 0 24 24"><use href="#${SERVICE_TYPES.find(s=>s.key===RS.cat).icon}"/></svg></div><div class="tx"><div class="nm">${esc(i.name)}</div><div class="sub">${esc(i.description||i.phone)}</div></div>${typeof i.distance==='number'?`<div class="side"><div class="num">${i.distance.toFixed(1)}</div><div class="unit">km</div></div>`:''}</div>`).join('') : '<div class="empty-note">Bu filtr bo\'yicha xizmat topilmadi.</div>';
+  }catch(e){ box.innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
+}
+function renderRoadsidePost(){
+  if(!S.me){ $('rsBody').innerHTML = '<div class="empty-note">E\'lon joylashtirish uchun tizimga kiring.</div>'; return; }
+  let ptype='gas', pfuels=[], lat=null, lon=null;
+  $('rsBody').innerHTML = `
+    <div class="field"><span class="field-label">Xizmat / texnika turi</span><div class="chip-row" id="ptypeChips">${SERVICE_TYPES.map(s=>`<div class="chip ${s.key==='gas'?'active':''}" data-t="${s.key}">${s.label}</div>`).join('')}</div></div>
+    <div class="field" id="pfuelField"><span class="field-label">Mavjud yoqilg'i turlari</span><div class="chip-row" id="pfuelChips">${FUEL_TYPES.map(f=>`<div class="chip" data-f="${f.key}"><span class="dot" style="background:${f.c}"></span>${f.label}</div>`).join('')}</div></div>
+    <div class="field"><span class="field-label">Nomi</span><input class="field-input" id="pName" placeholder="Masalan: Chorraha AGZS"></div>
+    <div class="field"><span class="field-label">Telefon</span><input class="field-input" id="pPhone" placeholder="+998 90 123 45 67"></div>
+    <div class="field"><span class="field-label">Tavsif</span><textarea class="field-input" id="pDesc" placeholder="Qisqacha tavsif"></textarea></div>
+    <div class="field"><span class="field-label">Joylashuv</span><div class="loc-pill" id="pLocBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-locate"/></svg><span id="pLocTxt">Joriy joylashuvni olish</span></div></div>
+    <div class="price-band"><span class="lbl">To'lov (30 kun)</span><span class="val mono" id="pPrice">50 000 so'm</span></div>
+    <div id="pErr"></div>
+    <button class="cta" id="pSubmit"><svg class="ic" viewBox="0 0 24 24"><use href="#i-megaphone"/></svg><span>E'lonni joylashtirish</span></button>`;
+  $('ptypeChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); $('ptypeChips').querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); ptype=c.dataset.t; $('pfuelField').style.display = ptype==='gas'?'block':'none'; $('pPrice').textContent = SERVICE_TYPES.find(s=>s.key===ptype).price.toLocaleString()+" so'm"; });
+  $('pfuelField').style.display = 'block';
+  $('pfuelChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); c.classList.toggle('active'); const f=c.dataset.f; pfuels = pfuels.includes(f)?pfuels.filter(x=>x!==f):[...pfuels,f]; });
+  $('pLocBtn').addEventListener('click', ()=>{
+    WT.tap();
+    if(!navigator.geolocation){ toast('Joylashuv qo\'llab-quvvatlanmaydi'); return; }
+    navigator.geolocation.getCurrentPosition(p=>{ lat=p.coords.latitude; lon=p.coords.longitude; $('pLocTxt').textContent='Joylashuv aniqlandi ✓'; $('pLocBtn').style.background='var(--green-soft)'; }, ()=> toast('Joylashuvga ruxsat berilmadi'));
+  });
+  $('pSubmit').addEventListener('click', async ()=>{
+    const body = {service_type: ptype==='heavy'?'heavy':ptype, fuel_types: ptype==='gas'?pfuels:[], name:$('pName').value.trim(), phone:$('pPhone').value.trim(), description:$('pDesc').value.trim(), latitude:lat, longitude:lon};
+    if(!body.name || !body.phone || !body.description || lat===null){ $('pErr').innerHTML='<div class="err-msg">Barcha maydonlarni to\'ldiring va joylashuvni oling</div>'; return; }
+    try{
+      await apiPost('/api/ads', body);
+      $('rsBody').innerHTML = `<div class="pending-card pop"><div class="pending-ic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-clock"/></svg></div><div class="pending-title">E'loningiz qabul qilindi</div><div class="pending-desc">Admin tekshirib tasdiqlagach, 30 kun davomida ko'rinadi.</div></div>`;
+    }catch(e){ $('pErr').innerHTML='<div class="err-msg">'+esc(e.message)+'</div>'; }
+  });
+}
+
+/* ============================================================= */
+/* SECTION: PROFILE (har bir foydalanuvchi uchun shaxsiy kabinet)   */
+/* ============================================================= */
+function renderProfile(){
+  if(!S.me){ clearPillTabs(); $('content').innerHTML = '<div class="empty-note">Profilni ko\'rish uchun tizimga kiring.</div>'; return; }
+  pillTabs([{key:'orders',label:'Buyurtmalarim'},{key:'ads',label:"E'lonlarim"},{key:'settings',label:'Sozlamalar'}], S.subTab.profile, k=>{ S.subTab.profile=k; renderProfile(); });
+  if(S.subTab.profile==='orders') renderProfileOrders();
+  else if(S.subTab.profile==='ads') renderProfileAds();
+  else renderProfileSettings();
+}
+async function renderProfileOrders(){
+  $('content').innerHTML = `
+    <div class="profile-card"><div class="profile-row">
+      <div class="profile-av">${esc(initials(S.me.first_name||'Siz'))}</div>
+      <div class="profile-info"><div class="profile-name">${esc(S.me.first_name||'Foydalanuvchi')}</div><div class="profile-sub mono">ID: ${S.me.id}</div></div>
+    </div></div>
+    <div class="sec-head"><span class="sec-title">Bergan buyurtmalarim</span></div>
+    <div id="myOrdersList"><div class="empty-note">Yuklanmoqda...</div></div>`;
+  try{
+    const orders = await apiGet('/api/me/orders');
+    const box = $('myOrdersList');
+    box.innerHTML = orders.length ? orders.map(o=> `<div class="card-row"><div class="ic-box" style="background:${o.is_active?'var(--green-soft)':'#EEF2F8'};color:${o.is_active?'var(--green)':'var(--silver)'}"><svg class="ic" viewBox="0 0 24 24"><use href="#i-route"/></svg></div><div class="tx"><div class="nm">${esc(o.from_loc)} → ${esc(o.to_loc)}</div><div class="sub">${o.service_type==='cargo'?'Yuk/Pochta':"Yo'lovchi"} · ${esc(o.phone)}</div></div><span class="badge ${o.is_active?'on':'off'}">${o.is_active?'Faol':'Yopilgan'}</span></div>`).join('') : '<div class="empty-note">Hali buyurtma bermagansiz.</div>';
+  }catch(e){ $('myOrdersList').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
+}
+async function renderProfileAds(){
+  $('content').innerHTML = `<div class="sec-head"><span class="sec-title">Joylashtirgan e'lonlarim</span></div><div id="myAdsList"><div class="empty-note">Yuklanmoqda...</div></div>`;
+  try{
+    const ads = await apiGet('/api/me/ads');
+    const statusMap = {pending:['Ko\'rib chiqilmoqda','off'], rejected:['Rad etilgan','off'], approved:['Faol','on']};
+    const box = $('myAdsList');
+    box.innerHTML = ads.length ? ads.map(a=>{
+      let st = a.payment_status;
+      let label = st==='pending' ? "Ko'rib chiqilmoqda" : st==='rejected' ? 'Rad etilgan' : (a.is_active ? 'Faol' : 'Muddati tugagan');
+      let cls = (st==='approved' || (st!=='pending' && st!=='rejected' && a.is_active)) ? 'on' : 'off';
+      return `<div class="card-row"><div class="ic-box" style="background:var(--amber-soft);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><use href="#i-megaphone"/></svg></div><div class="tx"><div class="nm">${esc(a.name)}</div><div class="sub">${esc(a.service_type)}</div></div><span class="badge ${cls}">${label}</span></div>`;
+    }).join('') : '<div class="empty-note">Hali e\'lon joylashtirmagansiz.</div>';
+  }catch(e){ $('myAdsList').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
+}
+async function renderProfileSettings(){
+  $('content').innerHTML = `<div class="sec-head"><span class="sec-title">Aloqa ma'lumotlari</span></div>
+    <div class="field"><span class="field-label">Telefon raqam</span><input class="field-input" id="mySettPhone" placeholder="+998 90 123 45 67"></div>
+    <div id="mySettErr"></div>
+    <button class="cta" id="mySettSave"><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg><span>Saqlash</span></button>`;
+  try{ const r = await apiGet('/api/me/settings'); if(r.phone) $('mySettPhone').value = r.phone; }catch(e){}
+  $('mySettSave').addEventListener('click', async ()=>{
+    const phone = $('mySettPhone').value.trim();
+    if(!phone){ $('mySettErr').innerHTML='<div class="err-msg">Telefon raqamini kiriting</div>'; return; }
+    try{ await apiPost('/api/me/settings', {phone}); toast('Saqlandi'); }
+    catch(e){ $('mySettErr').innerHTML='<div class="err-msg">'+esc(e.message)+'</div>'; }
+  });
+}
+
+/* ============================================================= */
+/* SECTION: ADMIN                                                   */
+/* ============================================================= */
+function renderAdmin(){
+  if(!(S.me && S.me.is_admin)){ clearPillTabs(); $('content').innerHTML = '<div class="empty-note">Bu bo\'lim faqat super admin uchun.</div>'; return; }
+  pillTabs([{key:'overview',label:'Umumiy'},{key:'drivers',label:'Haydovchilar'},{key:'admins',label:'Adminlar'},{key:'settings',label:'Sozlamalar'}], S.subTab.admin, k=>{ S.subTab.admin=k; renderAdmin(); });
+  if(S.subTab.admin==='overview') renderAdminOverview();
+  else if(S.subTab.admin==='drivers') renderAdminDrivers();
+  else if(S.subTab.admin==='admins') renderAdminAdmins();
+  else renderAdminSettings();
+}
+async function renderAdminOverview(){
+  $('content').innerHTML = '<div class="empty-note">Yuklanmoqda...</div>';
+  let stats, logs;
+  try{ [stats, logs] = await Promise.all([apiGet('/api/admin/stats'), apiGet('/api/admin/logs')]); }
+  catch(e){ $('content').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; return; }
+  $('content').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-num">${stats.drivers}</div><div class="stat-label">Haydovchilar</div></div>
+      <div class="stat-box"><div class="stat-num">${stats.routes}</div><div class="stat-label">Marshrutlar</div></div>
+      <div class="stat-box"><div class="stat-num">${stats.orders}</div><div class="stat-label">Buyurtmalar</div></div>
+      <div class="stat-box"><div class="stat-num">${stats.logs}</div><div class="stat-label">Loglar</div></div>
+      <div class="stat-box"><div class="stat-num">${stats.admins}</div><div class="stat-label">Adminlar</div></div>
+      <div class="stat-box"><div class="stat-num">${stats.banned}</div><div class="stat-label">Bloklangan</div></div>
+    </div>
+    <div class="sec-head"><span class="sec-title">Tizim boshqaruvi</span></div>
+    <div class="ctrl-card"><div class="ctrl-top"><span class="ctrl-title"><span class="ctrl-ic" style="background:var(--amber-soft);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><use href="#i-diamond"/></svg></span>Monetizatsiya</span><span class="badge off" id="monBadge">O'chiq</span></div>
+      <div class="ctrl-desc">Yoqilganda oylik obuna tizimi ishga tushadi, 7 kunlik bepul muhlat beriladi.</div>
+      <button class="btn-sm ghost" id="monBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-power"/></svg><span id="monBtnTxt">Yoqish</span></button></div>
+    <div class="ctrl-card" style="border-color:rgba(229,72,77,.22)"><div class="ctrl-top"><span class="ctrl-title"><span class="ctrl-ic" style="background:var(--red-soft);color:var(--red)"><svg class="ic" viewBox="0 0 24 24"><use href="#i-power"/></svg></span>Favqulodda to'xtatish</span><span class="badge on" id="killBadge">Bot faol</span></div>
+      <div class="ctrl-desc">Barcha foydalanuvchilar uchun botni bir zumda o'chiradi yoki yoqadi.</div>
+      <button class="btn-sm danger" id="killBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-alert"/></svg><span id="killBtnTxt">To'xtatish</span></button></div>
+    <div class="sec-head"><span class="sec-title">E'lon so'rovlari</span></div>
+    <div id="pendingAdsList"><div class="empty-note">Yuklanmoqda...</div></div>
+    <div class="sec-head"><span class="sec-title">Ommaviy xabar</span></div>
+    <textarea class="field-input" id="broadcastTxt" rows="3" placeholder="Barcha foydalanuvchilarga yuboriladigan xabar..." style="margin-bottom:10px"></textarea>
+    <button class="cta" id="broadcastBtn" style="margin-bottom:6px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-megaphone"/></svg><span>Barchaga yuborish</span></button>`;
+
+  let monOn = false, botOn = true;
+  $('monBtn').addEventListener('click', ()=> confirmAction({
+    icon:'i-diamond', iconBg:'var(--amber-soft)', iconColor:'var(--amber)',
+    title: monOn ? "Monetizatsiyani to'xtatish" : "Monetizatsiyani boshlash",
+    desc: monOn ? "Obuna tizimi o'chadi, barcha haydovchilar bepul rejimga o'tadi." : "Barcha haydovchilarga xabar yuboriladi va 7 kunlik bepul muhlat beriladi.",
+    danger: monOn,
+    async onConfirm(){
+      try{ await apiPost('/api/admin/monetization', {active: !monOn}); monOn=!monOn;
+        $('monBadge').textContent = monOn?'Yoniq':"O'chiq"; $('monBadge').className='badge '+(monOn?'on':'off');
+        $('monBtnTxt').textContent = monOn?"To'xtatish":"Yoqish"; $('monBtn').className='btn-sm '+(monOn?'danger':'ghost');
+        toast(monOn?'Monetizatsiya yoqildi':"Monetizatsiya to'xtatildi");
+      }catch(e){ toast(e.message); }
+    }
+  }));
+  $('killBtn').addEventListener('click', ()=> confirmAction({
+    icon:'i-power', iconBg:'var(--red-soft)', iconColor:'var(--red)',
+    title: botOn ? "Botni to'xtatish" : "Botni ishga tushirish",
+    desc: botOn ? "Bot barcha foydalanuvchilar uchun vaqtincha yopiladi." : "Bot barcha foydalanuvchilar uchun qayta ochiladi.",
+    danger: botOn,
+    async onConfirm(){
+      try{ await apiPost('/api/admin/maintenance', {active: botOn}); botOn=!botOn;
+        $('killBadge').textContent = botOn?'Bot faol':"To'xtatilgan"; $('killBadge').className='badge '+(botOn?'on':'off');
+        $('killBtnTxt').textContent = botOn?"To'xtatish":"Ishga tushirish"; $('killBtn').className='btn-sm '+(botOn?'danger':'ghost');
+        toast(botOn?'Bot ishga tushirildi':"Bot to'xtatildi");
+      }catch(e){ toast(e.message); }
+    }
+  }));
+  $('broadcastBtn').addEventListener('click', async ()=>{
+    const txt = $('broadcastTxt').value.trim(); if(!txt){ toast('Xabar matnini yozing'); return; }
+    try{ const r = await apiPost('/api/admin/broadcast', {text:txt}); $('broadcastTxt').value=''; toast(r.sent+' ta foydalanuvchiga yuborildi'); }
+    catch(e){ toast(e.message); }
+  });
+
+  apiGet('/api/admin/ads/pending').then(ads=>{
+    const box = $('pendingAdsList'); if(!box) return;
+    box.innerHTML = ads.length ? ads.map(ad=> `<div class="card-row" style="align-items:flex-start"><div class="ic-box" style="background:var(--amber-soft);color:var(--amber)"><svg class="ic" viewBox="0 0 24 24"><use href="#i-megaphone"/></svg></div><div class="tx"><div class="nm">${esc(ad.name)}</div><div class="sub">${esc(ad.service_type)} · ${(ad.amount||0).toLocaleString()} so'm</div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn-sm ghost" style="background:var(--green-soft);color:var(--green)" data-approve="${ad.id}">Tasdiqlash</button><button class="btn-sm ghost" style="background:var(--red-soft);color:var(--red)" data-reject="${ad.id}">Bekor qilish</button></div></div></div>`).join('') : '<div class="empty-note">Yangi so\'rov yo\'q.</div>';
+    box.querySelectorAll('[data-approve]').forEach(b=> b.addEventListener('click', async ()=>{ try{ await apiPost('/api/admin/ads/'+b.dataset.approve+'/approve', {}); toast('Tasdiqlandi'); renderAdminOverview(); }catch(e){ toast(e.message); } }));
+    box.querySelectorAll('[data-reject]').forEach(b=> b.addEventListener('click', async ()=>{ try{ await apiPost('/api/admin/ads/'+b.dataset.reject+'/reject', {}); toast('Bekor qilindi'); renderAdminOverview(); }catch(e){ toast(e.message); } }));
+  }).catch(()=>{});
+}
+async function renderAdminDrivers(){
+  $('content').innerHTML = '<div class="empty-note">Yuklanmoqda...</div>';
+  try{
+    const rows = await apiGet('/api/admin/drivers');
+    $('content').innerHTML = `<div class="sec-head"><span class="sec-title">Haydovchilar ro'yxati</span><span class="sec-action">${rows.length} ta</span></div>` +
+      (rows.length ? rows.map(d=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy);font-weight:800;font-size:11px">${esc(initials(d.full_name))}</div><div class="tx"><div class="nm">${esc(d.full_name)}</div><div class="sub">ID: ${d.telegram_id}</div></div></div>`).join('') : '<div class="empty-note">Haydovchilar yo\'q.</div>');
+  }catch(e){ $('content').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
+}
+async function renderAdminAdmins(){
+  $('content').innerHTML = '<div class="empty-note">Yuklanmoqda...</div>';
+  let admins, bans;
+  try{ [admins, bans] = await Promise.all([apiGet('/api/admin/admins'), apiGet('/api/admin/bans')]); }
+  catch(e){ $('content').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; return; }
+  $('content').innerHTML = `
+    <div class="sec-head"><span class="sec-title">Yangi admin tayinlash</span></div>
+    <div class="field-row"><div><input class="field-input" id="newAdminId" placeholder="Telegram ID"></div><div><input class="field-input" id="newAdminName" placeholder="Ism"></div></div>
+    <button class="cta" id="addAdminBtn" style="margin:10px 0 18px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg><span>Admin qo'shish</span></button>
+    <div class="sec-head"><span class="sec-title">Adminlar</span><span class="sec-action">${admins.length} ta</span></div>
+    <div id="adminsList">${admins.map(a=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy);font-weight:800;font-size:11px">${esc(initials(a.full_name))}</div><div class="tx"><div class="nm">${esc(a.full_name)}</div><div class="sub">ID: ${a.telegram_id}</div></div><span class="rm-btn" data-rm-admin="${a.telegram_id}"><svg class="ic" viewBox="0 0 24 24"><use href="#i-minus"/></svg></span></div>`).join('')}</div>
+    <div class="sec-head"><span class="sec-title">Qora ro'yxat</span></div>
+    <div class="field-row"><div><input class="field-input" id="banId" placeholder="Telegram ID"></div><div><input class="field-input" id="banReason" placeholder="Sabab"></div></div>
+    <div class="chip-row" id="banDurChips" style="margin-top:10px"><div class="chip active" data-h="24">1 kun</div><div class="chip" data-h="72">3 kun</div><div class="chip" data-h="168">1 hafta</div><div class="chip" data-h="0">Umrbod</div></div>
+    <button class="cta red" id="banBtn" style="margin-bottom:16px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-ban"/></svg><span>Bloklash</span></button>
+    <div id="bansList">${bans.length ? bans.map(b=> `<div class="card-row" style="background:rgba(229,72,77,.06);border-color:rgba(229,72,77,.18)"><div class="tx"><div class="nm mono">${b.telegram_id}</div><div class="sub">${esc(b.ban_reason||'')}</div></div><span class="sec-action" style="color:var(--green)" data-unban="${b.telegram_id}">Chiqarish</span></div>`).join('') : '<div class="empty-note">Bloklanganlar yo\'q.</div>'}</div>`;
+
+  $('addAdminBtn').addEventListener('click', async ()=>{
+    const id=$('newAdminId').value.trim(), name=$('newAdminName').value.trim();
+    if(!id||!name){ toast('ID va ismni kiriting'); return; }
+    try{ await apiPost('/api/admin/admins', {telegram_id:Number(id), full_name:name}); toast('Admin qo\'shildi'); renderAdminAdmins(); }
+    catch(e){ toast(e.message); }
+  });
+  document.querySelectorAll('[data-rm-admin]').forEach(b=> b.addEventListener('click', ()=> confirmAction({
+    icon:'i-minus', iconBg:'var(--red-soft)', iconColor:'var(--red)', title:'Adminni o\'chirish', desc:'ID: '+b.dataset.rmAdmin, danger:true,
+    async onConfirm(){ try{ await apiDelete('/api/admin/admins/'+b.dataset.rmAdmin); toast('O\'chirildi'); renderAdminAdmins(); }catch(e){ toast(e.message); } }
+  })));
+  $('banDurChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); $('banDurChips').querySelectorAll('.chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); });
+  $('banBtn').addEventListener('click', async ()=>{
+    const id=$('banId').value.trim(); if(!id){ toast('ID kiriting'); return; }
+    const hours = Number(document.querySelector('#banDurChips .chip.active').dataset.h);
+    try{ await apiPost('/api/admin/ban', {telegram_id:Number(id), reason:$('banReason').value.trim()||undefined, duration_hours: hours||undefined}); toast('Bloklandi'); renderAdminAdmins(); }
+    catch(e){ toast(e.message); }
+  });
+  document.querySelectorAll('[data-unban]').forEach(b=> b.addEventListener('click', async ()=>{ try{ await apiPost('/api/admin/unban', {telegram_id:Number(b.dataset.unban)}); toast('Blokdan chiqarildi'); renderAdminAdmins(); }catch(e){ toast(e.message); } }));
+}
+async function renderAdminSettings(){
+  $('content').innerHTML = '<div class="empty-note">Yuklanmoqda...</div>';
+  let card = "8600123456789012";
+  try{ const r = await apiGet('/api/admin/settings/card'); card = r.card_number; }catch(e){}
+  $('content').innerHTML = `
+    <div class="sec-head"><span class="sec-title">To'lov kartasini sozlash</span></div>
+    <input class="field-input mono" id="cardNum" value="${esc(card)}" style="margin-bottom:10px">
+    <button class="btn-sm ghost" id="saveCardBtn" style="margin-bottom:16px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-card"/></svg><span>Kartani saqlash</span></button>
+    <div class="sec-head"><span class="sec-title">Super Admin paroli</span></div>
+    <input class="field-input" id="newPass" type="password" placeholder="Yangi parol (kamida 4 belgi)" style="margin-bottom:10px">
+    <button class="btn-sm ghost" id="savePassBtn" style="margin-bottom:16px"><svg class="ic" viewBox="0 0 24 24"><use href="#i-key"/></svg><span>Parolni yangilash</span></button>
+    <div class="sec-head"><span class="sec-title">Zaxira nusxa</span></div>
+    <div class="ctrl-desc" style="margin-top:0">Hozircha bazani zaxiralash faqat bot chatida (💾 Baza tugmasi) mavjud.</div>`;
+  $('saveCardBtn').addEventListener('click', async ()=>{
+    try{ await apiPost('/api/admin/settings/card', {card_number:$('cardNum').value}); toast('Karta yangilandi'); }catch(e){ toast(e.message); }
+  });
+  $('savePassBtn').addEventListener('click', async ()=>{
+    const p = $('newPass').value;
+    try{ await apiPost('/api/admin/settings/password', {new_password:p}); $('newPass').value=''; toast('Parol yangilandi'); }catch(e){ toast(e.message); }
+  });
+}
+
+/* ============================================================= */
+/* BOOT                                                             */
+/* ============================================================= */
+$('tgBadge').textContent = inTelegram ? 'telegram ✓' : 'browser';
+setSection('passenger');
+loadMe();
+</script>
 </body>
 </html>

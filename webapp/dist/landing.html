@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0B2A5B">
 <title>W-Taxi — O'zbekiston bo'ylab 1335 yo'nalish</title>
-<meta name="description" content="Shahar taxi, viloyatlararo, yuk va pochta xizmatlari. O'zbekiston bo'ylab 1335 yo'nalish, 24/7 aqlli moslashtirish.">
+<meta name="description" content="Shahar taxi, viloyatlararo, yuk va pochta. O'zbekiston bo'ylab 1335 yo'nalish.">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy:#0B2A5B;--navy-2:#1A3B7A;--navy-3:#2D4D8A;--navy-deep:#061838;
   --navy-soft:rgba(11,42,91,.08);--silver:#A8B2BF;--silver-2:#D0D6DE;--silver-3:#E8ECF1;
-  --bg:#FFFFFF;--bg-alt:#F5F7FB;--bg-3:#EEF2F8;--ink:#0F172A;--muted:#64748B;--muted-2:#94A3B8;
+  --bg:#FFFFFF;--bg-alt:#F5F7FB;--bg-3:#EEF2F8;--ink:#0F172A;--muted:#64748B;
   --hair:rgba(11,42,91,.08);--green:#22A06B;--green-2:#15803D;--amber:#E8A500;--red:#DC2626;
   --shadow-sm:0 2px 8px -2px rgba(11,42,91,.06);
   --shadow-md:0 8px 24px -8px rgba(11,42,91,.12);
@@ -19,788 +19,646 @@
   --shadow-xl:0 40px 80px -30px rgba(11,42,91,.28);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth;scroll-padding-top:88px}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;font-size:15px}
-a{color:inherit;text-decoration:none;transition:color .2s}
+a{color:inherit;text-decoration:none}
 svg{display:block;flex-shrink:0}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select{font-family:inherit;border:none;outline:none;background:none;color:inherit;font-size:inherit}
 .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
-.container{max-width:1240px;margin:0 auto;padding:0 24px}
+.container{max-width:1280px;margin:0 auto;padding:0 32px}
+.container-wide{max-width:1440px;margin:0 auto;padding:0 40px}
 
-/* ═══════════════════════════════════════
-   ANIMATIONS
-   ═══════════════════════════════════════ */
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-@keyframes floatX{0%,100%{transform:translateX(0)}50%{transform:translateX(8px)}}
-@keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:0}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.4);opacity:0}}
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-@keyframes routeDraw{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
-@keyframes carPulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.1;transform:scale(1.2)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes slideDown{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUpFade{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes routeDraw{from{stroke-dashoffset:800}to{stroke-dashoffset:0}}
+@keyframes carPulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.08;transform:scale(1.2)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes drawLine{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
-@keyframes heartbeat{0%,100%{transform:scale(1)}25%{transform:scale(1.15)}50%{transform:scale(1)}75%{transform:scale(1.1)}}
-@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-
+@keyframes heartbeat{0%,100%{transform:scale(1)}25%{transform:scale(1.08)}50%{transform:scale(1)}75%{transform:scale(1.05)}}
+@keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
 .reveal.in{opacity:1;transform:translateY(0)}
 
-/* ═══════════════════════════════════════
-   NAVBAR
-   ═══════════════════════════════════════ */
-.nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--hair);transition:box-shadow .3s}
-.nav.scrolled{box-shadow:var(--shadow-sm)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px;gap:32px}
-.brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
-.brand-w{width:36px;height:36px;color:var(--navy);transition:transform .3s}
-.brand:hover .brand-w{transform:scale(1.05) rotate(-3deg)}
-.brand-txt{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--navy)}
+/* ═══════════════════ HEADER (katta, OLX uslubida) ═══════════════════ */
+.top-strip{background:var(--navy-deep);color:#A8B2BF;font-size:12px;padding:8px 0}
+.top-strip-inner{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.top-strip-left{display:flex;gap:20px;align-items:center}
+.top-strip-left a:hover{color:#fff}
+.top-strip-right{display:flex;gap:20px;align-items:center}
+.top-strip-right a:hover{color:#fff}
+.top-strip .phone-ic{display:inline-flex;align-items:center;gap:6px}
+.top-strip svg{width:12px;height:12px}
+
+.header{background:#fff;border-bottom:1px solid var(--hair);position:sticky;top:0;z-index:1000;box-shadow:var(--shadow-sm)}
+.header-main{padding:18px 0;display:flex;align-items:center;gap:40px}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.brand-w{width:44px;height:44px;color:var(--navy)}
+.brand-texts{display:flex;flex-direction:column}
+.brand-txt{font-size:20px;font-weight:800;letter-spacing:.02em;color:var(--navy);line-height:1}
 .brand-txt .dash{color:var(--silver);font-weight:600;margin:0 2px}
-.brand-sub{font-size:9px;font-weight:700;color:var(--silver);letter-spacing:.12em;text-transform:uppercase;margin-top:-2px}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{font-size:13px;font-weight:600;color:var(--muted);position:relative;padding:4px 0}
-.nav-links a:hover{color:var(--navy)}
-.nav-links a.active{color:var(--navy)}
-.nav-links a.active::after{content:"";position:absolute;bottom:-22px;left:0;right:0;height:2px;background:var(--navy);border-radius:2px;animation:fadeIn .3s both}
-.nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
-.lang-btn{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--muted);padding:8px 12px;border-radius:10px;transition:all .2s;letter-spacing:.03em}
-.lang-btn:hover{background:var(--bg-alt);color:var(--navy)}
-.lang-btn svg{width:12px;height:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13px;padding:11px 22px;border-radius:12px;transition:all .2s;white-space:nowrap;cursor:pointer}
+.brand-sub{font-size:9px;font-weight:700;color:var(--silver);letter-spacing:.15em;text-transform:uppercase;margin-top:3px}
+
+.header-search{flex:1;max-width:600px;display:flex;align-items:center;background:var(--bg-alt);border:2px solid transparent;border-radius:12px;padding:4px;transition:all .2s}
+.header-search:focus-within{border-color:var(--navy);background:#fff;box-shadow:0 0 0 4px var(--navy-soft)}
+.header-search svg{width:18px;height:18px;color:var(--silver);margin-left:10px}
+.header-search input{flex:1;padding:10px 12px;font-size:14px;font-weight:600;min-width:0}
+.header-search input::placeholder{color:var(--silver);font-weight:500}
+.header-search button{padding:9px 18px;background:var(--navy);color:#fff;border-radius:8px;font-size:13px;font-weight:700;transition:all .2s}
+.header-search button:hover{background:var(--navy-2)}
+
+.header-actions{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.header-action{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:8px;transition:all .2s;cursor:pointer}
+.header-action:hover{color:var(--navy);background:var(--bg-alt)}
+.header-action svg{width:20px;height:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;padding:11px 22px;border-radius:10px;transition:all .2s;white-space:nowrap;cursor:pointer}
 .btn-primary{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;box-shadow:0 6px 20px -6px rgba(11,42,91,.45)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 28px -8px rgba(11,42,91,.55)}
-.btn-primary:active{transform:scale(.98)}
-.btn-light{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm)}
+.btn-lg{padding:15px 30px;font-size:15px;border-radius:12px}
+.btn-light{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm);border:1px solid var(--hair)}
 .btn-light:hover{transform:translateY(-1px);box-shadow:var(--shadow-md)}
 .btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--hair)}
 .btn-ghost:hover{background:var(--bg-alt);border-color:var(--navy-2)}
-.btn-lg{padding:15px 28px;font-size:14px;border-radius:14px}
-.hamburger{display:none;width:42px;height:42px;border-radius:12px;align-items:center;justify-content:center;color:var(--navy);transition:background .2s}
-.hamburger:hover{background:var(--bg-alt)}
-.mobile-menu{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border-bottom:1px solid var(--hair);padding:16px 24px 24px;flex-direction:column;gap:4px;box-shadow:var(--shadow-lg)}
-.mobile-menu.open{display:flex}
-.mobile-menu a{padding:14px 12px;font-size:15px;font-weight:600;color:var(--ink);border-radius:10px;transition:background .2s}
-.mobile-menu a:hover{background:var(--bg-alt)}
-.mobile-menu .btn{margin-top:14px;padding:15px}
+.btn-ghost-light{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.2)}
+.btn-ghost-light:hover{background:rgba(255,255,255,.08);border-color:#fff}
 
-/* ═══════════════════════════════════════
-   HERO
-   ═══════════════════════════════════════ */
-.hero{position:relative;background:linear-gradient(180deg,var(--navy-deep) 0%,var(--navy) 50%,var(--navy-2) 100%);color:#fff;padding:100px 0 120px;overflow:hidden}
-.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.hero-bg::before{content:"";position:absolute;top:-30%;right:-10%;width:700px;height:700px;background:radial-gradient(circle,rgba(45,77,138,.55),transparent 70%);filter:blur(80px);animation:floatY 8s ease-in-out infinite}
-.hero-bg::after{content:"";position:absolute;bottom:-40%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(34,160,107,.18),transparent 70%);filter:blur(80px);animation:floatY 10s ease-in-out infinite reverse}
-.hero-grid{position:absolute;inset:0;opacity:.05;background-image:linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at center,black,transparent 80%);-webkit-mask-image:radial-gradient(ellipse at center,black,transparent 80%)}
-.skyline{position:absolute;bottom:0;left:0;right:0;width:100%;height:240px;opacity:.4}
-.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr 1fr;gap:60px;align-items:center}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#DDE3EA;margin-bottom:28px;backdrop-filter:blur(10px)}
-.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,160,107,.3);animation:blink 1.8s ease-in-out infinite}
-.hero h1{font-size:clamp(34px,4.5vw,58px);font-weight:800;line-height:1.08;letter-spacing:-.025em;margin-bottom:22px}
-.hero h1 .accent{background:linear-gradient(135deg,#FFFFFF 0%,#A8B2BF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:clamp(15px,1.5vw,17px);color:#C9D2DF;line-height:1.7;margin-bottom:40px;max-width:540px}
-.search-bar{display:flex;align-items:center;background:#fff;border-radius:20px;padding:8px;box-shadow:0 24px 60px -20px rgba(0,0,0,.5);gap:4px;max-width:620px}
-.search-field{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;min-width:0;position:relative}
-.search-field .ic{width:18px;height:18px;color:var(--silver);flex-shrink:0}
-.search-field input{flex:1;font-size:14px;font-weight:600;color:var(--ink);min-width:0;background:transparent}
-.search-field input::placeholder{color:var(--silver);font-weight:500}
-.search-sep{width:1px;height:32px;background:var(--silver-3);flex-shrink:0}
-.search-bar .btn{padding:15px 26px;border-radius:14px;flex-shrink:0}
-.hero-app-link{display:inline-flex;align-items:center;gap:10px;margin-top:28px;font-size:13px;font-weight:600;color:#A8B2BF;transition:color .2s}
-.hero-app-link:hover{color:#fff}
-.hero-app-link .tg{width:24px;height:24px;background:linear-gradient(135deg,#229ED9,#1F8FD2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;flex-shrink:0}
+/* ═══ KATEGORIYA NAV (OLX uslubida) ═══ */
+.cat-nav{background:#fff;border-bottom:1px solid var(--hair);position:sticky;top:81px;z-index:999}
+.cat-nav-inner{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}
+.cat-nav-inner::-webkit-scrollbar{display:none}
+.cat-link{display:flex;align-items:center;gap:8px;padding:16px 20px;font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap;position:relative;transition:color .2s;cursor:pointer;border-bottom:2px solid transparent}
+.cat-link:hover{color:var(--navy)}
+.cat-link.active{color:var(--navy);border-bottom-color:var(--navy)}
+.cat-link svg{width:16px;height:16px}
 
-/* HERO PHONE */
-.hero-phone-wrap{position:relative;display:flex;justify-content:center;align-items:center;perspective:1400px;min-height:620px}
-.hero-phone{width:300px;height:600px;border-radius:42px;background:linear-gradient(180deg,#0a1225,#02040c);padding:12px;box-shadow:0 60px 120px -40px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.1);position:relative;transform:rotateY(-8deg) rotateX(4deg);transition:transform .6s ease;animation:floatY 6s ease-in-out infinite}
-.hero-phone:hover{transform:rotateY(0deg) rotateX(0deg)}
-.hero-phone::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#02040c;border-radius:0 0 16px 16px;z-index:3}
-.hero-screen{width:100%;height:100%;border-radius:34px;overflow:hidden;position:relative;background:var(--bg-alt)}
-.hero-mock-map{position:absolute;inset:0}
-.hero-mock-map svg{width:100%;height:100%;display:block}
-.hero-mock-top{position:absolute;top:0;left:0;right:0;height:48px;display:flex;align-items:center;padding:0 20px;font-size:10px;font-weight:800;color:var(--navy);background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);z-index:2}
-.hero-mock-top svg{width:18px;height:18px;margin-right:8px;color:var(--navy)}
-.hero-mock-sheet{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;padding:18px 20px 22px;box-shadow:0 -20px 40px rgba(11,42,91,.12);z-index:2}
-.hero-mock-handle{width:36px;height:4px;border-radius:999px;background:rgba(11,42,91,.15);margin:0 auto 14px}
-.hero-mock-title{font-size:12px;font-weight:800;color:var(--navy);margin-bottom:2px}
-.hero-mock-sub{font-size:9px;color:var(--muted);margin-bottom:14px}
-.hero-mock-btn{height:44px;border-radius:14px;background:linear-gradient(135deg,var(--navy),var(--navy-2));margin-top:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;gap:6px;box-shadow:0 8px 20px -6px rgba(11,42,91,.5);position:relative;overflow:hidden}
-.hero-mock-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.22) 50%,transparent 70%);animation:shimmer 3s ease-in-out infinite}
-.hero-mock-btn svg{width:14px;height:14px;position:relative;z-index:2}
-.hero-mock-btn span{position:relative;z-index:2}
+/* ═══ HERO (katta web sayt) ═══ */
+.hero{position:relative;background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 55%,var(--navy-2) 100%);color:#fff;padding:80px 0 100px;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-20%;right:-10%;width:900px;height:900px;background:radial-gradient(circle,rgba(45,77,138,.4),transparent 65%);filter:blur(80px);animation:floatY 8s ease-in-out infinite}
+.hero::after{content:"";position:absolute;bottom:-30%;left:-15%;width:700px;height:700px;background:radial-gradient(circle,rgba(34,160,107,.15),transparent 65%);filter:blur(80px)}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#DDE3EA;margin-bottom:24px;backdrop-filter:blur(10px)}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,160,107,.3);animation:blink 1.8s infinite}
+.hero h1{font-size:clamp(36px,5vw,64px);font-weight:800;line-height:1.05;letter-spacing:-.03em;margin-bottom:20px}
+.hero h1 .accent{background:linear-gradient(135deg,#fff 0%,#A8B2BF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:16px;color:#C9D2DF;line-height:1.7;margin-bottom:32px;max-width:520px}
+.hero-bullets{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
+.hero-bullet{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#DDE3EA}
+.hero-bullet .ic{width:22px;height:22px;border-radius:7px;background:rgba(34,160,107,.2);display:flex;align-items:center;justify-content:center;color:var(--green);flex-shrink:0}
+.hero-bullet .ic svg{width:12px;height:12px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:32px}
 
-/* HERO FLOAT CARDS */
-.hero-float{position:absolute;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;color:var(--navy);animation:floatY 6s ease-in-out infinite;z-index:3}
-.hero-float-1{top:12%;left:-30px;animation-delay:0s}
-.hero-float-2{bottom:22%;right:-40px;animation-delay:2s}
-.hero-float-3{bottom:8%;left:20px;animation-delay:4s}
-.hero-float .ic{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.hero-visual{position:relative}
+.hero-map-box{position:relative;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.4);aspect-ratio:4/3;border:1px solid rgba(255,255,255,.1)}
+.hero-map-box svg{width:100%;height:100%;display:block}
+.hero-map-overlay{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 60%,rgba(11,42,91,.15) 100%)}
+.hero-float{position:absolute;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;color:var(--navy);z-index:3;animation:floatY 6s ease-in-out infinite}
+.hero-float-1{top:24px;left:24px;animation-delay:0s}
+.hero-float-2{bottom:24px;right:24px;animation-delay:2s}
+.hero-float .ic{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
 .hero-float .ic.green{background:linear-gradient(135deg,var(--green),var(--green-2))}
 .hero-float .ic.navy{background:linear-gradient(135deg,var(--navy),var(--navy-2))}
-.hero-float .ic.amber{background:linear-gradient(135deg,#F59E0B,#D97706)}
-.hero-float .ic svg{width:14px;height:14px}
-.hero-float .lbl-1{font-size:9px;color:var(--muted);font-weight:600;margin-top:1px}
+.hero-float .ic svg{width:16px;height:16px}
+.hero-float .sub{font-size:10px;color:var(--muted);font-weight:600;margin-top:2px}
 
-/* ═══════════════════════════════════════
-   STRIP
-   ═══════════════════════════════════════ */
-.strip{background:var(--bg-alt);padding:26px 0;border-bottom:1px solid var(--hair)}
-.strip-inner{display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:24px}
-.strip-item{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.02em}
-.strip-item .num{font-size:22px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace}
+/* ═══ STATS STRIP ═══ */
+.stats-strip{background:#fff;border-bottom:1px solid var(--hair);padding:28px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+.stat-item{text-align:center;padding:0 20px;border-right:1px solid var(--hair)}
+.stat-item:last-child{border-right:none}
+.stat-val{font-size:32px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;letter-spacing:-.03em;line-height:1}
+.stat-lbl{font-size:12px;color:var(--muted);font-weight:600;margin-top:8px}
 
-/* ═══════════════════════════════════════
-   SECTION
-   ═══════════════════════════════════════ */
-.section{padding:100px 0}
-.section-head{text-align:center;margin-bottom:60px}
-.section-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--navy-2);background:var(--navy-soft);padding:7px 16px;border-radius:999px;margin-bottom:20px}
-.section-title{font-size:clamp(28px,3.5vw,42px);font-weight:800;line-height:1.15;letter-spacing:-.025em;color:var(--navy);margin-bottom:14px}
-.section-sub{font-size:16px;color:var(--muted);max-width:620px;margin:0 auto;line-height:1.65}
+/* ═══ SECTION ═══ */
+.section{padding:80px 0}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:44px;gap:24px;flex-wrap:wrap}
+.section-head-center{text-align:center;margin-bottom:56px}
+.section-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--navy-2);background:var(--navy-soft);padding:6px 14px;border-radius:999px;margin-bottom:14px}
+.section-title{font-size:clamp(26px,3vw,38px);font-weight:800;line-height:1.15;letter-spacing:-.025em;color:var(--navy);margin-bottom:8px}
+.section-desc{font-size:15px;color:var(--muted);max-width:600px;line-height:1.6}
 
-/* ═══════════════════════════════════════
-   FEATURES
-   ═══════════════════════════════════════ */
-.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.feature{background:#fff;border:1px solid var(--hair);border-radius:22px;padding:32px 26px;transition:all .35s;position:relative;overflow:hidden}
-.feature::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--navy-3));transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,.61,.36,1)}
-.feature:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
-.feature:hover::before{transform:scaleX(1)}
-.feature-ic{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(11,42,91,.1),rgba(11,42,91,.03));display:flex;align-items:center;justify-content:center;color:var(--navy);margin-bottom:22px;transition:transform .3s}
-.feature:hover .feature-ic{transform:scale(1.08) rotate(-3deg)}
-.feature-ic svg{width:24px;height:24px}
-.feature h3{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px;letter-spacing:-.01em}
-.feature p{font-size:13px;color:var(--muted);line-height:1.65}
+/* ═══ KATEGORIYALAR (3x2 grid, katta kartalar) ═══ */
+.categories{background:var(--bg-alt)}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cat-card{background:#fff;border-radius:20px;padding:28px;transition:all .3s;border:1px solid transparent;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px;min-height:220px}
+.cat-card::before{content:"";position:absolute;top:0;right:0;width:140px;height:140px;border-radius:50%;background:var(--navy-soft);opacity:0;transform:scale(0);transition:all .4s;transform-origin:top right}
+.cat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--hair)}
+.cat-card:hover::before{opacity:1;transform:scale(1)}
+.cat-icon{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;z-index:1;transition:transform .3s}
+.cat-card:hover .cat-icon{transform:scale(1.08) rotate(-3deg)}
+.cat-icon svg{width:30px;height:30px}
+.cat-icon.navy{background:linear-gradient(135deg,var(--navy),var(--navy-2))}
+.cat-icon.navy-3{background:linear-gradient(135deg,var(--navy-2),var(--navy-3))}
+.cat-icon.dark{background:linear-gradient(135deg,var(--navy-deep),var(--navy))}
+.cat-icon.green{background:linear-gradient(135deg,var(--green),var(--green-2))}
+.cat-icon.silver{background:linear-gradient(135deg,var(--silver),var(--silver-2))}
+.cat-title{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.01em;position:relative;z-index:1}
+.cat-desc{font-size:13px;color:var(--muted);line-height:1.6;position:relative;z-index:1;flex:1}
+.cat-count{font-size:11px;font-weight:800;color:var(--navy-2);background:var(--navy-soft);padding:4px 10px;border-radius:999px;align-self:flex-start;position:relative;z-index:1;font-family:'JetBrains Mono',monospace}
+.cat-arrow{position:absolute;bottom:24px;right:24px;color:var(--navy-2);opacity:0;transform:translateX(-6px);transition:all .3s;z-index:1}
+.cat-card:hover .cat-arrow{opacity:1;transform:translateX(0)}
+.cat-arrow svg{width:20px;height:20px}
 
-/* ═══════════════════════════════════════
-   SERVICES
-   ═══════════════════════════════════════ */
-.services{background:var(--bg-alt)}
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.service{background:#fff;border-radius:22px;padding:28px;transition:all .35s;cursor:pointer;border:1px solid transparent;position:relative;overflow:hidden;display:block}
-.service::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(11,42,91,.02),transparent 60%);opacity:0;transition:opacity .35s;pointer-events:none}
-.service:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--hair)}
-.service:hover::after{opacity:1}
-.service-ic{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:#fff;position:relative;z-index:1;transition:transform .3s}
-.service:hover .service-ic{transform:scale(1.06) rotate(-3deg)}
-.service-ic svg{width:28px;height:28px}
-.service-ic.navy{background:linear-gradient(135deg,var(--navy),var(--navy-2))}
-.service-ic.navy-3{background:linear-gradient(135deg,var(--navy-2),var(--navy-3))}
-.service-ic.dark{background:linear-gradient(135deg,var(--navy-deep),var(--navy))}
-.service-ic.green{background:linear-gradient(135deg,var(--green),var(--green-2))}
-.service-ic.silver{background:linear-gradient(135deg,var(--silver),var(--silver-2))}
-.service h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:8px;position:relative;z-index:1;letter-spacing:-.01em}
-.service p{font-size:13px;color:var(--muted);margin-bottom:18px;position:relative;z-index:1;line-height:1.6}
-.service-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--navy-2);position:relative;z-index:1;transition:gap .25s}
-.service-link svg{transition:transform .25s}
-.service:hover .service-link{gap:10px}
-.service:hover .service-link svg{transform:translateX(3px)}
+/* ═══ QANDAY ISHLAYDI — 4 qadam ═══ */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative}
+.steps-grid::before{content:"";position:absolute;top:36px;left:14%;right:14%;height:2px;background:linear-gradient(90deg,var(--navy-soft),var(--silver-3),var(--navy-soft));z-index:0}
+.step{background:#fff;border-radius:20px;padding:28px 22px;text-align:center;border:1px solid var(--hair);position:relative;z-index:1;transition:all .3s}
+.step:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.step-num{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:'JetBrains Mono',monospace;box-shadow:0 10px 24px -8px rgba(11,42,91,.5)}
+.step h3{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.step p{font-size:13px;color:var(--muted);line-height:1.6}
 
-/* ═══════════════════════════════════════
-   LIVE MAP SHOWCASE
-   ═══════════════════════════════════════ */
-.live-map{background:var(--bg-3);padding:100px 0}
-.live-map-wrap{background:#fff;border-radius:28px;overflow:hidden;box-shadow:var(--shadow-xl);display:grid;grid-template-columns:220px 1fr 340px;height:620px;border:1px solid var(--hair);position:relative}
-.map-side{background:#fff;border-right:1px solid var(--hair);padding:20px 14px;display:flex;flex-direction:column;gap:2px}
-.map-side-brand{display:flex;align-items:center;gap:8px;padding:10px 12px;margin-bottom:14px}
-.map-side-brand svg{width:28px;height:28px;color:var(--navy)}
-.map-side-brand span{font-size:13px;font-weight:800;color:var(--navy);letter-spacing:.02em}
-.side-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s}
-.side-item:hover{background:var(--bg-alt);color:var(--navy)}
-.side-item.active{background:var(--navy);color:#fff;box-shadow:0 6px 16px -6px rgba(11,42,91,.4)}
-.side-item svg{width:16px;height:16px}
-.side-item.active svg{color:#fff}
+/* ═══ KATTA XARITA + SIDEBAR (OLX uslubida listing) ═══ */
+.map-list-section{background:var(--bg-alt)}
+.map-list-wrap{display:grid;grid-template-columns:280px 1fr 380px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:var(--shadow-xl);border:1px solid var(--hair);height:720px}
 
-.map-canvas{position:relative;background:radial-gradient(circle at 30% 30%,#EEF2F8,#E2E8F0);overflow:hidden}
-.map-canvas svg.map-svg{width:100%;height:100%;display:block}
+/* Sidebar — filter panel */
+.filter-panel{background:#fff;border-right:1px solid var(--hair);padding:24px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.filter-panel::-webkit-scrollbar{width:4px}
+.filter-panel::-webkit-scrollbar-thumb{background:var(--silver-3);border-radius:4px}
+.filter-head{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.filter-head button{font-size:11px;color:var(--muted);font-weight:600;cursor:pointer}
+.filter-head button:hover{color:var(--navy)}
+.filter-group{padding-bottom:16px;border-bottom:1px solid var(--hair);margin-bottom:12px}
+.filter-group:last-child{border-bottom:none}
+.filter-label{font-size:11px;font-weight:800;color:var(--navy);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.filter-radio{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:color .2s}
+.filter-radio:hover{color:var(--navy)}
+.filter-radio input{appearance:none;width:18px;height:18px;border:2px solid var(--silver-3);border-radius:50%;position:relative;cursor:pointer;transition:all .2s;flex-shrink:0}
+.filter-radio input:checked{border-color:var(--navy);border-width:6px}
+.filter-range{display:flex;gap:8px;align-items:center}
+.filter-range input{width:100%;padding:8px 10px;border-radius:8px;background:var(--bg-alt);border:1px solid var(--hair);font-size:12px;font-weight:700;color:var(--navy)}
+.filter-check{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+.filter-check input{appearance:none;width:18px;height:18px;border:2px solid var(--silver-3);border-radius:5px;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.filter-check input:checked{background:var(--navy);border-color:var(--navy)}
+.filter-check input:checked::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
 
-.map-search{position:absolute;top:16px;left:16px;right:16px;background:#fff;border-radius:14px;padding:6px;display:flex;align-items:center;gap:4px;box-shadow:var(--shadow-md);z-index:5}
-.map-search input{flex:1;padding:10px 12px;font-size:12px;font-weight:600;color:var(--ink);min-width:0}
-.map-search input::placeholder{color:var(--silver)}
-.map-search .sep{width:1px;height:24px;background:var(--silver-3)}
-.map-search .btn{padding:9px 14px;font-size:11px;border-radius:10px}
+/* Map */
+.map-canvas-big{position:relative;background:radial-gradient(circle at 30% 30%,#EEF2F8,#E2E8F0);overflow:hidden}
+.map-canvas-big svg{width:100%;height:100%;display:block}
+.map-ctrl{position:absolute;right:20px;top:20px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.map-ctrl button{width:42px;height:42px;border-radius:11px;background:#fff;border:1px solid var(--hair);box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;color:var(--navy);transition:all .15s}
+.map-ctrl button:hover{transform:scale(1.05);color:var(--navy-2)}
+.map-ctrl button svg{width:17px;height:17px}
+.map-info-box{position:absolute;bottom:20px;left:20px;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--navy);z-index:5}
+.map-info-box .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(34,160,107,.15);animation:blink 1.8s infinite}
 
-.map-zoom{position:absolute;bottom:20px;right:20px;display:flex;flex-direction:column;gap:6px;z-index:5}
-.map-zoom button{width:40px;height:40px;border-radius:12px;background:#fff;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;color:var(--navy);transition:transform .15s}
-.map-zoom button:hover{transform:scale(1.05)}
-.map-zoom button:active{transform:scale(.92)}
-.map-zoom button svg{width:16px;height:16px}
+/* Drivers list — OLX-style listing */
+.drivers-panel{background:#fff;border-left:1px solid var(--hair);display:flex;flex-direction:column;overflow:hidden}
+.drivers-panel-head{padding:18px 20px;border-bottom:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.drivers-panel-title{font-size:14px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px}
+.drivers-panel-title .live{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:var(--green);background:rgba(34,160,107,.1);padding:3px 8px;border-radius:999px}
+.drivers-panel-title .live::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
+.drivers-panel-sort{font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px}
+.drivers-panel-sort svg{width:12px;height:12px}
+.drivers-list{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.drivers-list::-webkit-scrollbar{width:4px}
+.drivers-list::-webkit-scrollbar-thumb{background:var(--silver-3);border-radius:4px}
 
-.map-drivers{background:#fff;border-left:1px solid var(--hair);padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
-.map-drivers::-webkit-scrollbar{width:4px}
-.map-drivers::-webkit-scrollbar-thumb{background:var(--silver-3);border-radius:4px}
-.drivers-title{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:4px;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center}
-.drivers-title .live-badge{font-size:9px;font-weight:700;color:var(--green);background:rgba(34,160,107,.1);padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:4px}
-.drivers-title .live-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
-.driver-item{border:1px solid var(--hair);border-radius:16px;padding:14px;transition:all .25s;cursor:pointer}
-.driver-item:hover{border-color:var(--navy-2);box-shadow:var(--shadow-md);transform:translateX(-2px)}
-.driver-item.selected{background:linear-gradient(135deg,rgba(11,42,91,.05),rgba(11,42,91,.02));border-color:rgba(11,42,91,.25)}
-.driver-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.driver-av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--navy-2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800;flex-shrink:0;position:relative}
-.driver-av::after{content:"";position:absolute;bottom:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:var(--green);border:2px solid #fff}
-.driver-av.green{background:linear-gradient(135deg,var(--green),var(--green-2))}
-.driver-av.navy-3{background:linear-gradient(135deg,var(--navy-2),var(--navy-3))}
-.driver-info{flex:1;min-width:0}
-.driver-name{font-size:13px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.driver-car{font-size:10px;color:var(--muted);margin-top:1px;font-family:'JetBrains Mono',monospace}
-.driver-rate{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--amber);flex-shrink:0}
-.driver-rate svg{width:11px;height:11px;fill:var(--amber)}
-.driver-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--hair)}
-.driver-price{font-size:14px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace}
-.driver-time{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.driver-row{border:1px solid var(--hair);border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;background:#fff}
+.driver-row:hover{border-color:var(--navy-2);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.driver-row.selected{background:linear-gradient(135deg,rgba(11,42,91,.05),rgba(11,42,91,.02));border-color:rgba(11,42,91,.3);box-shadow:var(--shadow-md)}
+.driver-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.driver-photo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--navy-2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800;flex-shrink:0;position:relative}
+.driver-photo::after{content:"";position:absolute;bottom:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:var(--green);border:2px solid #fff}
+.driver-photo.green{background:linear-gradient(135deg,var(--green),var(--green-2))}
+.driver-photo.navy-3{background:linear-gradient(135deg,var(--navy-2),var(--navy-3))}
+.driver-photo.silver{background:linear-gradient(135deg,var(--silver),var(--silver-2))}
+.driver-name-row{flex:1;min-width:0}
+.driver-name{font-size:14px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.driver-car{font-size:11px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace}
+.driver-rating{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:800;color:var(--amber);flex-shrink:0}
+.driver-rating svg{width:13px;height:13px;fill:var(--amber)}
 
-/* Premium card */
-.premium-card{margin-top:auto;background:linear-gradient(135deg,var(--navy),var(--navy-2));border-radius:16px;padding:16px;color:#fff;position:relative;overflow:hidden}
-.premium-card::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(45,77,138,.7),transparent 70%);filter:blur(20px)}
-.premium-label{font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--silver);margin-bottom:6px;position:relative}
-.premium-title{font-size:13px;font-weight:800;margin-bottom:8px;position:relative}
-.premium-card p{font-size:10px;color:rgba(255,255,255,.7);margin-bottom:12px;position:relative;line-height:1.5}
-.premium-card button{background:#fff;color:var(--navy);font-size:11px;font-weight:800;padding:9px 14px;border-radius:10px;position:relative;transition:transform .15s}
-.premium-card button:hover{transform:scale(1.03)}
+.driver-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.driver-tag{font-size:10px;font-weight:700;color:var(--navy-2);background:var(--navy-soft);padding:3px 8px;border-radius:6px}
+.driver-tag.vip{background:linear-gradient(135deg,rgba(232,165,0,.15),rgba(232,165,0,.05));color:#B45309}
 
-/* ═══════════════════════════════════════
-   ADMIN
-   ═══════════════════════════════════════ */
-.admin{background:var(--navy-deep);padding:100px 0;position:relative;overflow:hidden}
-.admin::before{content:"";position:absolute;top:-20%;right:-10%;width:700px;height:700px;background:radial-gradient(circle,rgba(45,77,138,.35),transparent 70%);filter:blur(80px);animation:floatY 9s ease-in-out infinite}
+.driver-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--hair)}
+.driver-price{font-size:16px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;letter-spacing:-.02em}
+.driver-price small{font-size:11px;color:var(--muted);font-weight:700}
+.driver-meta{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-weight:600}
+
+.drivers-panel-foot{padding:14px 20px;border-top:1px solid var(--hair);background:var(--bg-alt);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0}
+
+/* ═══ ADMIN PANEL ═══ */
+.admin{background:var(--navy-deep);padding:80px 0;position:relative;overflow:hidden}
+.admin::before{content:"";position:absolute;top:-20%;right:-10%;width:800px;height:800px;background:radial-gradient(circle,rgba(45,77,138,.35),transparent 70%);filter:blur(80px)}
 .admin-inner{position:relative;z-index:2}
-.admin-head{text-align:center;margin-bottom:48px}
+.admin-head{text-align:center;margin-bottom:44px}
 .admin-head .section-tag{color:#A8B2BF;background:rgba(255,255,255,.06)}
 .admin-head .section-title{color:#fff}
-.admin-head .section-sub{color:#A8B2BF}
-.admin-panel{background:#F8FAFC;border-radius:24px;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.5);display:grid;grid-template-columns:220px 1fr;min-height:520px;border:1px solid rgba(255,255,255,.1)}
-.admin-sidebar{background:var(--navy);color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:2px}
-.admin-brand{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:20px}
-.admin-brand svg{width:32px;height:32px}
-.admin-brand .info{flex:1;min-width:0}
-.admin-brand .name{font-size:13px;font-weight:800;letter-spacing:.02em}
-.admin-brand .role{font-size:9px;color:var(--silver);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
-.admin-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;font-size:12px;font-weight:600;color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s}
+.admin-head .section-desc{color:#A8B2BF;margin:0 auto}
+.admin-panel{background:#F8FAFC;border-radius:20px;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.5);display:grid;grid-template-columns:240px 1fr;min-height:600px;border:1px solid rgba(255,255,255,.1)}
+.admin-sidebar{background:var(--navy);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:2px}
+.admin-brand{display:flex;align-items:center;gap:12px;padding:10px 12px 20px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.admin-brand svg{width:36px;height:36px}
+.admin-brand .info .name{font-size:14px;font-weight:800;letter-spacing:.02em}
+.admin-brand .info .role{font-size:10px;color:var(--silver);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.admin-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s}
 .admin-item:hover{background:rgba(255,255,255,.06);color:#fff}
 .admin-item.active{background:rgba(255,255,255,.12);color:#fff}
-.admin-item svg{width:16px;height:16px}
-.admin-main{padding:24px;background:#F5F7FB;overflow-y:auto}
-.admin-top{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-.metric{background:#fff;border-radius:16px;padding:18px;border:1px solid var(--hair);transition:transform .25s}
+.admin-item svg{width:18px;height:18px}
+.admin-main{padding:28px;background:#F5F7FB;overflow-y:auto}
+.admin-top{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.metric{background:#fff;border-radius:14px;padding:20px;border:1px solid var(--hair);transition:transform .25s}
 .metric:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.metric-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px}
-.metric-value{font-size:22px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;letter-spacing:-.02em}
-.metric-delta{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;margin-top:8px;padding:3px 7px;border-radius:6px}
+.metric-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.metric-value{font-size:26px;font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;letter-spacing:-.03em}
+.metric-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;margin-top:10px;padding:3px 8px;border-radius:6px}
 .metric-delta.up{color:var(--green);background:rgba(34,160,107,.1)}
-.metric-delta svg{width:10px;height:10px}
-.admin-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
-.chart-card{background:#fff;border-radius:16px;padding:20px;border:1px solid var(--hair)}
-.chart-title{font-size:12px;font-weight:800;color:var(--navy);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.chart-title select{font-size:10px;font-weight:700;color:var(--muted);padding:4px 8px;border-radius:6px;background:var(--bg-alt);cursor:pointer}
-.chart-svg{width:100%;height:180px}
+.metric-delta svg{width:11px;height:11px}
+.admin-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+.chart-card,.orders-card{background:#fff;border-radius:14px;padding:22px;border:1px solid var(--hair)}
+.chart-title{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.chart-title select{font-size:11px;font-weight:700;color:var(--muted);padding:5px 10px;border-radius:6px;background:var(--bg-alt);cursor:pointer}
+.chart-svg{width:100%;height:200px}
 .chart-path{stroke-dasharray:1000;stroke-dashoffset:1000;animation:drawLine 2s cubic-bezier(.22,.61,.36,1) forwards}
-.orders-card{background:#fff;border-radius:16px;padding:20px;border:1px solid var(--hair)}
-.orders-list{display:flex;flex-direction:column;gap:10px}
-.order-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;transition:background .2s;font-size:11px}
+.orders-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto}
+.order-row{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;transition:background .2s;font-size:12px}
 .order-row:hover{background:var(--bg-alt)}
-.order-id{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);font-size:10px;flex-shrink:0;width:60px}
-.order-route{flex:1;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.order-amount{font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;font-size:11px;flex-shrink:0}
+.order-id{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--navy);font-size:11px;flex-shrink:0;width:64px}
+.order-route{flex:1;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.order-amount{font-weight:800;color:var(--navy);font-family:'JetBrains Mono',monospace;font-size:12px;flex-shrink:0}
 .order-amount.new{animation:heartbeat 1.5s ease-in-out}
 
-/* ═══════════════════════════════════════
-   ROADSIDE
-   ═══════════════════════════════════════ */
-.roadside{background:var(--bg-alt);padding:100px 0}
-.roadside-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.roadside-phone-wrap{display:flex;justify-content:center;perspective:1400px}
-.roadside-phone{width:320px;height:640px;border-radius:44px;background:linear-gradient(180deg,#0a1225,#02040c);padding:12px;box-shadow:0 60px 120px -40px rgba(11,42,91,.35),0 0 0 1px rgba(11,42,91,.1);position:relative;animation:floatY 7s ease-in-out infinite}
-.roadside-phone::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#02040c;border-radius:0 0 16px 16px;z-index:3}
-.rs-screen{width:100%;height:100%;border-radius:34px;overflow:hidden;background:#fff;position:relative}
-.rs-header{padding:44px 20px 16px;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;position:relative}
-.rs-header h3{font-size:14px;font-weight:800;margin-bottom:2px}
-.rs-header p{font-size:10px;color:rgba(255,255,255,.7)}
-.rs-search{margin-top:12px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.7)}
-.rs-search svg{width:14px;height:14px}
-.rs-chips{padding:14px 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
-.rs-chips::-webkit-scrollbar{display:none}
-.rs-chip{padding:6px 12px;border-radius:999px;background:var(--bg-alt);font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap;flex-shrink:0;cursor:pointer;transition:all .2s}
-.rs-chip.active{background:var(--navy);color:#fff}
-.rs-list{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;height:calc(100% - 240px)}
-.rs-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:#fff;border:1px solid var(--hair);transition:all .2s;cursor:pointer}
-.rs-item:hover{border-color:var(--navy-2);transform:translateX(2px)}
-.rs-item-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
-.rs-item-ic.gas{background:linear-gradient(135deg,#3B82F6,#2563EB)}
-.rs-item-ic.food{background:linear-gradient(135deg,#F59E0B,#D97706)}
-.rs-item-ic.hotel{background:linear-gradient(135deg,var(--navy),var(--navy-2))}
-.rs-item-ic.service{background:linear-gradient(135deg,var(--green),var(--green-2))}
-.rs-item-ic.auto{background:linear-gradient(135deg,#8B5CF6,#7C3AED)}
-.rs-item-ic svg{width:22px;height:22px}
-.rs-item-info{flex:1;min-width:0}
-.rs-item-name{font-size:12px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rs-item-desc{font-size:9px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rs-item-dist{font-size:10px;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+/* ═══ YO'L BO'YI ═══ */
+.roadside{background:var(--bg-alt)}
+.roadside-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rs-cat{background:#fff;border-radius:18px;padding:24px;border:1px solid var(--hair);transition:all .3s;display:flex;flex-direction:column;gap:14px;cursor:pointer}
+.rs-cat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.rs-cat-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff}
+.rs-cat-icon.gas{background:linear-gradient(135deg,#3B82F6,#2563EB)}
+.rs-cat-icon.food{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.rs-cat-icon.hotel{background:linear-gradient(135deg,var(--navy),var(--navy-2))}
+.rs-cat-icon.service{background:linear-gradient(135deg,var(--green),var(--green-2))}
+.rs-cat-icon.auto{background:linear-gradient(135deg,#8B5CF6,#7C3AED)}
+.rs-cat-icon.other{background:linear-gradient(135deg,var(--silver),var(--silver-2))}
+.rs-cat-icon svg{width:28px;height:28px}
+.rs-cat-title{font-size:16px;font-weight:800;color:var(--navy)}
+.rs-cat-desc{font-size:12px;color:var(--muted);line-height:1.6;flex:1}
+.rs-cat-count{font-size:11px;font-weight:800;color:var(--navy-2);background:var(--navy-soft);padding:4px 10px;border-radius:999px;align-self:flex-start;font-family:'JetBrains Mono',monospace}
 
-.roadside-text h2{font-size:clamp(26px,3vw,38px);font-weight:800;color:var(--navy);line-height:1.15;letter-spacing:-.02em;margin-bottom:16px}
-.roadside-text > p{font-size:15px;color:var(--muted);margin-bottom:32px;line-height:1.65}
-.rs-features{display:flex;flex-direction:column;gap:16px;margin-bottom:36px}
-.rs-feature{display:flex;align-items:flex-start;gap:14px}
-.rs-feature-ic{width:44px;height:44px;border-radius:14px;background:var(--navy-soft);display:flex;align-items:center;justify-content:center;color:var(--navy);flex-shrink:0}
-.rs-feature-ic svg{width:20px;height:20px}
-.rs-feature-text h4{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px}
-.rs-feature-text p{font-size:13px;color:var(--muted);line-height:1.6}
-
-/* ═══════════════════════════════════════
-   CTA
-   ═══════════════════════════════════════ */
-.cta{padding:100px 0;background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 50%,var(--navy-2) 100%);color:#fff;position:relative;overflow:hidden}
-.cta::before{content:"";position:absolute;top:-50%;left:-20%;width:800px;height:800px;background:radial-gradient(circle,rgba(45,77,138,.4),transparent 70%);filter:blur(80px);animation:floatY 8s ease-in-out infinite}
-.cta::after{content:"";position:absolute;bottom:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(34,160,107,.15),transparent 70%);filter:blur(80px);animation:floatY 10s ease-in-out infinite reverse}
-.cta-inner{position:relative;z-index:2;text-align:center;max-width:720px;margin:0 auto}
-.cta-tag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:24px}
+/* ═══ CTA BANNER ═══ */
+.cta-banner{position:relative;background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 50%,var(--navy-2) 100%);color:#fff;padding:64px 48px;border-radius:24px;overflow:hidden;margin:0 auto;max-width:1200px}
+.cta-banner::before{content:"";position:absolute;top:-50%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(45,77,138,.5),transparent 70%);filter:blur(60px)}
+.cta-banner-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:center}
+.cta-banner h2{font-size:clamp(26px,3vw,36px);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
+.cta-banner p{font-size:15px;color:#C9D2DF;line-height:1.65;margin-bottom:28px;max-width:540px}
+.cta-banner-actions{display:flex;gap:12px;flex-wrap:wrap}
+.cta-tag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:16px}
 .cta-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,160,107,.3);animation:blink 1.8s infinite}
-.cta h2{font-size:clamp(28px,4vw,46px);font-weight:800;line-height:1.15;letter-spacing:-.025em;margin-bottom:20px}
-.cta p{font-size:16px;color:#C9D2DF;margin-bottom:36px;line-height:1.7;max-width:560px;margin-left:auto;margin-right:auto}
-.cta-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 
-/* ═══════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════ */
-.footer{background:var(--bg-alt);padding:72px 0 32px;border-top:1px solid var(--hair)}
-.footer-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1.2fr;gap:56px;margin-bottom:56px}
-.footer-brand{display:flex;align-items:center;gap:11px;margin-bottom:18px}
-.footer-brand .brand-w{width:32px;height:32px;color:var(--navy)}
-.footer-brand .txt{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:.02em}
-.footer-brand .sub{font-size:9px;color:var(--silver);font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-top:1px}
-.footer-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:340px;margin-bottom:20px}
-.footer-tagline{font-size:11px;color:var(--silver);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-.footer-social{display:flex;gap:10px;margin-top:20px}
-.footer-social a{width:36px;height:36px;border-radius:10px;background:#fff;border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s}
-.footer-social a:hover{background:var(--navy);color:#fff;border-color:var(--navy);transform:translateY(-2px)}
-.footer-social svg{width:16px;height:16px}
-.footer-col h4{font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--navy);margin-bottom:18px}
+/* ═══ FOOTER (katta, 5 ustun) ═══ */
+.footer{background:var(--navy-deep);color:#fff;padding:72px 0 32px;margin-top:80px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:40px;margin-bottom:56px}
+.footer-brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.footer-brand svg{width:40px;height:40px;color:#fff}
+.footer-brand .txt{font-size:18px;font-weight:800;letter-spacing:.02em}
+.footer-brand .sub{font-size:9px;color:var(--silver);font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-top:2px}
+.footer-desc{font-size:13px;color:#A8B2BF;line-height:1.7;margin-bottom:20px}
+.footer-tagline{font-size:11px;color:var(--silver);font-weight:700;letter-spacing:.1em;text-transform:uppercase;line-height:1.6;padding:14px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:20px}
+.footer-social{display:flex;gap:10px}
+.footer-social a{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#A8B2BF;transition:all .2s}
+.footer-social a:hover{background:var(--navy-2);color:#fff;border-color:var(--navy-2);transform:translateY(-2px)}
+.footer-social svg{width:18px;height:18px}
+.footer-col h4{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:20px}
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
-.footer-col a{font-size:13px;color:var(--muted);font-weight:500}
-.footer-col a:hover{color:var(--navy)}
-.footer-contact{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.footer-contact svg{width:16px;height:16px;color:var(--navy);flex-shrink:0;margin-top:2px}
-.footer-bottom{padding-top:32px;border-top:1px solid var(--hair);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--muted)}
-.footer-bottom strong{color:var(--navy);font-weight:700}
+.footer-col a{font-size:13px;color:#A8B2BF;font-weight:500;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-contact{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#A8B2BF;margin-bottom:14px;line-height:1.5}
+.footer-contact svg{width:16px;height:16px;color:var(--silver);flex-shrink:0;margin-top:2px}
+.footer-bottom{padding-top:28px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:12px;color:#A8B2BF}
+.footer-bottom strong{color:#fff;font-weight:700}
 
-/* ═══════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════ */
+/* ═══ RESPONSIVE ═══ */
 @media(max-width:1100px){
+  .container{padding:0 24px}
+  .header-main{gap:24px}
+  .header-search{max-width:none}
   .hero-inner{grid-template-columns:1fr;gap:40px}
-  .hero-phone-wrap{min-height:auto;margin-top:20px}
-  .hero-float{display:none}
-  .live-map-wrap{grid-template-columns:1fr;height:auto}
-  .map-side{display:none}
-  .map-canvas{height:400px}
-  .map-drivers{border-left:none;border-top:1px solid var(--hair);max-height:400px}
+  .cat-grid,.roadside-grid{grid-template-columns:repeat(2,1fr)}
+  .steps-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+  .steps-grid::before{display:none}
+  .map-list-wrap{grid-template-columns:1fr;height:auto}
+  .filter-panel{display:none}
+  .map-canvas-big{height:400px}
+  .drivers-panel{max-height:500px}
   .admin-panel{grid-template-columns:1fr}
   .admin-sidebar{display:none}
+  .admin-top{grid-template-columns:repeat(2,1fr)}
   .admin-grid{grid-template-columns:1fr}
-  .features-grid{grid-template-columns:repeat(2,1fr)}
-  .services-grid{grid-template-columns:repeat(2,1fr)}
-  .roadside-grid{grid-template-columns:1fr;gap:48px}
-  .roadside-phone-wrap{display:none}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:40px}
+  .footer-grid{grid-template-columns:repeat(2,1fr);gap:40px}
+  .stats-grid{grid-template-columns:repeat(3,1fr);gap:24px}
+  .stat-item{border-right:none}
+  .cta-banner-inner{grid-template-columns:1fr;gap:24px}
+  .cta-banner{padding:44px 28px}
 }
-@media(max-width:640px){
-  .container{padding:0 20px}
-  .nav-links,.lang-btn{display:none}
-  .hamburger{display:flex}
-  .nav-inner{height:64px}
-  .hero{padding:64px 0 72px}
-  .hero h1{font-size:32px}
-  .search-bar{flex-direction:column;padding:14px;gap:6px}
-  .search-field{width:100%;padding:12px 8px}
-  .search-sep{display:none}
-  .search-bar .btn{width:100%;padding:15px}
-  .section{padding:72px 0}
-  .section-head{margin-bottom:44px}
-  .features-grid,.services-grid{grid-template-columns:1fr;gap:16px}
-  .feature,.service{padding:22px 20px}
-  .admin-top{grid-template-columns:1fr;gap:10px}
-  .metric-value{font-size:20px}
-  .footer-grid{grid-template-columns:1fr;gap:36px}
-  .footer-bottom{flex-direction:column;text-align:center;gap:10px}
-  .strip-inner{justify-content:center;gap:16px}
-  .strip-item{font-size:11px}
-  .strip-item .num{font-size:18px}
-  .cta-buttons .btn{width:100%}
-  .roadside{padding:72px 0}
-  .live-map{padding:72px 0}
-  .map-canvas{height:320px}
+@media(max-width:768px){
+  .top-strip{display:none}
+  .header-main{gap:16px;flex-wrap:wrap}
+  .header-search{order:3;width:100%;max-width:none}
+  .header-actions .header-action{display:none}
+  .cat-nav{top:auto;position:relative}
+  .hero{padding:48px 0 64px}
+  .hero h1{font-size:34px}
+  .section{padding:56px 0}
+  .cat-grid,.roadside-grid,.steps-grid{grid-template-columns:1fr}
+  .admin-top{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .footer{padding:56px 0 24px}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════ NAV ═══════════════════ -->
-<header class="nav" id="nav">
-  <div class="container nav-inner">
+<!-- ═══════════ TOP STRIP ═══════════ -->
+<div class="top-strip">
+  <div class="container top-strip-inner">
+    <div class="top-strip-left">
+      <span class="phone-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 4.5H8L9.5 9 7.5 10.5A12 12 0 0 0 13.5 16.5L15 14.5L19.5 16V19.5c0 .8-.7 1.5-1.5 1.5A16.5 16.5 0 0 1 3 6c0-.8.7-1.5 1.5-1.5z"/></svg>
+        +998 90 123 45 67
+      </span>
+      <a href="mailto:info@wtaxi.uz">info@wtaxi.uz</a>
+    </div>
+    <div class="top-strip-right">
+      <a href="#">Yordam</a>
+      <a href="#">Haydovchi bo'lish</a>
+      <a href="#">UZ / RU</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="header">
+  <div class="container header-main">
     <a href="#top" class="brand">
       <svg class="brand-w" viewBox="0 0 40 40" fill="none">
         <path d="M3 9 L11 32 L20 15 L29 32 L37 9" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <div>
+      <div class="brand-texts">
         <div class="brand-txt">W<span class="dash">-</span>TAXI</div>
         <div class="brand-sub">O'zbekiston</div>
       </div>
     </a>
 
-    <nav class="nav-links">
-      <a href="#services">Xizmatlar</a>
-      <a href="#map">Xarita</a>
-      <a href="#roadside">Yo'l bo'yi</a>
-      <a href="#admin">Boshqaruv</a>
-      <a href="#contact">Aloqa</a>
-    </nav>
+    <div class="header-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
+      <input placeholder="Shahar, viloyat yoki yo'nalishni kiriting...">
+      <button>Qidirish</button>
+    </div>
 
-    <div class="nav-right">
-      <button class="lang-btn" onclick="toggleLang(this)">
-        <span>UZ</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <button class="btn btn-primary" onclick="openMiniApp()">
+    <div class="header-actions">
+      <div class="header-action">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-3.8 3.5-6 7.5-6s7.5 2.2 7.5 6"/></svg>
         Kirish
+      </div>
+      <button class="btn btn-primary" onclick="openMiniApp()">
+        Mini App
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
-      <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
     </div>
   </div>
-
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#services" onclick="toggleMenu()">Xizmatlar</a>
-    <a href="#map" onclick="toggleMenu()">Xarita</a>
-    <a href="#roadside" onclick="toggleMenu()">Yo'l bo'yi</a>
-    <a href="#admin" onclick="toggleMenu()">Boshqaruv</a>
-    <a href="#contact" onclick="toggleMenu()">Aloqa</a>
-    <button class="btn btn-primary" onclick="openMiniApp()">Mini App'ni ochish</button>
-  </div>
 </header>
 
-<!-- ═══════════════════ HERO ═══════════════════ -->
-<section class="hero" id="top">
-  <div class="hero-bg">
-    <div class="hero-grid"></div>
-    <svg class="skyline" viewBox="0 0 1600 400" preserveAspectRatio="xMidYMax slice">
-      <g fill="#061838" opacity="0.75">
-        <rect x="0" y="220" width="60" height="180"/>
-        <rect x="70" y="160" width="50" height="240"/>
-        <rect x="130" y="200" width="80" height="200"/>
-        <rect x="220" y="130" width="55" height="270"/>
-        <rect x="285" y="180" width="70" height="220"/>
-        <rect x="365" y="100" width="45" height="300"/>
-        <rect x="420" y="210" width="90" height="190"/>
-        <rect x="520" y="150" width="60" height="250"/>
-        <rect x="590" y="90" width="70" height="310"/>
-        <rect x="670" y="180" width="55" height="220"/>
-        <rect x="735" y="130" width="90" height="270"/>
-        <rect x="835" y="200" width="60" height="200"/>
-        <rect x="905" y="110" width="50" height="290"/>
-        <rect x="965" y="170" width="80" height="230"/>
-        <rect x="1055" y="140" width="65" height="260"/>
-        <rect x="1130" y="200" width="90" height="200"/>
-        <rect x="1230" y="100" width="55" height="300"/>
-        <rect x="1295" y="160" width="70" height="240"/>
-        <rect x="1375" y="190" width="60" height="210"/>
-        <rect x="1445" y="130" width="75" height="270"/>
-        <rect x="1530" y="180" width="70" height="220"/>
-      </g>
-    </svg>
-  </div>
-
-  <div class="container hero-inner">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="dot"></span>
-        O'zbekiston bo'ylab 1335 yo'nalish
+<!-- ═══════════ CATEGORY NAV ═══════════ -->
+<nav class="cat-nav">
+  <div class="container">
+    <div class="cat-nav-inner">
+      <div class="cat-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+        Barcha xizmatlar
       </div>
-      <h1>
-        <span class="accent">Sizning yo'lingiz —</span><br>
-        bizning g'amxo'rligimiz!
-      </h1>
-      <p class="hero-sub">
-        Shahar taxi, viloyatlararo, yuk va pochta — barcha xizmatlar bitta ilovada. Aqlli moslashtirish tizimi bilan mijoz va haydovchi bir-birini qidirmaydi.
-      </p>
+      <div class="cat-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.5C4 13.7 4.6 13 5.4 13h13.2c.8 0 1.4.7 1.4 1.5v2c0 .8-.6 1.5-1.4 1.5H5.4C4.6 18 4 17.3 4 16.5v-2z"/><path d="M6.5 13 8.5 8.5c.3-.6.9-1 1.6-1h3.8c.7 0 1.3.4 1.6 1L17.5 13"/></svg>
+        Shahar taxi
+      </div>
+      <div class="cat-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17V8c0-1 1-2 2-2h8l7 5.5V17"/><path d="M13 6v5.5h7"/><circle cx="7" cy="16" r="1.4" fill="currentColor"/><circle cx="16" cy="16" r="1.4" fill="currentColor"/></svg>
+        Viloyatlararo
+      </div>
+      <div class="cat-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/></svg>
+        Yuk / Pochta
+      </div>
+      <div class="cat-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 10h10"/><path d="M14 8h3a2 2 0 0 1 2 2v8a1.5 1.5 0 0 0 3 0v-6l-2-3"/></svg>
+        Yo'l bo'yi
+      </div>
+      <div class="cat-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l16-6v14L3 13z"/><path d="M3 11v2"/></svg>
+        E'lonlar
+      </div>
+      <div class="cat-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-3.8 3.5-6 7.5-6s7.5 2.2 7.5 6"/></svg>
+        Haydovchilar
+      </div>
+    </div>
+  </div>
+</nav>
 
-      <form class="search-bar" onsubmit="event.preventDefault();handleSearch();">
-        <div class="search-field">
-          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="10" r="3"/>
-            <path d="M12 21c-5-6-7-9-7-12a7 7 0 1 1 14 0c0 3-2 6-7 12z"/>
-          </svg>
-          <input id="heroFrom" placeholder="Qayerdan?" autocomplete="off">
-        </div>
-        <div class="search-sep"></div>
-        <div class="search-field">
-          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 21V3M6 4h12.5L15.5 8l3 4H6"/>
-          </svg>
-          <input id="heroTo" placeholder="Qayerga?" autocomplete="off">
-        </div>
-        <button type="submit" class="btn btn-primary">
-          Buyurtma berish
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-      </form>
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content reveal">
+        <div class="hero-badge"><span class="dot"></span>O'zbekiston bo'ylab 1335 yo'nalish</div>
+        <h1>
+          <span class="accent">Sizning yo'lingiz —</span><br>
+          bizning g'amxo'rligimiz!
+        </h1>
+        <p>Shahar taxi, viloyatlararo, yuk va pochta — barcha xizmatlar bitta platformada. Aqlli moslashtirish tizimi mijoz va haydovchini o'zi bog'laydi.</p>
 
-      <a class="hero-app-link" href="javascript:openMiniApp()">
-        <span class="tg">TG</span>
-        <span>Yoki Telegram Mini App orqali oching</span>
+        <div class="hero-bullets">
+          <div class="hero-bullet">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17 L19 7"/></svg></span>
+            14 viloyat, barcha tumanlararo yo'nalishlar
+          </div>
+          <div class="hero-bullet">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17 L19 7"/></svg></span>
+            Haydovchi 2-3 daqiqada topiladi
+          </div>
+          <div class="hero-bullet">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17 L19 7"/></svg></span>
+            24/7 qo'llab-quvvatlash, xavfsiz to'lov
+          </div>
+        </div>
+
+        <div class="hero-cta">
+          <a class="btn btn-light btn-lg" href="javascript:openMiniApp()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Hoziroq buyurtma berish
+          </a>
+          <a class="btn btn-ghost-light btn-lg" href="#how">
+            Qanday ishlaydi?
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal">
+        <div class="hero-map-box">
+          <svg viewBox="0 0 700 525" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="hbBg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/>
+              </linearGradient>
+              <pattern id="hbGrid" width="34" height="34" patternUnits="userSpaceOnUse">
+                <path d="M34 0H0V34" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/>
+              </pattern>
+              <radialGradient id="hbPark" cx=".5" cy=".5">
+                <stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="hbWater" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#BFDBFE"/><stop offset="1" stop-color="#93C5FD"/>
+              </linearGradient>
+              <filter id="hbShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#0B2A5B" flood-opacity=".1"/>
+              </filter>
+              <filter id="hbCarShadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#0B2A5B" flood-opacity=".35"/>
+              </filter>
+              <path id="hbRoadH" d="M-20 262 H 720"/>
+              <path id="hbRoadH2" d="M720 380 H -20"/>
+              <path id="hbRoadV" d="M260 -20 V 545"/>
+              <path id="hbRoadV2" d="M140 545 V -20"/>
+              <path id="hbRoadH-rev" d="M720 268 H -20"/>
+              <path id="hbRoadV-rev" d="M268 545 V -20"/>
+              <path id="hbRoadV2-rev" d="M148 545 V -20"/>
+            </defs>
+
+            <rect width="700" height="525" fill="url(#hbBg)"/>
+            <rect width="700" height="525" fill="url(#hbGrid)"/>
+
+            <ellipse cx="560" cy="120" rx="90" ry="60" fill="url(#hbPark)" opacity=".9"/>
+            <path d="M-20 460 Q 180 430 350 470 T 720 440" stroke="url(#hbWater)" stroke-width="34" fill="none" opacity=".75"/>
+
+            <g filter="url(#hbShadow)">
+              <rect x="30" y="40" width="55" height="40" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="110" y="25" width="40" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="180" y="50" width="60" height="30" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="380" y="35" width="50" height="48" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="470" y="60" width="65" height="35" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="30" y="300" width="55" height="40" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="120" y="320" width="35" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="190" y="305" width="60" height="32" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="380" y="295" width="50" height="52" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="470" y="315" width="60" height="38" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="40" y="410" width="60" height="38" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="180" y="400" width="50" height="60" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="380" y="405" width="70" height="40" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+              <rect x="490" y="400" width="55" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
+            </g>
+
+            <path d="M-20 262 H 720" stroke="#FFF" stroke-width="22" fill="none"/>
+            <path d="M-20 380 H 720" stroke="#FFF" stroke-width="18" fill="none"/>
+            <path d="M260 -20 V 545" stroke="#FFF" stroke-width="22" fill="none"/>
+            <path d="M140 -20 V 545" stroke="#FFF" stroke-width="16" fill="none"/>
+            <path d="M-20 262 H 720" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
+            <path d="M260 -20 V 545" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
+
+            <!-- Live traffic -->
+            <g filter="url(#hbCarShadow)">
+              <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#4F5E75"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="10s" begin="0s" repeatCount="indefinite"><mpath href="#hbRoadH"/></animateMotion></g>
+              <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="2" fill="#8896A8"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="14s" begin="3s" repeatCount="indefinite"><mpath href="#hbRoadH"/></animateMotion></g>
+              <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#A8B2BF"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="13s" begin="2s" repeatCount="indefinite"><mpath href="#hbRoadH-rev"/></animateMotion></g>
+              <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="2" fill="#6B7A90"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="12s" begin="1s" repeatCount="indefinite"><mpath href="#hbRoadH2"/></animateMotion></g>
+              <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="2" fill="#7C8AA0"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="11s" begin="0s" repeatCount="indefinite"><mpath href="#hbRoadV"/></animateMotion></g>
+              <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#5C6B80"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="15s" begin="4s" repeatCount="indefinite"><mpath href="#hbRoadV"/></animateMotion></g>
+              <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="2" fill="#8896A8"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="13s" begin="5s" repeatCount="indefinite"><mpath href="#hbRoadV-rev"/></animateMotion></g>
+              <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#4F5E75"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="12s" begin="2s" repeatCount="indefinite"><mpath href="#hbRoadV2"/></animateMotion></g>
+              <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="2" fill="#A8B2BF"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="14s" begin="3s" repeatCount="indefinite"><mpath href="#hbRoadV2-rev"/></animateMotion></g>
+            </g>
+
+            <!-- Route -->
+            <path d="M 140 320 Q 200 240 260 260 T 500 400" stroke="#0B2A5B" stroke-width="12" fill="none" stroke-linecap="round" opacity=".12"/>
+            <path id="hbRoute" d="M 140 320 Q 200 240 260 260 T 500 400" stroke="#0B2A5B" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="800" style="animation:routeDraw 2s ease-out forwards"/>
+
+            <!-- User marker -->
+            <circle cx="140" cy="320" r="16" fill="#0B2A5B" opacity=".15">
+              <animate attributeName="r" values="12;20;12" dur="2.4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="140" cy="320" r="9" fill="#fff" stroke="#0B2A5B" stroke-width="2.5"/>
+            <circle cx="140" cy="320" r="3" fill="#0B2A5B"/>
+
+            <!-- Destination -->
+            <circle cx="500" cy="400" r="16" fill="#22A06B" opacity=".15">
+              <animate attributeName="r" values="12;20;12" dur="2.6s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="500" cy="400" r="9" fill="#fff" stroke="#22A06B" stroke-width="2.5"/>
+            <circle cx="500" cy="400" r="3" fill="#22A06B"/>
+
+            <!-- Driver -->
+            <g>
+              <circle r="22" fill="#0B2A5B" opacity=".3" style="animation:carPulse 2s infinite"/>
+              <rect x="-15" y="-15" width="30" height="30" rx="9" fill="#0B2A5B" stroke="#fff" stroke-width="2.5"/>
+              <g transform="translate(-10 -10)">
+                <svg width="20" height="20" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9 L11 32 L20 15 L29 32 L37 9"/>
+                </svg>
+              </g>
+              <animateMotion dur="5s" begin="0s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#hbRoute"/>
+              </animateMotion>
+            </g>
+          </svg>
+          <div class="hero-map-overlay"></div>
+        </div>
+
+        <div class="hero-float hero-float-1">
+          <div class="ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17 L19 7"/></svg></div>
+          <div>
+            <div>Haydovchi topildi</div>
+            <div class="sub">2 daqiqada yetib keladi</div>
+          </div>
+        </div>
+
+        <div class="hero-float hero-float-2">
+          <div class="ic navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div>
+            <div>2-3 daqiqa</div>
+            <div class="sub">o'rtacha kutish</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STATS ═══════════ -->
+<div class="stats-strip">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-val" data-count="1335">0</div><div class="stat-lbl">Yo'nalish</div></div>
+      <div class="stat-item"><div class="stat-val" data-count="14">0</div><div class="stat-lbl">Viloyat</div></div>
+      <div class="stat-item"><div class="stat-val" data-count="12458">0</div><div class="stat-lbl">Foydalanuvchilar</div></div>
+      <div class="stat-item"><div class="stat-val" data-count="8932">0</div><div class="stat-lbl">Buyurtmalar</div></div>
+      <div class="stat-item"><div class="stat-val">98%</div><div class="stat-lbl">Mamnun mijozlar</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ KATEGORIYALAR ═══════════ -->
+<section class="section categories" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-tag">Xizmatlar</div>
+        <h2 class="section-title">Barcha ehtiyojlar uchun</h2>
+        <p class="section-desc">Shahar ichida yoki viloyatlararo — biz sizga mos yechim topamiz.</p>
+      </div>
+      <a class="btn btn-ghost" href="javascript:openMiniApp()">
+        Barchasini ko'rish
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
     </div>
 
-    <!-- HERO PHONE with LIVE MAP -->
-    <div class="hero-phone-wrap">
-      <div class="hero-float hero-float-1">
-        <div class="ic green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 L10 17 L19 7"/></svg>
-        </div>
-        <div>
-          <div>Haydovchi topildi</div>
-          <div class="lbl-1">2 daqiqada yetib keladi</div>
-        </div>
-      </div>
-
-      <div class="hero-phone">
-        <div class="hero-screen">
-          <div class="hero-mock-map">
-            <svg viewBox="0 0 300 600" preserveAspectRatio="xMidYMid slice">
-              <defs>
-                <linearGradient id="hmBg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/>
-                </linearGradient>
-                <pattern id="hmGrid" width="30" height="30" patternUnits="userSpaceOnUse">
-                  <path d="M30 0H0V30" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".5"/>
-                </pattern>
-                <radialGradient id="hmPark" cx=".5" cy=".5">
-                  <stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/>
-                </radialGradient>
-                <filter id="hmShadow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#0B2A5B" flood-opacity=".3"/>
-                </filter>
-                <path id="hmRoadH" d="M-20 300 H 320"/>
-                <path id="hmRoadH2" d="M320 380 H -20"/>
-                <path id="hmRoadV" d="M150 -20 V 620"/>
-                <path id="hmRoadV2" d="M80 620 V -20"/>
-              </defs>
-
-              <rect width="300" height="600" fill="url(#hmBg)"/>
-              <rect width="300" height="600" fill="url(#hmGrid)"/>
-
-              <ellipse cx="240" cy="140" rx="60" ry="40" fill="url(#hmPark)" opacity=".9"/>
-              <path d="M-20 540 Q 80 520 150 550 T 320 530" stroke="#BFDBFE" stroke-width="22" fill="none" opacity=".7"/>
-
-              <g filter="url(#hmShadow)">
-                <rect x="20" y="60" width="40" height="35" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="80" y="45" width="30" height="45" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="130" y="70" width="45" height="25" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="200" y="55" width="35" height="40" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="240" y="80" width="40" height="30" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="30" y="350" width="40" height="35" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="90" y="380" width="30" height="45" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="180" y="360" width="45" height="30" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="240" y="380" width="40" height="35" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="30" y="460" width="45" height="35" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="110" y="470" width="40" height="45" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-                <rect x="180" y="455" width="50" height="30" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".5"/>
-              </g>
-
-              <!-- Roads -->
-              <path d="M-20 300 H 320" stroke="#FFF" stroke-width="18" fill="none"/>
-              <path d="M-20 380 H 320" stroke="#FFF" stroke-width="14" fill="none"/>
-              <path d="M150 -20 V 620" stroke="#FFF" stroke-width="18" fill="none"/>
-              <path d="M80 -20 V 620" stroke="#FFF" stroke-width="12" fill="none"/>
-              <path d="M-20 300 H 320" stroke="#CBD5E1" stroke-width=".6" stroke-dasharray="6 8" fill="none"/>
-              <path d="M150 -20 V 620" stroke="#CBD5E1" stroke-width=".6" stroke-dasharray="6 8" fill="none"/>
-
-              <!-- LIVE CARS -->
-              <g filter="url(#hmShadow)">
-                <g>
-                  <rect x="-7" y="-2.5" width="14" height="5" rx="2" fill="#4F5E75"/>
-                  <rect x="1.5" y="-1.7" width="3.5" height="3.4" rx=".8" fill="#fff" opacity=".85"/>
-                  <animateMotion rotate="auto" dur="8s" begin="0s" repeatCount="indefinite"><mpath href="#hmRoadH"/></animateMotion>
-                </g>
-                <g>
-                  <rect x="-6" y="-2.2" width="12" height="4.4" rx="1.8" fill="#8896A8"/>
-                  <rect x="1.3" y="-1.4" width="3" height="2.8" rx=".7" fill="#fff" opacity=".85"/>
-                  <animateMotion rotate="auto" dur="12s" begin="3s" repeatCount="indefinite"><mpath href="#hmRoadH"/></animateMotion>
-                </g>
-                <g>
-                  <rect x="-6" y="-2.2" width="12" height="4.4" rx="1.8" fill="#A8B2BF"/>
-                  <rect x="1.3" y="-1.4" width="3" height="2.8" rx=".7" fill="#fff" opacity=".85"/>
-                  <animateMotion rotate="auto" dur="10s" begin="1s" repeatCount="indefinite"><mpath href="#hmRoadH2"/></animateMotion>
-                </g>
-                <g>
-                  <rect x="-6" y="-2.2" width="12" height="4.4" rx="1.8" fill="#6B7A90"/>
-                  <rect x="1.3" y="-1.4" width="3" height="2.8" rx=".7" fill="#fff" opacity=".85"/>
-                  <animateMotion rotate="auto" dur="11s" begin="0s" repeatCount="indefinite"><mpath href="#hmRoadV"/></animateMotion>
-                </g>
-                <g>
-                  <rect x="-6" y="-2.2" width="12" height="4.4" rx="1.8" fill="#7C8AA0"/>
-                  <rect x="1.3" y="-1.4" width="3" height="2.8" rx=".7" fill="#fff" opacity=".85"/>
-                  <animateMotion rotate="auto" dur="13s" begin="2s" repeatCount="indefinite"><mpath href="#hmRoadV2"/></animateMotion>
-                </g>
-              </g>
-
-              <!-- Route -->
-              <path d="M 60 350 Q 110 280 150 300 T 250 440" stroke="#0B2A5B" stroke-width="10" fill="none" stroke-linecap="round" opacity=".12"/>
-              <path d="M 60 350 Q 110 280 150 300 T 250 440" stroke="#0B2A5B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="500" style="animation:routeDraw 2s ease-out forwards"/>
-
-              <!-- User marker -->
-              <circle cx="60" cy="350" r="14" fill="#0B2A5B" opacity=".15">
-                <animate attributeName="r" values="12;18;12" dur="2.4s" repeatCount="indefinite"/>
-              </circle>
-              <circle cx="60" cy="350" r="7" fill="#fff" stroke="#0B2A5B" stroke-width="2"/>
-              <circle cx="60" cy="350" r="2.5" fill="#0B2A5B"/>
-
-              <!-- Destination -->
-              <circle cx="250" cy="440" r="12" fill="#22A06B" opacity=".15">
-                <animate attributeName="r" values="10;16;10" dur="2.6s" repeatCount="indefinite"/>
-              </circle>
-              <circle cx="250" cy="440" r="6" fill="#fff" stroke="#22A06B" stroke-width="2"/>
-              <circle cx="250" cy="440" r="2" fill="#22A06B"/>
-
-              <!-- W-Taxi driver car -->
-              <g>
-                <circle r="20" fill="#0B2A5B" opacity=".3" class="carPulse" style="animation:carPulse 2s infinite"/>
-                <rect x="-14" y="-14" width="28" height="28" rx="9" fill="#0B2A5B" stroke="#fff" stroke-width="2"/>
-                <g transform="translate(-10 -10)">
-                  <svg width="20" height="20" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9 L11 32 L20 15 L29 32 L37 9"/>
-                  </svg>
-                </g>
-                <animateMotion dur="5s" begin="0s" repeatCount="indefinite" rotate="auto">
-                  <mpath href="#hmRoute"/>
-                </animateMotion>
-              </g>
-              <path id="hmRoute" d="M 60 350 Q 110 280 150 300 T 250 440" style="visibility:hidden"/>
-            </svg>
-          </div>
-
-          <div class="hero-mock-top">
-            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9 L11 32 L20 15 L29 32 L37 9"/>
-            </svg>
-            W-Taxi
-          </div>
-
-          <div class="hero-mock-sheet">
-            <div class="hero-mock-handle"></div>
-            <div class="hero-mock-title">Haydovchi topildi</div>
-            <div class="hero-mock-sub">Azizbek Karimov · Toyota Camry</div>
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
-              <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center">A</div>
-              <div style="flex:1">
-                <div style="font-size:11px;font-weight:800;color:var(--navy)">3 daqiqada</div>
-                <div style="font-size:9px;color:var(--muted);margin-top:1px">1.8 km · 12 000 so'm</div>
-              </div>
-              <div style="font-size:9px;font-weight:800;color:var(--amber)">★ 4.9</div>
-            </div>
-            <div class="hero-mock-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              <span>Kuzatish</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-float hero-float-2">
-        <div class="ic navy">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        </div>
-        <div>
-          <div>2-3 daqiqada</div>
-          <div class="lbl-1">o'rtacha kutish vaqti</div>
-        </div>
-      </div>
-
-      <div class="hero-float hero-float-3">
-        <div class="ic amber">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
-        </div>
-        <div>
-          <div>4.9 ★ reyting</div>
-          <div class="lbl-1">98% mamnun mijozlar</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ STRIP ═══════════════════ -->
-<div class="strip">
-  <div class="container strip-inner">
-    <div class="strip-item"><span class="num">1335</span><span>yo'nalish</span></div>
-    <div class="strip-item"><span class="num">14</span><span>viloyat</span></div>
-    <div class="strip-item"><span class="num">4</span><span>xizmat turi</span></div>
-    <div class="strip-item"><span class="num">24/7</span><span>qo'llab-quvvatlash</span></div>
-    <div class="strip-item"><span class="num">98%</span><span>mamnun mijozlar</span></div>
-  </div>
-</div>
-
-<!-- ═══════════════════ FEATURES ═══════════════════ -->
-<section class="section" id="features">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="section-tag">Nima uchun W-Taxi?</div>
-      <h2 class="section-title">Ishonchli, tezkor va oson</h2>
-      <p class="section-sub">Aqlli moslashtirish tizimi — siz manzilni kiritasiz, qolganini biz qilamiz.</p>
-    </div>
-
-    <div class="features-grid">
-      <div class="feature reveal">
-        <div class="feature-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 5 14h6l-1 8 8-12h-6l1-8z"/></svg>
-        </div>
-        <h3>Tezkor xizmat</h3>
-        <p>Haydovchi 2-3 daqiqada topiladi. Kutish vaqti minimal, har bir daqiqa hisoblanadi.</p>
-      </div>
-
-      <div class="feature reveal">
-        <div class="feature-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 6v6c0 5-4 8-8 9-4-1-8-4-8-9V6l8-3z"/><path d="m9 12 2 2 4-4"/></svg>
-        </div>
-        <h3>Xavfsiz haydovchilar</h3>
-        <p>Har bir haydovchi tekshirilgan. Reyting, sharhlar va tasdiqlangan hujjatlar.</p>
-      </div>
-
-      <div class="feature reveal">
-        <div class="feature-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9.5v.01M18 14.5v.01"/></svg>
-        </div>
-        <h3>Qulay to'lovlar</h3>
-        <p>Naqd, karta yoki Click orqali. Har bir safar uchun qulay to'lov varianti.</p>
-      </div>
-
-      <div class="feature reveal">
-        <div class="feature-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        </div>
-        <h3>24/7 qo'llab-quvvatlash</h3>
-        <p>Kunning istalgan vaqtida yordam. Har qanday savolga tez javob beramiz.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ SERVICES ═══════════════════ -->
-<section class="section services" id="services">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="section-tag">Xizmatlarimiz</div>
-      <h2 class="section-title">Barcha ehtiyojlar uchun</h2>
-      <p class="section-sub">Shahar ichida yoki viloyatlararo — biz sizga mos yechim topamiz.</p>
-    </div>
-
-    <div class="services-grid">
-      <a class="service reveal" href="javascript:openMiniApp()">
-        <div class="service-ic navy">
+    <div class="cat-grid">
+      <div class="cat-card reveal" onclick="openMiniApp()">
+        <div class="cat-icon navy">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
             <path d="M4 14.5C4 13.7 4.6 13 5.4 13h13.2c.8 0 1.4.7 1.4 1.5v2c0 .8-.6 1.5-1.4 1.5H5.4C4.6 18 4 17.3 4 16.5v-2z"/>
             <path d="M6.5 13 8.5 8.5c.3-.6.9-1 1.6-1h3.8c.7 0 1.3.4 1.6 1L17.5 13"/>
@@ -809,13 +667,14 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
             <circle cx="16.5" cy="16.5" r="1.2" fill="currentColor"/>
           </svg>
         </div>
-        <h3>Shahar taxi</h3>
-        <p>Toshkent va boshqa shaharlar ichida tez va qulay qatnov. Eng yaqin haydovchi avtomatik topiladi.</p>
-        <span class="service-link">Buyurtma berish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
+        <div class="cat-title">Shahar taxi</div>
+        <div class="cat-desc">Toshkent va boshqa shaharlar ichida tez va qulay qatnov. Eng yaqin haydovchi avtomatik topiladi.</div>
+        <span class="cat-count">482 haydovchi</span>
+        <div class="cat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
 
-      <a class="service reveal" href="javascript:openMiniApp()">
-        <div class="service-ic navy-3">
+      <div class="cat-card reveal" onclick="openMiniApp()">
+        <div class="cat-icon navy-3">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
             <path d="M3 17V8c0-1 1-2 2-2h8l7 5.5V17"/>
             <path d="M13 6v5.5h7"/>
@@ -823,341 +682,400 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
             <circle cx="16" cy="16" r="1.4" fill="currentColor"/>
           </svg>
         </div>
-        <h3>Viloyatlararo</h3>
-        <p>14 viloyat bo'ylab 1335 yo'nalish. Oldindan band qiling, qulay joyni tanlang.</p>
-        <span class="service-link">Yo'nalishlar <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
+        <div class="cat-title">Viloyatlararo</div>
+        <div class="cat-desc">14 viloyat bo'ylab 1335 yo'nalish. Oldindan band qiling, qulay joyni tanlang.</div>
+        <span class="cat-count">1335 yo'nalish</span>
+        <div class="cat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
 
-      <a class="service reveal" href="javascript:openMiniApp()">
-        <div class="service-ic navy-3">
+      <div class="cat-card reveal" onclick="openMiniApp()">
+        <div class="cat-icon navy-3">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
             <path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9z"/>
             <path d="M3 7.5 12 12l9-4.5"/>
             <path d="M12 12v9"/>
           </svg>
         </div>
-        <h3>Yuk / Pochta</h3>
-        <p>Xavfsiz pochta va yuk tashish. Har qanday hajm uchun kuzatuv va sug'urta.</p>
-        <span class="service-link">Yuborish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
+        <div class="cat-title">Yuk / Pochta</div>
+        <div class="cat-desc">Xavfsiz pochta va yuk tashish. Har qanday hajm uchun kuzatuv va sug'urta.</div>
+        <span class="cat-count">24/7 xizmat</span>
+        <div class="cat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
 
-      <a class="service reveal" href="#roadside">
-        <div class="service-ic green">
+      <div class="cat-card reveal" onclick="document.getElementById('roadside').scrollIntoView({behavior:'smooth'})">
+        <div class="cat-icon green">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
             <path d="M4 10h10"/>
             <path d="M14 8h3a2 2 0 0 1 2 2v8a1.5 1.5 0 0 0 3 0v-6l-2-3"/>
           </svg>
         </div>
-        <h3>Yo'l bo'yi xizmatlari</h3>
-        <p>Zapravka, ovqatlanish, mehmonxona, avtoservis — yo'lda kerak bo'lgan hamma narsa.</p>
-        <span class="service-link">Ko'rish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
+        <div class="cat-title">Yo'l bo'yi xizmatlari</div>
+        <div class="cat-desc">Zapravka, ovqatlanish, mehmonxona, avtoservis — yo'lda kerak bo'lgan hamma narsa.</div>
+        <span class="cat-count">5 turkum</span>
+        <div class="cat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
 
-      <a class="service reveal" href="javascript:openMiniApp()">
-        <div class="service-ic dark">
+      <div class="cat-card reveal" onclick="openMiniApp()">
+        <div class="cat-icon dark">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 11l16-6v14L3 13z"/>
             <path d="M3 11v2"/>
           </svg>
         </div>
-        <h3>E'lonlar</h3>
-        <p>O'z xizmatingizni minglab foydalanuvchilarga ko'rsating. Oddiy va tez joylashtiring.</p>
-        <span class="service-link">Joylashtirish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
+        <div class="cat-title">E'lonlar</div>
+        <div class="cat-desc">O'z xizmatingizni minglab foydalanuvchilarga ko'rsating. Oddiy va tez joylashtiring.</div>
+        <span class="cat-count">30 kun / 50K</span>
+        <div class="cat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
 
-      <a class="service reveal" href="javascript:openMiniApp()">
-        <div class="service-ic silver">
+      <div class="cat-card reveal" onclick="openMiniApp()">
+        <div class="cat-icon silver">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="8" r="3.5"/>
             <path d="M4.5 20c0-3.8 3.5-6 7.5-6s7.5 2.2 7.5 6"/>
           </svg>
         </div>
-        <h3>Haydovchilar</h3>
-        <p>O'z mashinangiz bilan daromad qiling. Kunlik qatnovlar, tez to'lovlar.</p>
-        <span class="service-link">Ro'yxatdan o'tish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-      </a>
+        <div class="cat-title">Haydovchilar</div>
+        <div class="cat-desc">O'z mashinangiz bilan daromad qiling. Kunlik qatnovlar, tez to'lovlar.</div>
+        <span class="cat-count">Ro'yxatdan o'tish</span>
+        <div class="cat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════ LIVE MAP ═══════════════════ -->
-<section class="live-map" id="map">
+<!-- ═══════════ QANDAY ISHLAYDI ═══════════ -->
+<section class="section" id="how">
   <div class="container">
-    <div class="section-head reveal">
-      <div class="section-tag">Real vaqtda xarita</div>
-      <h2 class="section-title">Haydovchilar shu yerda</h2>
-      <p class="section-sub">Yaqin atrofdagi haydovchilarni ko'ring, reyting va narxni solishtiring, to'g'ridan-to'g'ri bog'laning.</p>
+    <div class="section-head-center reveal">
+      <div class="section-tag">Qanday ishlaydi</div>
+      <h2 class="section-title">4 ta oddiy qadam</h2>
+      <p class="section-desc" style="margin:0 auto">Aqlli tizim — siz manzilni kiritasiz, qolganini biz qilamiz.</p>
     </div>
 
-    <div class="live-map-wrap reveal">
-      <aside class="map-side">
-        <div class="map-side-brand">
-          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 L11 32 L20 15 L29 32 L37 9"/></svg>
-          <span>W-TAXI</span>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Manzilni kiriting</h3>
+        <p>Qayerdan va qayerga — ikki manzilni belgilang.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Haydovchi topiladi</h3>
+        <p>2-3 daqiqada eng yaqin haydovchi sizga tayinlanadi.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>Yo'lda kuzatish</h3>
+        <p>Real vaqtda xaritada haydovchini kuzatib boring.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <h3>Safar va baho</h3>
+        <p>Safardan so'ng haydovchini baholang. To'lov qulay.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ KATTA XARITA + SIDEBAR ═══════════ -->
+<section class="section map-list-section" id="map">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <div class="section-tag">Real vaqtda xarita</div>
+        <h2 class="section-title">Yaqin atrofdagi haydovchilar</h2>
+        <p class="section-desc">Reyting, narx va masofani solishtiring. Filter bilan o'zingizga mos haydovchini toping.</p>
+      </div>
+    </div>
+
+    <div class="map-list-wrap reveal">
+      <!-- FILTER SIDEBAR -->
+      <aside class="filter-panel">
+        <div class="filter-head">
+          Filter
+          <button onclick="notify('Tozalandi','Barcha filterlar olib tashlandi')">Tozalash</button>
         </div>
-        <div class="side-item active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
-          Bosh sahifa
+
+        <div class="filter-group">
+          <div class="filter-label">Xizmat turi</div>
+          <label class="filter-radio"><input type="radio" name="svc" checked> Shahar taxi</label>
+          <label class="filter-radio"><input type="radio" name="svc"> Viloyatlararo</label>
+          <label class="filter-radio"><input type="radio" name="svc"> Yuk / Pochta</label>
         </div>
-        <div class="side-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-          Buyurtmalar
+
+        <div class="filter-group">
+          <div class="filter-label">Narx (so'm)</div>
+          <div class="filter-range">
+            <input placeholder="dan" value="5 000">
+            <input placeholder="gacha" value="50 000">
+          </div>
         </div>
-        <div class="side-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21c-5-6-7-9-7-12a7 7 0 1 1 14 0c0 3-2 6-7 12z"/></svg>
-          Xarita
+
+        <div class="filter-group">
+          <div class="filter-label">Masofa</div>
+          <label class="filter-check"><input type="checkbox" checked> 3 km gacha</label>
+          <label class="filter-check"><input type="checkbox"> 10 km gacha</label>
+          <label class="filter-check"><input type="checkbox"> 50 km gacha</label>
         </div>
-        <div class="side-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l16-6v14L3 13z"/></svg>
-          E'lonlar
+
+        <div class="filter-group">
+          <div class="filter-label">Reyting</div>
+          <label class="filter-check"><input type="checkbox" checked> 4.5+ ★</label>
+          <label class="filter-check"><input type="checkbox"> 4.8+ ★</label>
         </div>
-        <div class="side-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 10h10"/></svg>
-          Yo'l bo'yi
-        </div>
-        <div class="side-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-3.8 3.5-6 7.5-6s7.5 2.2 7.5 6"/></svg>
-          Profil
+
+        <div class="filter-group">
+          <div class="filter-label">Qo'shimcha</div>
+          <label class="filter-check"><input type="checkbox"> Konditsioner</label>
+          <label class="filter-check"><input type="checkbox"> Pochta oladi</label>
+          <label class="filter-check"><input type="checkbox"> Ayol haydovchi</label>
         </div>
       </aside>
 
-      <div class="map-canvas">
-        <div class="map-search">
-          <svg style="width:14px;height:14px;color:var(--silver);margin-left:8px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
-          <input placeholder="Amir Temur ko'chasi 1" value="Amir Temur ko'chasi 1">
-          <div class="sep"></div>
-          <input placeholder="Qayerga?" value="Mustaqillik maydoni">
-          <button class="btn btn-primary">Qidirish</button>
-        </div>
-
-        <svg class="map-svg" viewBox="0 0 700 700" preserveAspectRatio="xMidYMid slice">
+      <!-- MAP -->
+      <div class="map-canvas-big">
+        <svg viewBox="0 0 900 720" preserveAspectRatio="xMidYMid slice">
           <defs>
-            <linearGradient id="mapBgBig" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="bbBg" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#EEF2F8"/><stop offset="1" stop-color="#E2E8F0"/>
             </linearGradient>
-            <pattern id="gridBig" width="44" height="44" patternUnits="userSpaceOnUse">
-              <path d="M44 0H0V44" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".6"/>
+            <pattern id="bbGrid" width="38" height="38" patternUnits="userSpaceOnUse">
+              <path d="M38 0H0V38" fill="none" stroke="#CBD5E1" stroke-width=".5" opacity=".55"/>
             </pattern>
-            <radialGradient id="parkBig" cx=".5" cy=".5">
+            <radialGradient id="bbPark" cx=".5" cy=".5">
               <stop offset="0" stop-color="#BBF7D0"/><stop offset="1" stop-color="#BBF7D0" stop-opacity="0"/>
             </radialGradient>
-            <linearGradient id="waterBig" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="bbWater" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#BFDBFE"/><stop offset="1" stop-color="#93C5FD"/>
             </linearGradient>
-            <filter id="bldBig" x="-10%" y="-10%" width="120%" height="120%">
+            <filter id="bbBld" x="-10%" y="-10%" width="120%" height="120%">
               <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#0B2A5B" flood-opacity=".08"/>
             </filter>
-            <filter id="carShBig" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="bbCarSh" x="-50%" y="-50%" width="200%" height="200%">
               <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#0B2A5B" flood-opacity=".35"/>
             </filter>
-            <path id="rH" d="M-30 350 H 730"/>
-            <path id="rH2" d="M730 480 H -30"/>
-            <path id="rV" d="M350 -30 V 730"/>
-            <path id="rV2" d="M180 730 V -30"/>
-            <path id="rH-rev" d="M730 358 H -30"/>
-            <path id="rV-rev" d="M358 730 V -30"/>
-            <path id="rV2-rev" d="M188 730 V -30"/>
+            <path id="bbRH" d="M-30 360 H 930"/>
+            <path id="bbRH2" d="M930 500 H -30"/>
+            <path id="bbRV" d="M480 -30 V 750"/>
+            <path id="bbRV2" d="M240 750 V -30"/>
+            <path id="bbRH-rev" d="M930 368 H -30"/>
+            <path id="bbRV-rev" d="M488 750 V -30"/>
+            <path id="bbRV2-rev" d="M248 750 V -30"/>
           </defs>
 
-          <rect width="700" height="700" fill="url(#mapBgBig)"/>
-          <rect width="700" height="700" fill="url(#gridBig)"/>
+          <rect width="900" height="720" fill="url(#bbBg)"/>
+          <rect width="900" height="720" fill="url(#bbGrid)"/>
 
-          <ellipse cx="540" cy="160" rx="110" ry="75" fill="url(#parkBig)" opacity=".9"/>
+          <ellipse cx="700" cy="140" rx="130" ry="90" fill="url(#bbPark)" opacity=".9"/>
           <g opacity=".85">
-            <circle cx="500" cy="140" r="3.5" fill="#86EFAC"/>
-            <circle cx="530" cy="155" r="4" fill="#86EFAC"/>
-            <circle cx="560" cy="135" r="3.5" fill="#86EFAC"/>
-            <circle cx="580" cy="165" r="4" fill="#86EFAC"/>
-            <circle cx="515" cy="180" r="3.5" fill="#86EFAC"/>
-            <circle cx="555" cy="190" r="4" fill="#86EFAC"/>
+            <circle cx="650" cy="120" r="4" fill="#86EFAC"/>
+            <circle cx="690" cy="135" r="4.5" fill="#86EFAC"/>
+            <circle cx="720" cy="115" r="4" fill="#86EFAC"/>
+            <circle cx="750" cy="150" r="4.5" fill="#86EFAC"/>
+            <circle cx="670" cy="165" r="4" fill="#86EFAC"/>
+            <circle cx="710" cy="175" r="4.5" fill="#86EFAC"/>
           </g>
 
-          <path d="M-30 620 Q 180 590 350 630 T 730 600" stroke="url(#waterBig)" stroke-width="44" fill="none" opacity=".8"/>
-          <path d="M-30 620 Q 180 590 350 630 T 730 600" stroke="#60A5FA" stroke-width="1" fill="none" opacity=".4"/>
-          <text x="350" y="638" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" fill="#2563EB" letter-spacing=".15em" text-anchor="middle" opacity=".7">ANHOR KANALI</text>
+          <path d="M-30 640 Q 220 610 480 650 T 930 620" stroke="url(#bbWater)" stroke-width="46" fill="none" opacity=".75"/>
+          <path d="M-30 640 Q 220 610 480 650 T 930 620" stroke="#60A5FA" stroke-width="1" fill="none" opacity=".4"/>
 
-          <g filter="url(#bldBig)">
-            <rect x="40" y="60" width="70" height="50" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="140" y="40" width="55" height="70" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="225" y="70" width="85" height="40" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="420" y="50" width="65" height="65" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="510" y="80" width="80" height="45" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="610" y="50" width="55" height="75" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="60" y="400" width="75" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="180" y="430" width="55" height="80" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="260" y="405" width="90" height="45" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="440" y="395" width="70" height="70" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="540" y="425" width="85" height="50" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="620" y="400" width="55" height="65" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="80" y="530" width="80" height="50" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="200" y="545" width="60" height="70" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="420" y="540" width="85" height="50" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
-            <rect x="540" y="545" width="70" height="65" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+          <g filter="url(#bbBld)">
+            <rect x="40" y="60" width="80" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="160" y="40" width="60" height="80" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="260" y="70" width="100" height="45" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="420" y="55" width="70" height="70" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="550" y="80" width="90" height="50" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="60" y="410" width="90" height="60" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="200" y="440" width="60" height="90" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="300" y="415" width="100" height="50" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="560" y="405" width="80" height="80" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="700" y="435" width="90" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="80" y="550" width="90" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="230" y="565" width="70" height="80" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="560" y="560" width="90" height="55" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
+            <rect x="720" y="570" width="80" height="70" rx="3" fill="#FFF" stroke="#CBD5E1" stroke-width=".6"/>
           </g>
 
-          <g font-family="Plus Jakarta Sans" font-size="7" font-weight="700" fill="#B8C2D0" text-anchor="middle">
-            <text x="75" y="88">12</text>
-            <text x="167" y="68">14</text>
-            <text x="267" y="92">16</text>
-            <text x="452" y="80">18</text>
-            <text x="550" y="100">20</text>
-            <text x="97" y="428">24</text>
-            <text x="207" y="470">26</text>
-            <text x="305" y="428">28</text>
+          <g font-family="Plus Jakarta Sans" font-size="8" font-weight="700" fill="#B8C2D0" text-anchor="middle">
+            <text x="80" y="94">12</text>
+            <text x="190" y="86">14</text>
+            <text x="310" y="98">16</text>
+            <text x="455" y="96">18</text>
+            <text x="595" y="110">20</text>
+            <text x="105" y="446">24</text>
+            <text x="230" y="496">26</text>
+            <text x="350" y="448">28</text>
           </g>
 
-          <!-- Roads -->
-          <path d="M-30 350 H 730" stroke="#FFF" stroke-width="28" fill="none"/>
-          <path d="M-30 480 H 730" stroke="#FFF" stroke-width="22" fill="none"/>
-          <path d="M350 -30 V 730" stroke="#FFF" stroke-width="28" fill="none"/>
-          <path d="M180 -30 V 730" stroke="#FFF" stroke-width="20" fill="none"/>
-          <path d="M-30 350 H 730" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
-          <path d="M350 -30 V 730" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
+          <path d="M-30 360 H 930" stroke="#FFF" stroke-width="26" fill="none"/>
+          <path d="M-30 500 H 930" stroke="#FFF" stroke-width="22" fill="none"/>
+          <path d="M480 -30 V 750" stroke="#FFF" stroke-width="26" fill="none"/>
+          <path d="M240 -30 V 750" stroke="#FFF" stroke-width="20" fill="none"/>
+          <path d="M-30 360 H 930" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
+          <path d="M480 -30 V 750" stroke="#CBD5E1" stroke-width=".8" stroke-dasharray="8 10" fill="none"/>
 
-          <!-- Street labels -->
-          <text x="40" y="344" font-family="Plus Jakarta Sans" font-size="8" font-weight="600" fill="#9AA7B8" letter-spacing=".12em">AMIR TEMUR</text>
-          <text x="40" y="474" font-family="Plus Jakarta Sans" font-size="8" font-weight="600" fill="#9AA7B8" letter-spacing=".12em">BUNYODKOR</text>
-          <text x="366" y="120" font-family="Plus Jakarta Sans" font-size="8" font-weight="600" fill="#9AA7B8" letter-spacing=".12em" transform="rotate(90 366 120)">MUSTAQILLIK</text>
-          <text x="196" y="620" font-family="Plus Jakarta Sans" font-size="8" font-weight="600" fill="#9AA7B8" letter-spacing=".12em" transform="rotate(90 196 620)">SHAYXONTOHUR</text>
+          <text x="50" y="354" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" fill="#9AA7B8" letter-spacing=".12em">AMIR TEMUR</text>
+          <text x="50" y="494" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" fill="#9AA7B8" letter-spacing=".12em">BUNYODKOR</text>
+          <text x="500" y="150" font-family="Plus Jakarta Sans" font-size="9" font-weight="600" fill="#9AA7B8" letter-spacing=".12em" transform="rotate(90 500 150)">MUSTAQILLIK</text>
 
-          <!-- LIVE TRAFFIC — 14 cars -->
-          <g filter="url(#carShBig)">
-            <g><rect x="-8" y="-3" width="16" height="6" rx="2.5" fill="#4F5E75"/><rect x="2" y="-2" width="4" height="4" rx="1" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="12s" begin="0s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#8896A8"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="18s" begin="3s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
-            <g><rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#6B7A90"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="15s" begin="7s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#A8B2BF"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="17s" begin="2s" repeatCount="indefinite"><mpath href="#rH-rev"/></animateMotion></g>
-            <g><rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#7C8AA0"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="14s" begin="5s" repeatCount="indefinite"><mpath href="#rH-rev"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#5C6B80"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="16s" begin="1s" repeatCount="indefinite"><mpath href="#rH2"/></animateMotion></g>
-            <g><rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#8896A8"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="20s" begin="6s" repeatCount="indefinite"><mpath href="#rH2"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#4F5E75"/><rect x="-1.8" y="1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="15s" begin="0s" repeatCount="indefinite"><mpath href="#rV"/></animateMotion></g>
-            <g><rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#6B7A90"/><rect x="-1.5" y="1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="22s" begin="4s" repeatCount="indefinite"><mpath href="#rV"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#A8B2BF"/><rect x="-1.8" y="1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="18s" begin="8s" repeatCount="indefinite"><mpath href="#rV-rev"/></animateMotion></g>
-            <g><rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#7C8AA0"/><rect x="-1.5" y="1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="16s" begin="3s" repeatCount="indefinite"><mpath href="#rV2"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#5C6B80"/><rect x="-1.8" y="1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="19s" begin="10s" repeatCount="indefinite"><mpath href="#rV2"/></animateMotion></g>
-            <g><rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#8896A8"/><rect x="-1.5" y="1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="17s" begin="5s" repeatCount="indefinite"><mpath href="#rV2-rev"/></animateMotion></g>
-            <g><rect x="-7" y="-2.8" width="14" height="5.6" rx="2.2" fill="#6B7A90"/><rect x="1.8" y="-1.8" width="3.5" height="3.6" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="13s" begin="1s" repeatCount="indefinite"><mpath href="#rH"/></animateMotion></g>
+          <!-- Traffic — 14 cars -->
+          <g filter="url(#bbCarSh)">
+            <g><rect x="-9" y="-3.2" width="18" height="6.4" rx="2.5" fill="#4F5E75"/><rect x="2.5" y="-2.2" width="4" height="4.4" rx="1" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="13s" begin="0s" repeatCount="indefinite"><mpath href="#bbRH"/></animateMotion></g>
+            <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2.2" fill="#8896A8"/><rect x="2" y="-1.7" width="3.5" height="3.4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="17s" begin="2s" repeatCount="indefinite"><mpath href="#bbRH"/></animateMotion></g>
+            <g><rect x="-6" y="-2.4" width="12" height="4.8" rx="2" fill="#6B7A90"/><rect x="1.5" y="-1.6" width="3" height="3.2" rx=".8" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="15s" begin="6s" repeatCount="indefinite"><mpath href="#bbRH"/></animateMotion></g>
+            <g><rect x="-8" y="-3" width="16" height="6" rx="2.5" fill="#A8B2BF"/><rect x="2" y="-2" width="3.8" height="4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="19s" begin="3s" repeatCount="indefinite"><mpath href="#bbRH-rev"/></animateMotion></g>
+            <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2.2" fill="#7C8AA0"/><rect x="2" y="-1.7" width="3.5" height="3.4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="16s" begin="5s" repeatCount="indefinite"><mpath href="#bbRH-rev"/></animateMotion></g>
+            <g><rect x="-8" y="-3" width="16" height="6" rx="2.5" fill="#5C6B80"/><rect x="2" y="-2" width="3.8" height="4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="18s" begin="1s" repeatCount="indefinite"><mpath href="#bbRH2"/></animateMotion></g>
+            <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2.2" fill="#8896A8"/><rect x="2" y="-1.7" width="3.5" height="3.4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="21s" begin="7s" repeatCount="indefinite"><mpath href="#bbRH2"/></animateMotion></g>
+            <g><rect x="-9" y="-3.2" width="18" height="6.4" rx="2.5" fill="#4F5E75"/><rect x="-2.2" y="2.2" width="4" height="4.4" rx="1" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="17s" begin="0s" repeatCount="indefinite"><mpath href="#bbRV"/></animateMotion></g>
+            <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2.2" fill="#6B7A90"/><rect x="-2" y="1.7" width="3.5" height="3.4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="22s" begin="4s" repeatCount="indefinite"><mpath href="#bbRV"/></animateMotion></g>
+            <g><rect x="-8" y="-3" width="16" height="6" rx="2.5" fill="#A8B2BF"/><rect x="-2" y="2" width="3.8" height="4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="20s" begin="9s" repeatCount="indefinite"><mpath href="#bbRV-rev"/></animateMotion></g>
+            <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2.2" fill="#7C8AA0"/><rect x="-2" y="1.7" width="3.5" height="3.4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="18s" begin="3s" repeatCount="indefinite"><mpath href="#bbRV2"/></animateMotion></g>
+            <g><rect x="-8" y="-3" width="16" height="6" rx="2.5" fill="#5C6B80"/><rect x="-2" y="2" width="3.8" height="4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="21s" begin="11s" repeatCount="indefinite"><mpath href="#bbRV2"/></animateMotion></g>
+            <g><rect x="-7" y="-2.6" width="14" height="5.2" rx="2.2" fill="#8896A8"/><rect x="-2" y="1.7" width="3.5" height="3.4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="19s" begin="6s" repeatCount="indefinite"><mpath href="#bbRV2-rev"/></animateMotion></g>
+            <g><rect x="-8" y="-3" width="16" height="6" rx="2.5" fill="#6B7A90"/><rect x="2" y="-2" width="3.8" height="4" rx=".9" fill="#fff" opacity=".85"/><animateMotion rotate="auto" dur="14s" begin="2s" repeatCount="indefinite"><mpath href="#bbRH"/></animateMotion></g>
           </g>
 
-          <!-- Route -->
-          <path d="M 180 500 Q 260 380 350 400 T 500 550" stroke="#0B2A5B" stroke-width="16" fill="none" stroke-linecap="round" opacity=".12"/>
-          <path id="routeLine2" d="M 180 500 Q 260 380 350 400 T 500 550" stroke="#0B2A5B" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="600" style="animation:routeDraw 2s ease-out forwards"/>
+          <path d="M 240 480 Q 340 380 480 400 T 720 520" stroke="#0B2A5B" stroke-width="14" fill="none" stroke-linecap="round" opacity=".12"/>
+          <path id="bbRoute" d="M 240 480 Q 340 380 480 400 T 720 520" stroke="#0B2A5B" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="800" style="animation:routeDraw 2s ease-out forwards"/>
 
-          <!-- User marker -->
-          <circle cx="180" cy="500" r="20" fill="#0B2A5B" opacity=".15">
-            <animate attributeName="r" values="14;24;14" dur="2.4s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values=".15;0;.15" dur="2.4s" repeatCount="indefinite"/>
+          <circle cx="240" cy="480" r="22" fill="#0B2A5B" opacity=".15">
+            <animate attributeName="r" values="16;26;16" dur="2.4s" repeatCount="indefinite"/>
           </circle>
-          <circle cx="180" cy="500" r="11" fill="#fff" stroke="#0B2A5B" stroke-width="3"/>
-          <circle cx="180" cy="500" r="4" fill="#0B2A5B"/>
+          <circle cx="240" cy="480" r="12" fill="#fff" stroke="#0B2A5B" stroke-width="3"/>
+          <circle cx="240" cy="480" r="4.5" fill="#0B2A5B"/>
 
-          <!-- Destination marker -->
-          <circle cx="500" cy="550" r="20" fill="#22A06B" opacity=".15">
-            <animate attributeName="r" values="14;24;14" dur="2.6s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values=".15;0;.15" dur="2.6s" repeatCount="indefinite"/>
+          <circle cx="720" cy="520" r="22" fill="#22A06B" opacity=".15">
+            <animate attributeName="r" values="16;26;16" dur="2.6s" repeatCount="indefinite"/>
           </circle>
-          <circle cx="500" cy="550" r="10" fill="#fff" stroke="#22A06B" stroke-width="3"/>
-          <circle cx="500" cy="550" r="4" fill="#22A06B"/>
+          <circle cx="720" cy="520" r="11" fill="#fff" stroke="#22A06B" stroke-width="3"/>
+          <circle cx="720" cy="520" r="4" fill="#22A06B"/>
 
-          <!-- Driver car animated -->
           <g>
-            <circle r="26" fill="#0B2A5B" opacity=".35" style="animation:carPulse 2s infinite"/>
-            <rect x="-18" y="-18" width="36" height="36" rx="11" fill="#0B2A5B" stroke="#fff" stroke-width="2.5"/>
-            <g transform="translate(-12 -12)">
-              <svg width="24" height="24" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+            <circle r="28" fill="#0B2A5B" opacity=".3" style="animation:carPulse 2s infinite"/>
+            <rect x="-20" y="-20" width="40" height="40" rx="12" fill="#0B2A5B" stroke="#fff" stroke-width="3"/>
+            <g transform="translate(-13 -13)">
+              <svg width="26" height="26" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9 L11 32 L20 15 L29 32 L37 9"/>
               </svg>
             </g>
             <animateMotion dur="6s" begin="0s" repeatCount="indefinite" rotate="auto">
-              <mpath href="#routeLine2"/>
+              <mpath href="#bbRoute"/>
             </animateMotion>
           </g>
         </svg>
 
-        <div class="map-zoom">
+        <div class="map-ctrl">
           <button onclick="notify('Zoom +','Yaqinlashtirilmoqda')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
           <button onclick="notify('Zoom −','Uzoqlashtirilmoqda')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+          <button onclick="notify('Joylashuv','Koordinatalar aniqlandi')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="7"/><path d="M12 2V5 M12 19V22 M2 12H5 M19 12H22"/></svg></button>
+        </div>
+
+        <div class="map-info-box">
+          <span class="dot"></span>
+          <span>3 haydovchi yaqin atrofda</span>
         </div>
       </div>
 
-      <aside class="map-drivers">
-        <div class="drivers-title">
-          Topilgan haydovchilar
-          <span class="live-badge">Live</span>
-        </div>
-
-        <div class="driver-item selected">
-          <div class="driver-top">
-            <div class="driver-av">A</div>
-            <div class="driver-info">
-              <div class="driver-name">Azizbek Karimov</div>
-              <div class="driver-car">Toyota Camry · 01 A 123 AA</div>
-            </div>
-            <div class="driver-rate">
-              <svg viewBox="0 0 24 24"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
-              4.9
-            </div>
+      <!-- DRIVERS LIST -->
+      <aside class="drivers-panel">
+        <div class="drivers-panel-head">
+          <div class="drivers-panel-title">
+            Topilgan haydovchilar
+            <span class="live">Live</span>
           </div>
-          <div class="driver-bottom">
-            <span class="driver-time">2 daqiqa · 1.8 km</span>
-            <span class="driver-price">12 000</span>
+          <div class="drivers-panel-sort">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+            Saralash
           </div>
         </div>
 
-        <div class="driver-item">
-          <div class="driver-top">
-            <div class="driver-av green">S</div>
-            <div class="driver-info">
-              <div class="driver-name">Sardor To'tayev</div>
-              <div class="driver-car">Chevrolet Cobalt · 01 B 456 BA</div>
+        <div class="drivers-list">
+          <div class="driver-row selected">
+            <div class="driver-head">
+              <div class="driver-photo">A</div>
+              <div class="driver-name-row">
+                <div class="driver-name">Azizbek Karimov</div>
+                <div class="driver-car">Toyota Camry · 01 A 123 AA</div>
+              </div>
+              <div class="driver-rating">
+                <svg viewBox="0 0 24 24"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
+                4.9
+              </div>
             </div>
-            <div class="driver-rate">
-              <svg viewBox="0 0 24 24"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
-              4.8
+            <div class="driver-tags">
+              <span class="driver-tag vip">VIP</span>
+              <span class="driver-tag">Konditsioner</span>
+              <span class="driver-tag">Pochta oladi</span>
+            </div>
+            <div class="driver-footer">
+              <div class="driver-price">12 000 <small>so'm</small></div>
+              <div class="driver-meta">2 daq · 1.8 km</div>
             </div>
           </div>
-          <div class="driver-bottom">
-            <span class="driver-time">3 daqiqa · 2.3 km</span>
-            <span class="driver-price">11 500</span>
+
+          <div class="driver-row">
+            <div class="driver-head">
+              <div class="driver-photo green">S</div>
+              <div class="driver-name-row">
+                <div class="driver-name">Sardor To'tayev</div>
+                <div class="driver-car">Chevrolet Cobalt · 01 B 456 BA</div>
+              </div>
+              <div class="driver-rating">
+                <svg viewBox="0 0 24 24"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
+                4.8
+              </div>
+            </div>
+            <div class="driver-tags">
+              <span class="driver-tag">Konditsioner</span>
+              <span class="driver-tag">Karta to'lov</span>
+            </div>
+            <div class="driver-footer">
+              <div class="driver-price">11 500 <small>so'm</small></div>
+              <div class="driver-meta">3 daq · 2.3 km</div>
+            </div>
+          </div>
+
+          <div class="driver-row">
+            <div class="driver-head">
+              <div class="driver-photo navy-3">J</div>
+              <div class="driver-name-row">
+                <div class="driver-name">Jasur Rahimov</div>
+                <div class="driver-car">Kia Rio · 01 C 789 CC</div>
+              </div>
+              <div class="driver-rating">
+                <svg viewBox="0 0 24 24"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
+                4.7
+              </div>
+            </div>
+            <div class="driver-tags">
+              <span class="driver-tag">Konditsioner</span>
+            </div>
+            <div class="driver-footer">
+              <div class="driver-price">11 000 <small>so'm</small></div>
+              <div class="driver-meta">4 daq · 2.9 km</div>
+            </div>
           </div>
         </div>
 
-        <div class="driver-item">
-          <div class="driver-top">
-            <div class="driver-av navy-3">J</div>
-            <div class="driver-info">
-              <div class="driver-name">Jasur Rahimov</div>
-              <div class="driver-car">Kia Rio · 01 C 789 CC</div>
-            </div>
-            <div class="driver-rate">
-              <svg viewBox="0 0 24 24"><path d="M12 2.8 14.8 8.9 21.4 9.8 16.6 14.4 17.9 20.9 12 17.7 6.1 20.9 7.4 14.4 2.6 9.8 9.2 8.9z"/></svg>
-              4.7
-            </div>
-          </div>
-          <div class="driver-bottom">
-            <span class="driver-time">4 daqiqa · 2.9 km</span>
-            <span class="driver-price">11 000</span>
-          </div>
-        </div>
-
-        <div class="premium-card">
-          <div class="premium-label">Premium</div>
-          <div class="premium-title">Reklamadan xalos bo'ling</div>
-          <p>Oylik obuna orqali barcha imtiyozlardan foydalaning</p>
-          <button>Obuna bo'lish</button>
+        <div class="drivers-panel-foot">
+          <span>3 ta natija</span>
+          <span style="color:var(--navy);cursor:pointer">Barchasini ko'rish →</span>
         </div>
       </aside>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════ ADMIN ═══════════════════ -->
+<!-- ═══════════ ADMIN PANEL ═══════════ -->
 <section class="admin" id="admin">
   <div class="container">
     <div class="admin-head reveal">
       <div class="section-tag">Boshqaruv paneli</div>
       <h2 class="section-title">Kuchli admin panel</h2>
-      <p class="section-sub">Statistika, buyurtmalar, haydovchilar va moliyaviy hisobotlar — bitta joyda.</p>
+      <p class="section-desc">Statistika, buyurtmalar, haydovchilar va moliyaviy hisobotlar — bitta joyda.</p>
     </div>
 
     <div class="admin-panel reveal">
@@ -1169,7 +1087,6 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
             <div class="role">Super Admin</div>
           </div>
         </div>
-
         <div class="admin-item active">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
           Umumiy statistika
@@ -1203,7 +1120,7 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
       <div class="admin-main">
         <div class="admin-top">
           <div class="metric">
-            <div class="metric-label">Jami foydalanuvchilar</div>
+            <div class="metric-label">Foydalanuvchilar</div>
             <div class="metric-value" data-count="12458">0</div>
             <span class="metric-delta up">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14l5-5 5 5"/></svg>
@@ -1211,11 +1128,19 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
             </span>
           </div>
           <div class="metric">
-            <div class="metric-label">Jami buyurtmalar</div>
+            <div class="metric-label">Buyurtmalar</div>
             <div class="metric-value" data-count="8932">0</div>
             <span class="metric-delta up">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14l5-5 5 5"/></svg>
               +18%
+            </span>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Haydovchilar</div>
+            <div class="metric-value" data-count="482">0</div>
+            <span class="metric-delta up">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14l5-5 5 5"/></svg>
+              +8%
             </span>
           </div>
           <div class="metric">
@@ -1238,7 +1163,7 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
                 <option>Bu yil</option>
               </select>
             </div>
-            <svg class="chart-svg" viewBox="0 0 400 180" preserveAspectRatio="none">
+            <svg class="chart-svg" viewBox="0 0 500 200" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0" stop-color="#0B2A5B" stop-opacity=".25"/>
@@ -1246,20 +1171,20 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
                 </linearGradient>
               </defs>
               <g stroke="#E8ECF1" stroke-width="1">
-                <line x1="0" y1="45" x2="400" y2="45"/>
-                <line x1="0" y1="90" x2="400" y2="90"/>
-                <line x1="0" y1="135" x2="400" y2="135"/>
+                <line x1="0" y1="50" x2="500" y2="50"/>
+                <line x1="0" y1="100" x2="500" y2="100"/>
+                <line x1="0" y1="150" x2="500" y2="150"/>
               </g>
-              <path d="M0 140 Q 40 100 80 110 T 160 80 T 240 50 T 320 90 T 400 40 L 400 180 L 0 180 Z" fill="url(#chartGrad)"/>
-              <path class="chart-path" d="M0 140 Q 40 100 80 110 T 160 80 T 240 50 T 320 90 T 400 40" stroke="#0B2A5B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-              <circle cx="240" cy="50" r="4" fill="#0B2A5B"/>
-              <circle cx="240" cy="50" r="8" fill="#0B2A5B" opacity=".2"/>
-              <g fill="#94A3B8" font-size="9" font-family="Plus Jakarta Sans" text-anchor="middle" font-weight="600">
-                <text x="40" y="175">Du</text>
-                <text x="120" y="175">Se</text>
-                <text x="200" y="175">Ch</text>
-                <text x="280" y="175">Pa</text>
-                <text x="360" y="175">Ju</text>
+              <path d="M0 155 Q 50 110 100 120 T 200 90 T 300 55 T 400 100 T 500 45 L 500 200 L 0 200 Z" fill="url(#chartGrad)"/>
+              <path class="chart-path" d="M0 155 Q 50 110 100 120 T 200 90 T 300 55 T 400 100 T 500 45" stroke="#0B2A5B" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <circle cx="300" cy="55" r="5" fill="#0B2A5B"/>
+              <circle cx="300" cy="55" r="10" fill="#0B2A5B" opacity=".2"/>
+              <g fill="#94A3B8" font-size="10" font-family="Plus Jakarta Sans" text-anchor="middle" font-weight="600">
+                <text x="50" y="195">Du</text>
+                <text x="150" y="195">Se</text>
+                <text x="250" y="195">Ch</text>
+                <text x="350" y="195">Pa</text>
+                <text x="450" y="195">Ju</text>
               </g>
             </svg>
           </div>
@@ -1267,31 +1192,11 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
           <div class="orders-card">
             <div class="chart-title">So'nggi buyurtmalar</div>
             <div class="orders-list" id="ordersList">
-              <div class="order-row">
-                <span class="order-id">#12458</span>
-                <span class="order-route">Chilonzor → Yunusobod</span>
-                <span class="order-amount">12 000</span>
-              </div>
-              <div class="order-row">
-                <span class="order-id">#12457</span>
-                <span class="order-route">Sergeli → M. Ulug'bek</span>
-                <span class="order-amount">15 000</span>
-              </div>
-              <div class="order-row">
-                <span class="order-id">#12456</span>
-                <span class="order-route">Yakkasaroy → Chilonzor</span>
-                <span class="order-amount">9 000</span>
-              </div>
-              <div class="order-row">
-                <span class="order-id">#12455</span>
-                <span class="order-route">Toshkent → Samarqand</span>
-                <span class="order-amount">145 000</span>
-              </div>
-              <div class="order-row">
-                <span class="order-id">#12454</span>
-                <span class="order-route">Mirobod → Shayxontohur</span>
-                <span class="order-amount">11 000</span>
-              </div>
+              <div class="order-row"><span class="order-id">#12458</span><span class="order-route">Chilonzor → Yunusobod</span><span class="order-amount">12 000</span></div>
+              <div class="order-row"><span class="order-id">#12457</span><span class="order-route">Sergeli → M. Ulug'bek</span><span class="order-amount">15 000</span></div>
+              <div class="order-row"><span class="order-id">#12456</span><span class="order-route">Yakkasaroy → Chilonzor</span><span class="order-amount">9 000</span></div>
+              <div class="order-row"><span class="order-id">#12455</span><span class="order-route">Toshkent → Samarqand</span><span class="order-amount">145 000</span></div>
+              <div class="order-row"><span class="order-id">#12454</span><span class="order-route">Mirobod → Shayxontohur</span><span class="order-amount">11 000</span></div>
             </div>
           </div>
         </div>
@@ -1300,112 +1205,94 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
   </div>
 </section>
 
-<!-- ═══════════════════ ROADSIDE ═══════════════════ -->
-<section class="roadside" id="roadside">
+<!-- ═══════════ YO'L BO'YI ═══════════ -->
+<section class="section roadside" id="roadside">
   <div class="container">
-    <div class="roadside-grid">
-      <div class="roadside-text reveal">
+    <div class="section-head reveal">
+      <div>
         <div class="section-tag">Yo'l bo'yi xizmatlari</div>
-        <h2>Yo'lda kerak bo'lgan hamma narsa</h2>
-        <p>Zapravka, ovqatlanish, mehmonxona, avtoservis va avtosalon — barchasi yaqin atrofdan topiladi va bir tugma bilan bog'lanasiz.</p>
+        <h2 class="section-title">Yo'lda kerak bo'lgan hamma narsa</h2>
+        <p class="section-desc">5 turkumdagi xizmatlar — GPS orqali eng yaqinini toping.</p>
+      </div>
+      <a class="btn btn-ghost" href="javascript:openMiniApp()">
+        Barchasini ko'rish
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
 
-        <div class="rs-features">
-          <div class="rs-feature">
-            <div class="rs-feature-ic">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 10h10"/><path d="M14 8h3a2 2 0 0 1 2 2v8a1.5 1.5 0 0 0 3 0v-6l-2-3"/></svg>
-            </div>
-            <div class="rs-feature-text">
-              <h4>Yoqilg'i turlari bo'yicha filtr</h4>
-              <p>Metan, propan, benzin, dizel — o'zingizga qulayini tanlang</p>
-            </div>
-          </div>
-
-          <div class="rs-feature">
-            <div class="rs-feature-ic">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
-            </div>
-            <div class="rs-feature-text">
-              <h4>Eng yaqin topish</h4>
-              <p>GPS orqali km bo'yicha eng yaqin xizmat ko'rsatiladi</p>
-            </div>
-          </div>
-
-          <div class="rs-feature">
-            <div class="rs-feature-ic">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l16-6v14L3 13z"/></svg>
-            </div>
-            <div class="rs-feature-text">
-              <h4>O'z xizmatingizni e'lon qiling</h4>
-              <p>Zapravka, kafe, mehmonxona — minglab haydovchilarga ko'rsating</p>
-            </div>
-          </div>
-        </div>
-
-        <a class="btn btn-primary btn-lg" href="javascript:openMiniApp()">
-          Xizmatlarni ko'rish
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
+    <div class="roadside-grid">
+      <div class="rs-cat reveal">
+        <div class="rs-cat-icon gas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 10h10"/><path d="M14 8h3a2 2 0 0 1 2 2v8a1.5 1.5 0 0 0 3 0v-6l-2-3"/></svg></div>
+        <div class="rs-cat-title">Zapravka</div>
+        <div class="rs-cat-desc">Metan, propan, benzin, dizel — yoqilg'i turlari bo'yicha filtr</div>
+        <span class="rs-cat-count">128 ta</span>
       </div>
 
-      <div class="roadside-phone-wrap reveal">
-        <div class="roadside-phone">
-          <div class="rs-screen">
-            <div class="rs-header">
-              <h3>Yo'l bo'yi xizmatlari</h3>
-              <p>Yaqin atrofdagi xizmatlar</p>
-              <div class="rs-search">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
-                Xizmat turini tanlang
-              </div>
-            </div>
-            <div class="rs-chips">
-              <span class="rs-chip active">Barchasi</span>
-              <span class="rs-chip">Zapravka</span>
-              <span class="rs-chip">Ovqatlanish</span>
-              <span class="rs-chip">Mehmonxona</span>
-            </div>
-            <div class="rs-list">
-              <div class="rs-item">
-                <div class="rs-item-ic gas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M4 10h10"/><path d="M14 8h3a2 2 0 0 1 2 2v8a1.5 1.5 0 0 0 3 0v-6l-2-3"/></svg></div>
-                <div class="rs-item-info">
-                  <div class="rs-item-name">Shovush neft</div>
-                  <div class="rs-item-desc">Metan · Propan</div>
-                </div>
-                <span class="rs-item-dist">1.2 km</span>
-              </div>
-              <div class="rs-item">
-                <div class="rs-item-ic food"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16"/><path d="M4 10c0-4 3.6-7 8-7s8 3 8 7"/><path d="M4 10v3h16v-3"/><path d="M6 13l-1 6h14l-1-6"/></svg></div>
-                <div class="rs-item-info">
-                  <div class="rs-item-name">Burger House</div>
-                  <div class="rs-item-desc">Fast food · 24/7</div>
-                </div>
-                <span class="rs-item-dist">2.4 km</span>
-              </div>
-              <div class="rs-item">
-                <div class="rs-item-ic hotel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V14h6v7"/></svg></div>
-                <div class="rs-item-info">
-                  <div class="rs-item-name">Grand Hotel</div>
-                  <div class="rs-item-desc">5 yulduzli mehmonxona</div>
-                </div>
-                <span class="rs-item-dist">2.1 km</span>
-              </div>
-              <div class="rs-item">
-                <div class="rs-item-ic service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4L15 12l-3-3z"/></svg></div>
-                <div class="rs-item-info">
-                  <div class="rs-item-name">Avto Plus</div>
-                  <div class="rs-item-desc">Avtoservis</div>
-                </div>
-                <span class="rs-item-dist">1.9 km</span>
-              </div>
-              <div class="rs-item">
-                <div class="rs-item-ic auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15l2-5h14l2 5v4h-2v-2H5v2H3z"/><circle cx="7.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="16.5" cy="15.5" r="1.2" fill="currentColor"/></svg></div>
-                <div class="rs-item-info">
-                  <div class="rs-item-name">UzAuto Motors</div>
-                  <div class="rs-item-desc">Avtosalon</div>
-                </div>
-                <span class="rs-item-dist">4.5 km</span>
-              </div>
-            </div>
+      <div class="rs-cat reveal">
+        <div class="rs-cat-icon food"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16"/><path d="M4 10c0-4 3.6-7 8-7s8 3 8 7"/><path d="M4 10v3h16v-3"/><path d="M6 13l-1 6h14l-1-6"/></svg></div>
+        <div class="rs-cat-title">Ovqatlanish</div>
+        <div class="rs-cat-desc">Milliy taomlar, fast food, kafelar — 24/7 xizmat</div>
+        <span class="rs-cat-count">94 ta</span>
+      </div>
+
+      <div class="rs-cat reveal">
+        <div class="rs-cat-icon hotel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V14h6v7"/><path d="M9 9h.01M15 9h.01"/></svg></div>
+        <div class="rs-cat-title">Mehmonxona</div>
+        <div class="rs-cat-desc">Hostel, mehmonxona, motel — dam olish uchun qulay joylar</div>
+        <span class="rs-cat-count">67 ta</span>
+      </div>
+
+      <div class="rs-cat reveal">
+        <div class="rs-cat-icon service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4L15 12l-3-3z"/></svg></div>
+        <div class="rs-cat-title">Avtoservis</div>
+        <div class="rs-cat-desc">Diagnostika, ta'mirlash, ehtiyot qismlar</div>
+        <span class="rs-cat-count">52 ta</span>
+      </div>
+
+      <div class="rs-cat reveal">
+        <div class="rs-cat-icon auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15l2-5h14l2 5v4h-2v-2H5v2H3z"/><circle cx="7.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="16.5" cy="15.5" r="1.2" fill="currentColor"/></svg></div>
+        <div class="rs-cat-title">Avtosalon</div>
+        <div class="rs-cat-desc">Yangi va ishlatilgan mashinalar — rasmiy dilerlar</div>
+        <span class="rs-cat-count">34 ta</span>
+      </div>
+
+      <div class="rs-cat reveal" style="background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-color:transparent" onclick="openMiniApp()">
+        <div class="rs-cat-icon other" style="background:rgba(255,255,255,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        <div class="rs-cat-title" style="color:#fff">Xizmatingizni qo'shing</div>
+        <div class="rs-cat-desc" style="color:rgba(255,255,255,.75)">O'z biznesingizni minglab haydovchilarga ko'rsating</div>
+        <span class="rs-cat-count" style="background:rgba(255,255,255,.15);color:#fff">E'lon berish</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA BANNER ═══════════ -->
+<section class="section" style="padding:60px 0">
+  <div class="container-wide">
+    <div class="cta-banner reveal">
+      <div class="cta-banner-inner">
+        <div>
+          <div class="cta-tag"><span class="dot"></span>Telegram Mini App</div>
+          <h2>Hoziroq yuklab oling va imtiyozlardan foydalaning!</h2>
+          <p>Telegram'da bir tugma bilan oching. Ro'yxatdan o'tish shart emas — Telegram hisobingiz bilan avtomatik kirasiz. 7 kun bepul sinov.</p>
+          <div class="cta-banner-actions">
+            <button class="btn btn-light btn-lg" onclick="openMiniApp()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              Mini App'ni ochish
+            </button>
+            <a class="btn btn-ghost-light btn-lg" href="https://t.me/W_TAXIBOT" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l6 2.5 2 7 4-5.5 5 3z"/></svg>
+              @W_TAXIBOT
+            </a>
+          </div>
+        </div>
+        <div style="text-align:center">
+          <div style="display:inline-flex;flex-direction:column;align-items:center;gap:14px;padding:24px 32px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;backdrop-filter:blur(10px)">
+            <svg width="60" height="60" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9 L11 32 L20 15 L29 32 L37 9"/>
+            </svg>
+            <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:.02em">W-TAXI</div>
+            <div style="font-size:11px;color:#A8B2BF;font-weight:700;letter-spacing:.12em;text-transform:uppercase">O'zbekiston</div>
           </div>
         </div>
       </div>
@@ -1413,34 +1300,13 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
   </div>
 </section>
 
-<!-- ═══════════════════ CTA ═══════════════════ -->
-<section class="cta" id="contact">
-  <div class="container">
-    <div class="cta-inner reveal">
-      <div class="cta-tag"><span class="dot"></span>Telegram Mini App</div>
-      <h2>Hoziroq yuklab oling va imtiyozlardan foydalaning!</h2>
-      <p>Telegram'da bir tugma bilan oching. Ro'yxatdan o'tish shart emas — Telegram hisobingiz bilan avtomatik kirasiz.</p>
-      <div class="cta-buttons">
-        <button class="btn btn-light btn-lg" onclick="openMiniApp()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          Mini App'ni ochish
-        </button>
-        <a class="btn btn-ghost btn-lg" style="color:#fff;border-color:rgba(255,255,255,.2)" href="https://t.me/W_TAXIBOT" target="_blank" rel="noopener">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l6 2.5 2 7 4-5.5 5 3z"/></svg>
-          @W_TAXIBOT
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<!-- ═══════════ FOOTER ═══════════ -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div>
         <div class="footer-brand">
-          <svg class="brand-w" viewBox="0 0 40 40" fill="none">
+          <svg viewBox="0 0 40 40" fill="none">
             <path d="M3 9 L11 32 L20 15 L29 32 L37 9" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <div>
@@ -1449,10 +1315,9 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
           </div>
         </div>
         <p class="footer-desc">
-          O'zbekiston bo'ylab 1335 yo'nalish. Shahar taxi, viloyatlararo, yuk va pochta xizmatlari — bitta ilovada.
+          O'zbekiston bo'ylab 1335 yo'nalish. Shahar taxi, viloyatlararo, yuk va pochta xizmatlari — bitta platformada.
         </p>
         <p class="footer-tagline">YO'LLARNI BIRLASHTIRAMIZ.<br>MASOFALARNI YAQINLASHTIRAMIZ.</p>
-
         <div class="footer-social">
           <a href="https://t.me/W_TAXIBOT" target="_blank" rel="noopener" aria-label="Telegram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l6 2.5 2 7 4-5.5 5 3z"/></svg>
@@ -1484,10 +1349,20 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
         <h4>Kompaniya</h4>
         <ul>
           <li><a href="#top">Bosh sahifa</a></li>
+          <li><a href="#how">Qanday ishlaydi</a></li>
           <li><a href="#admin">Boshqaruv</a></li>
           <li><a href="#map">Xarita</a></li>
           <li><a href="javascript:openMiniApp()">Mini App</a></li>
-          <li><a href="#contact">Aloqa</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Haydovchilar</h4>
+        <ul>
+          <li><a href="#">Ro'yxatdan o'tish</a></li>
+          <li><a href="#">Tarif va obuna</a></li>
+          <li><a href="#">Ko'p bekatli safar</a></li>
+          <li><a href="#">Bonuslar</a></li>
         </ul>
       </div>
 
@@ -1495,26 +1370,22 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
         <h4>Aloqa</h4>
         <div class="footer-contact">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 3 10.5l6 2.5 2 7 4-5.5 5 3z"/></svg>
-          <a href="https://t.me/W_TAXIBOT" target="_blank" rel="noopener">Telegram: @W_TAXIBOT</a>
+          <a href="https://t.me/W_TAXIBOT" target="_blank" rel="noopener">@W_TAXIBOT</a>
         </div>
         <div class="footer-contact">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5H8L9.5 9 7.5 10.5A12 12 0 0 0 13.5 16.5L15 14.5L19.5 16V19.5C19.5 20.3 18.8 21 18 21A16.5 16.5 0 0 1 3 6C3 5.2 3.7 4.5 4.5 4.5z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5H8L9.5 9 7.5 10.5A12 12 0 0 0 13.5 16.5L15 14.5L19.5 16V19.5c0 .8-.7 1.5-1.5 1.5A16.5 16.5 0 0 1 3 6c0-.8.7-1.5 1.5-1.5z"/></svg>
           <a href="tel:+998901234567">+998 90 123 45 67</a>
         </div>
         <div class="footer-contact">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
           <a href="mailto:info@wtaxi.uz">info@wtaxi.uz</a>
         </div>
-        <div class="footer-contact">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21c-5-6-7-9-7-12a7 7 0 1 1 14 0c0 3-2 6-7 12z"/></svg>
-          <span>Toshkent, O'zbekiston</span>
-        </div>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div>© <span id="year"></span> <strong>W-Taxi</strong>. Barcha huquqlar himoyalangan.</div>
-      <div>Telegram: <strong>@W_TAXIBOT</strong></div>
+      <div>Toshkent, O'zbekiston · Telegram: <strong>@W_TAXIBOT</strong></div>
     </div>
   </div>
 </footer>
@@ -1525,81 +1396,83 @@ input,select{font-family:inherit;border:none;outline:none;background:none;color:
 var BOT_USERNAME = 'W_TAXIBOT';
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// ═══ SCROLL REVEAL ═══
-var reveals = document.querySelectorAll('.reveal');
+// Scroll reveal
 var observer = new IntersectionObserver(function(entries){
   entries.forEach(function(e){
-    if (e.isIntersecting) {
-      e.target.classList.add('in');
-      observer.unobserve(e.target);
-    }
+    if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); }
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
-reveals.forEach(function(r){ observer.observe(r); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(function(r){ observer.observe(r); });
 
-// ═══ NAV SCROLL SHADOW ═══
-var nav = document.getElementById('nav');
-window.addEventListener('scroll', function(){
-  nav.classList.toggle('scrolled', window.scrollY > 10);
-}, { passive: true });
-
-// ═══ ACTIVE LINK ═══
-var sections = ['services','map','roadside','admin','contact'];
-window.addEventListener('scroll', function(){
-  var pos = window.scrollY + 120;
-  sections.forEach(function(id){
-    var el = document.getElementById(id);
-    if (!el) return;
-    var link = document.querySelector('.nav-links a[href="#' + id + '"]');
-    if (!link) return;
-    link.classList.toggle('active', pos >= el.offsetTop && pos < el.offsetTop + el.offsetHeight);
-  });
-}, { passive: true });
-
-// ═══ COUNTER ANIMATION ═══
+// Counter
 function animateCounter(el){
   var target = parseInt(el.dataset.count, 10);
   var current = 0;
-  var step = Math.max(1, Math.floor(target / 40));
+  var step = Math.max(1, Math.floor(target / 50));
   var timer = setInterval(function(){
     current += step;
     if (current >= target) { current = target; clearInterval(timer); }
     el.textContent = current.toLocaleString('uz-UZ');
-  }, 25);
+  }, 22);
 }
-var metricObserver = new IntersectionObserver(function(entries){
+var counterObs = new IntersectionObserver(function(entries){
   entries.forEach(function(e){
     if (e.isIntersecting && e.target.dataset.count) {
       animateCounter(e.target);
-      metricObserver.unobserve(e.target);
+      counterObs.unobserve(e.target);
     }
   });
 }, { threshold: 0.5 });
-document.querySelectorAll('.metric-value[data-count]').forEach(function(m){ metricObserver.observe(m); });
+document.querySelectorAll('[data-count]').forEach(function(m){ counterObs.observe(m); });
 
-// ═══ LIVE ORDERS (fake updates) ═══
+// Live orders
 var mockOrders = [
-  ['#12459', 'Mirobod → Yakkasaroy', '10 500'],
-  ['#12460', 'Olmazor → Chilonzor', '13 000'],
-  ['#12461', 'Bektemir → Sergeli', '16 500'],
-  ['#12462', 'Toshkent → Buxoro', '185 000'],
-  ['#12463', 'Yunusobod → Shayxontohur', '14 000']
+  ['#12459','Mirobod → Yakkasaroy','10 500'],
+  ['#12460','Olmazor → Chilonzor','13 000'],
+  ['#12461','Bektemir → Sergeli','16 500'],
+  ['#12462','Toshkent → Buxoro','185 000'],
+  ['#12463','Yunusobod → Shayxontohur','14 000']
 ];
-var orderIdx = 0;
-var ordersList = document.getElementById('ordersList');
-if (ordersList) {
+var idx = 0;
+var list = document.getElementById('ordersList');
+if (list) {
   setInterval(function(){
-    var row = mockOrders[orderIdx % mockOrders.length];
+    var r = mockOrders[idx % mockOrders.length];
     var div = document.createElement('div');
     div.className = 'order-row';
-    div.innerHTML = '<span class="order-id">' + row[0] + '</span><span class="order-route">' + row[1] + '</span><span class="order-amount new">' + row[2] + '</span>';
-    ordersList.insertBefore(div, ordersList.firstChild);
-    while (ordersList.children.length > 6) { ordersList.removeChild(ordersList.lastChild); }
-    orderIdx++;
-  }, 4500);
+    div.innerHTML = '<span class="order-id">'+r[0]+'</span><span class="order-route">'+r[1]+'</span><span class="order-amount new">'+r[2]+'</span>';
+    list.insertBefore(div, list.firstChild);
+    while (list.children.length > 6) list.removeChild(list.lastChild);
+    idx++;
+  }, 4000);
 }
 
-// ═══ MINI APP ═══
+// Category nav
+document.querySelectorAll('.cat-link').forEach(function(link){
+  link.addEventListener('click', function(){
+    document.querySelectorAll('.cat-link').forEach(function(l){ l.classList.remove('active'); });
+    link.classList.add('active');
+  });
+});
+
+// Driver rows
+document.querySelectorAll('.driver-row').forEach(function(row){
+  row.addEventListener('click', function(){
+    document.querySelectorAll('.driver-row').forEach(function(r){ r.classList.remove('selected'); });
+    row.classList.add('selected');
+    notify('Haydovchi tanlandi', row.querySelector('.driver-name').textContent);
+  });
+});
+
+// Admin items
+document.querySelectorAll('.admin-item').forEach(function(item){
+  item.addEventListener('click', function(){
+    document.querySelectorAll('.admin-item').forEach(function(i){ i.classList.remove('active'); });
+    item.classList.add('active');
+  });
+});
+
+// Mini app
 window.openMiniApp = function() {
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
     try { window.Telegram.WebApp.openTelegramLink('https://t.me/' + BOT_USERNAME); return; }
@@ -1608,61 +1481,32 @@ window.openMiniApp = function() {
   window.open('https://t.me/' + BOT_USERNAME + '/app', '_blank');
 };
 
-window.handleSearch = function() {
-  var from = document.getElementById('heroFrom').value.trim();
-  var to = document.getElementById('heroTo').value.trim();
-  if (!from || !to) { openMiniApp(); return; }
-  var params = new URLSearchParams({ from: from, to: to });
-  window.open('https://t.me/' + BOT_USERNAME + '/app?' + params.toString(), '_blank');
-};
-
-window.toggleMenu = function() {
-  document.getElementById('mobileMenu').classList.toggle('open');
-};
-
-window.toggleLang = function(btn) {
-  var langs = ['UZ', 'RU', 'EN'];
-  var current = btn.querySelector('span').textContent;
-  var idx = langs.indexOf(current);
-  var next = langs[(idx + 1) % langs.length];
-  btn.querySelector('span').textContent = next;
-};
-
+// Notify toast
 window.notify = function(title, sub) {
-  // Create toast
   var toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:#0B2A5B;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:0 12px 32px -8px rgba(11,42,91,.5);z-index:2000;opacity:0;transition:all .3s cubic-bezier(.22,.61,.36,1);display:flex;align-items:center;gap:10px;max-width:calc(100% - 40px)';
-  toast.innerHTML = '<span style="font-size:16px">🔔</span><span>' + title + (sub ? '<br><small style="font-size:10px;opacity:.75;font-weight:600">' + sub + '</small>' : '') + '</span>';
+  toast.style.cssText = 'position:fixed;top:100px;left:50%;transform:translateX(-50%) translateY(-20px);background:#0B2A5B;color:#fff;padding:14px 22px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:0 12px 32px -8px rgba(11,42,91,.5);z-index:2000;opacity:0;transition:all .3s cubic-bezier(.22,.61,.36,1);display:flex;align-items:center;gap:12px;max-width:calc(100% - 40px)';
+  toast.innerHTML = '<span style="font-size:18px">🔔</span><span>'+title+(sub?'<br><small style="font-size:11px;opacity:.75;font-weight:600">'+sub+'</small>':'')+'</span>';
   document.body.appendChild(toast);
+  setTimeout(function(){ toast.style.opacity='1'; toast.style.transform='translateX(-50%) translateY(0)'; }, 10);
   setTimeout(function(){
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateX(-50%) translateY(0)';
-  }, 10);
-  setTimeout(function(){
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    toast.style.opacity='0';
+    toast.style.transform='translateX(-50%) translateY(-20px)';
     setTimeout(function(){ toast.remove(); }, 400);
   }, 3000);
 };
 
-// ═══ SMOOTH SCROLL ═══
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
   a.addEventListener('click', function(e){
-    var href = a.getAttribute('href');
-    if (href === '#' || href.length < 2) return;
-    var target = document.querySelector(href);
-    if (target) {
+    var h = a.getAttribute('href');
+    if (h === '#' || h.length < 2) return;
+    var t = document.querySelector(h);
+    if (t) {
       e.preventDefault();
-      var top = target.getBoundingClientRect().top + window.pageYOffset - 80;
-      window.scrollTo({ top: top, behavior: 'smooth' });
+      window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - 100, behavior: 'smooth' });
     }
   });
 });
-
-// ═══ PREVENT PULL TO REFRESH ═══
-document.addEventListener('touchmove', function(e){
-  if (e.touches.length > 1) e.preventDefault();
-}, { passive: false });
 
 })();
 </script>
