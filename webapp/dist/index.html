@@ -333,6 +333,7 @@ function friendlyError(m){ return ERROR_MESSAGES[m] || m || "Xatolik yuz berdi";
 /* TELEGRAM WRAPPER                                                */
 /* ============================================================= */
 const tg = window.Telegram && window.Telegram.WebApp;
+const inTelegramEnv = !!tg;
 const inTelegram = !!(tg && tg.initData);
 const WT = {
   tap(){ inTelegram && tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); },
@@ -399,11 +400,37 @@ function updateAuthUI(){
   render();
 }
 function renderTgLogin(){
-  const needsLogin = !S.me && !inTelegram;
-  $('loginBanner').style.display = needsLogin ? 'flex' : 'none';
-  $('tgLoginWrap').style.display = needsLogin ? 'flex' : 'none';
-  if(needsLogin && !$('tgLoginWrap').dataset.mounted){
-    $('tgLoginWrap').dataset.mounted = '1';
+  const banner = $('loginBanner');
+  const wrap = $('tgLoginWrap');
+
+  if(S.me){
+    banner.style.display = 'none';
+    wrap.style.display = 'none';
+    return;
+  }
+
+  if(inTelegramEnv && !inTelegram){
+    // Telegram muhiti bor lekin initData yo'q — bot orqali to'g'ri oching
+    banner.querySelector('.txt').textContent = "Iltimos, mini-ilovani bot tugmasi orqali oching (Telegram ichida).";
+    banner.style.display = 'flex';
+    wrap.style.display = 'none';
+    return;
+  }
+
+  if(inTelegram && !S.me){
+    // initData bor lekin server rad etdi — server xatosi
+    banner.querySelector('.txt').textContent = "Autentifikatsiyada xatolik. Sahifani qayta yuklang.";
+    banner.style.display = 'flex';
+    wrap.style.display = 'none';
+    return;
+  }
+
+  // Browser rejimi: Login Widget ko'rsat
+  banner.querySelector('.txt').textContent = "Buyurtma berish, ro'yxatdan o'tish va e'lon joylashtirish uchun tizimga kiring.";
+  banner.style.display = 'flex';
+  wrap.style.display = 'flex';
+  if(!wrap.dataset.mounted){
+    wrap.dataset.mounted = '1';
     window.onTelegramAuth = async (user)=>{
       try{ const res = await apiPost('/api/auth/login-widget', user); localStorage.setItem('wtaxi_session', res.token); await loadMe(); toast('Xush kelibsiz!'); }
       catch(e){ toast(friendlyError(e.code)); }
@@ -412,7 +439,7 @@ function renderTgLogin(){
     s.src = "https://telegram.org/js/telegram-widget.js?22"; s.async = true;
     s.setAttribute('data-telegram-login', BOT_USERNAME); s.setAttribute('data-size','medium');
     s.setAttribute('data-radius','12'); s.setAttribute('data-onauth','onTelegramAuth(user)'); s.setAttribute('data-request-access','write');
-    $('tgLoginWrap').appendChild(s);
+    wrap.appendChild(s);
   }
 }
 function requireAuth(){ if(!S.me){ toast('Avval tizimga kiring'); return false; } return true; }
