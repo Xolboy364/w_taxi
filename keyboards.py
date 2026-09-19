@@ -1,6 +1,6 @@
 from aiogram.types import (
     ReplyKeyboardMarkup, KeyboardButton,
-    InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+    InlineKeyboardMarkup, InlineKeyboardButton
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -24,12 +24,10 @@ REGIONS_DATA = {
 
 def get_main_menu(is_super: bool = False, is_sub: bool = False, webapp_url: str = "") -> ReplyKeyboardMarkup:
     keyboard = [
-        [KeyboardButton(text="🚗 Haydovchi"), KeyboardButton(text="🙋‍♂️ Yo‘lovchi")],
+        [KeyboardButton(text="🚗 Haydovchi"), KeyboardButton(text="🙋‍♂️ Yo’lovchi")],
         [KeyboardButton(text="📦 Pochta berish"), KeyboardButton(text="🚚 Yuk yuborish")],
-        [KeyboardButton(text="🗺 Yo‘l bo‘yi xizmatlari")]
+        [KeyboardButton(text="🗺 Yo’l bo’yi xizmatlari")]
     ]
-    if webapp_url:
-        keyboard.append([KeyboardButton(text="🌐 Veb-ilova", web_app=WebAppInfo(url=webapp_url if webapp_url.endswith('/app') else f"{webapp_url.rstrip("/")}/app"))])
     if is_super:
         keyboard.append([KeyboardButton(text="👑 Super Admin Panel")])
     elif is_sub:

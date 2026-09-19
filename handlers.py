@@ -12,7 +12,7 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove, FSInputFi
 from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
-from config import ADMIN_ID, WEBAPP_URL, WEBAPP_URL
+from config import ADMIN_ID
 from keyboards import (
     REGIONS_DATA, get_main_menu, get_super_admin_kb, sub_admin_kb,
     driver_type_kb, get_cars_kb, get_route_scope_kb,
@@ -124,7 +124,7 @@ async def render_user_menu(user_id: int):
     is_sub = False
     if not is_super:
         is_sub = await db.is_admin(user_id, ADMIN_ID)
-    return get_main_menu(is_super=is_super, is_sub=is_sub, webapp_url=WEBAPP_URL)
+    return get_main_menu(is_super=is_super, is_sub=is_sub)
 
 
 async def delayed_dispatch_to_free_drivers(bot: Bot, driver_ids: list, message_text: str, delay_seconds: int = 300):

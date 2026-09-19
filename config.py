@@ -13,7 +13,3 @@ if not _admin_id_raw or not _admin_id_raw.isdigit():
 
 ADMIN_ID = int(_admin_id_raw)
 
-_raw = (os.getenv("WEBAPP_URL") or "https://wtaxi-production.up.railway.app").strip().rstrip("/")
-if _raw.endswith("/app"):
-    _raw = _raw[:-4].strip().rstrip("/")
-WEBAPP_URL = _raw
