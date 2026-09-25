@@ -781,3 +781,13 @@ def register_webapp_routes(app: web.Application, bot):
         app.router.add_get("/app", spa_index)
         app.router.add_get("/app/", spa_index)
         app.router.add_static("/app/static", STATIC_DIR, show_index=False)
+
+        # Telegram WebView index.html va JS fayllarni keshlab qoladi - shu sabab
+        # yangi deploydan keyin ham eski versiya ko'rinadi. Keshni o'chiramiz.
+        async def _no_cache(request, response):
+            if not request.path.startswith("/api/"):
+                response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+                response.headers["Pragma"] = "no-cache"
+                response.headers["Expires"] = "0"
+
+        app.on_response_prepare.append(_no_cache)
