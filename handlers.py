@@ -14,7 +14,7 @@ from aiogram.fsm.context import FSMContext
 
 from config import ADMIN_ID
 from keyboards import (
-    REGIONS_DATA, get_main_menu, get_super_admin_kb, sub_admin_kb,
+    REGIONS_DATA, SHOW_REPLY_MENU, get_main_menu, get_super_admin_kb, sub_admin_kb,
     driver_type_kb, get_cars_kb, get_route_scope_kb,
     get_regions_kb, get_districts_kb, get_multi_districts_kb,
     phone_keyboard, get_driver_cabinet_kb, get_driver_card_kb,
@@ -201,7 +201,12 @@ async def cmd_start(message: Message, state: FSMContext):
     if not await check_access(message): return
     await state.clear()
     menu = await render_user_menu(message.from_user.id)
-    greeting = "👑 Hurmatli Super Admin, xush kelibsiz!" if is_super_admin(message.from_user.id) else "Assalomu alaykum! Kerakli bo‘limni tanlang:"
+    if is_super_admin(message.from_user.id):
+        greeting = "👑 Hurmatli Super Admin, xush kelibsiz!"
+    elif SHOW_REPLY_MENU:
+        greeting = "Assalomu alaykum! Kerakli bo‘limni tanlang:"
+    else:
+        greeting = "Assalomu alaykum! Xizmatlardan foydalanish uchun pastdagi Mini App tugmasini bosing."
     await message.answer(greeting, reply_markup=menu)
 
 

@@ -1,8 +1,15 @@
+import os
+
 from aiogram.types import (
-    ReplyKeyboardMarkup, KeyboardButton,
+    ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove,
     InlineKeyboardMarkup, InlineKeyboardButton
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+# Pastdagi asosiy menyu tugmalari VAQTINCHALIK yashirilgan - foydalanuvchilar
+# faqat Mini App orqali ishlaydi. Qayta yoqish uchun serverda (Railway
+# Variables) SHOW_REPLY_MENU=1 qo'ying yoki pastdagi standart qiymatni "1" qiling.
+SHOW_REPLY_MENU = os.getenv("SHOW_REPLY_MENU", "0") == "1"
 
 REGIONS_DATA = {
     "Toshkent shahri": ["Yunusobod", "Chilonzor", "Mirzo Ulug‘bek", "Mirobod", "Shayxontohur", "Yakkasaroy", "Sergeli", "Yangi Hayot", "Olmazor", "Uchtepa", "Bektemir", "Yashnobod"],
@@ -22,7 +29,15 @@ REGIONS_DATA = {
 }
 
 
-def get_main_menu(is_super: bool = False, is_sub: bool = False, webapp_url: str = "") -> ReplyKeyboardMarkup:
+def get_main_menu(is_super: bool = False, is_sub: bool = False, webapp_url: str = "") -> ReplyKeyboardMarkup | ReplyKeyboardRemove:
+    if not SHOW_REPLY_MENU:
+        # Adminlar panelga kira olishi uchun faqat admin tugmasi qoldiriladi
+        if is_super:
+            return ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="👑 Super Admin Panel")]], resize_keyboard=True)
+        if is_sub:
+            return ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🛠 Admin Panel")]], resize_keyboard=True)
+        return ReplyKeyboardRemove()
+
     keyboard = [
         [KeyboardButton(text="🚗 Haydovchi"), KeyboardButton(text="🙋‍♂️ Yo’lovchi")],
         [KeyboardButton(text="📦 Pochta berish"), KeyboardButton(text="🚚 Yuk yuborish")],
