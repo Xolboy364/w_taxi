@@ -5,15 +5,15 @@
   const API = {
     isTelegram: available,
     user: null,
-    theme: { bg: '#F5F7FB', text: '#0B2A5B', hint: '#7C8AA0', button: '#0B2A5B', buttonText: '#FFFFFF', secondary: '#F1F5F9' },
+    theme: { bg: '#FFFFFF', text: '#21201F', hint: '#8A8784', button: '#FCE000', buttonText: '#21201F', secondary: '#F5F4F2' },
     init() {
       if (!available) return this;
       try {
         tg.ready();
         tg.expand();
         tg.disableVerticalSwipes && tg.disableVerticalSwipes();
-        tg.setHeaderColor && tg.setHeaderColor('secondary_bg_color');
-        tg.setBackgroundColor && tg.setBackgroundColor('#F5F7FB');
+        tg.setHeaderColor && tg.setHeaderColor('#FFFFFF');
+        tg.setBackgroundColor && tg.setBackgroundColor('#FFFFFF');
         tg.enableClosingConfirmation && tg.enableClosingConfirmation();
         const u = tg.initDataUnsafe && tg.initDataUnsafe.user;
         if (u) {
