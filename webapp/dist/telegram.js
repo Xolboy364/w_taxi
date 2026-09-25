@@ -5,7 +5,7 @@
   const API = {
     isTelegram: available,
     user: null,
-    theme: { bg: '#FFFFFF', text: '#21201F', hint: '#8A8784', button: '#FCE000', buttonText: '#21201F', secondary: '#F5F4F2' },
+    theme: { bg: '#FFFFFF', text: '#0B2A5B', hint: '#7C8AA0', button: '#0B2A5B', buttonText: '#FFFFFF', secondary: '#F5F7FB' },
     init() {
       if (!available) return this;
       try {

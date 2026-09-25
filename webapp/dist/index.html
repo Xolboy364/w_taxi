@@ -11,18 +11,18 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{font-family:'Inter',-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#EDECEA;color:#21201F;display:flex;justify-content:center;align-items:center;overscroll-behavior:none;user-select:none;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#EEF2F8;color:#0B2A5B;display:flex;justify-content:center;align-items:center;overscroll-behavior:none;user-select:none;-webkit-font-smoothing:antialiased}
 .mono{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-:root{--yellow:#FCE000;--yellow-2:#FFD600;--yellow-soft:#FFF8C7;--navy:#21201F;--navy-2:#3B3A38;--navy-soft:rgba(33,32,31,.06);--green:#1FAF4B;--green-soft:rgba(31,175,75,.12);--amber:#F5A300;--amber-soft:rgba(245,163,0,.14);--rust:#E26A1B;--red:#F0443A;--red-soft:rgba(240,68,58,.10);--silver:#B3B0AC;--silver-2:#E6E4E1;--bg:#FFFFFF;--field:#F5F4F2;--ink:#21201F;--muted:#8A8784;--hair:rgba(0,0,0,.06)}
-.phone{position:relative;width:100%;max-width:420px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#EDECEA}
+:root{--accent:#0B2A5B;--accent-2:#1A3B7A;--accent-soft:rgba(11,42,91,.08);--navy:#0B2A5B;--navy-2:#1A3B7A;--navy-soft:rgba(11,42,91,.10);--green:#22A06B;--green-soft:rgba(34,160,107,.12);--amber:#E8A500;--amber-soft:rgba(232,165,0,.12);--rust:#C2560B;--red:#E5484D;--red-soft:rgba(229,72,77,.12);--silver:#A8B2BF;--silver-2:#DDE3EA;--bg:#FFFFFF;--field:#F5F7FB;--ink:#0B2A5B;--muted:#7C8AA0;--hair:rgba(11,42,91,.08)}
+.phone{position:relative;width:100%;max-width:420px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#EEF2F8}
 @media(min-width:640px){.phone{height:880px;border-radius:36px;box-shadow:0 40px 120px -30px rgba(0,0,0,.35)}}
 .ic{display:inline-block;flex-shrink:0;width:1em;height:1em;color:currentColor;vertical-align:middle}
 .ic use{pointer-events:none}
-.map{position:absolute;inset:0;z-index:0;transition:opacity .3s;background:#EDECEA}
+.map{position:absolute;inset:0;z-index:0;transition:opacity .3s;background:#EEF2F8}
 .map svg{width:100%;height:100%;display:block}
 #bgMap{position:absolute;inset:0;z-index:1;background:transparent}
 #bgMap .leaflet-tile-pane{filter:saturate(.85)}
-.bgpanel{position:absolute;inset:0;z-index:0;background:#1C1B1A;display:none}
+.bgpanel{position:absolute;inset:0;z-index:0;background:#061838;display:none}
 .glow{position:absolute;border-radius:9999px;filter:blur(100px);pointer-events:none}
 .street-label{font-size:6.5px;font-weight:600;fill:#A8A5A1;letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:#fff;stroke-width:1.5px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
@@ -37,77 +37,80 @@ body{font-family:'Inter',-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;ba
 .sheet-in{animation:sheetIn .45s cubic-bezier(.22,.61,.36,1) both}
 .pop{animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both}
 .sweep{animation:sweep 2.6s ease-in-out infinite}
-.spinner{width:18px;height:18px;border:2.5px solid rgba(33,32,31,.2);border-top-color:#21201F;border-radius:9999px;animation:spin .7s linear infinite}
-.cta.red .spinner{border-color:rgba(255,255,255,.35);border-top-color:#fff}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(11,42,91,.2);border-top-color:#0B2A5B;border-radius:9999px;animation:spin .7s linear infinite}
+.cta .spinner,.cta.red .spinner{border-color:rgba(255,255,255,.35);border-top-color:#fff}
 /* ---------- top chrome (floating over map) ---------- */
 .topbar{position:relative;z-index:20;padding:calc(14px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;pointer-events:none}
 .topbar>*{pointer-events:auto}
 .brand{display:flex;align-items:center;gap:8px;height:44px;padding:0 16px 0 6px;border-radius:9999px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12)}
-.brand-w{width:32px;height:32px;padding:7px;border-radius:9999px;background:var(--yellow);color:#21201F}
-.brand-txt{font-size:15px;font-weight:800;letter-spacing:-.01em;color:#21201F}
-.brand-txt .dash{color:#21201F;margin:0;font-weight:800}
+.brand-w{width:32px;height:32px;padding:7px;border-radius:9999px;background:var(--accent);color:#fff}
+.brand-txt{font-size:15px;font-weight:800;letter-spacing:-.01em;color:#0B2A5B}
+.brand-txt .dash{color:#0B2A5B;margin:0;font-weight:800}
 .brand-tag{font-size:13px;color:var(--muted);font-weight:500}
 .brand-tag::before{content:"·";margin-right:6px;color:var(--silver)}
-.topbar.dark .brand{background:#2C2B29;box-shadow:none}
+.topbar.dark .brand{background:#0F2A52;box-shadow:none}
 .topbar.dark .brand-txt,.topbar.dark .brand-txt .dash{color:#fff}
 .topbar.dark .brand-tag{color:rgba(255,255,255,.55)}
-.avatar{width:44px;height:44px;border-radius:9999px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;color:#21201F;overflow:hidden;font-size:15px;font-weight:700;cursor:pointer}
+.avatar{width:44px;height:44px;border-radius:9999px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;color:#0B2A5B;overflow:hidden;font-size:15px;font-weight:700;cursor:pointer}
 .avatar .ic{width:20px;height:20px}
-.crown-badge{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:9999px;background:var(--yellow);color:#21201F;font-size:13px;font-weight:700}
+.crown-badge{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:9999px;background:var(--accent);color:#fff;font-size:13px;font-weight:700}
 .crown-badge .ic{width:14px;height:14px}
 /* ---------- bottom sheet ---------- */
 .sheet{position:relative;z-index:20;margin-top:auto;background:#fff;border-radius:28px 28px 0 0;padding:10px 16px 0;box-shadow:0 -8px 32px rgba(0,0,0,.10);flex:1;display:flex;flex-direction:column;min-height:0}
 .phone.sec-passenger .sheet,.phone.sec-roadside .sheet{flex:0 1 auto;max-height:calc(100% - 170px)}
-.handle{width:40px;height:5px;border-radius:9999px;background:#DAD8D5;margin:0 auto 14px;flex-shrink:0}
+.handle{position:relative;width:40px;height:5px;border-radius:9999px;background:#DDE3EA;margin:0 auto 14px;flex-shrink:0;cursor:pointer}
+.handle::before{content:"";position:absolute;inset:-12px -60px}
+.phone.sec-passenger .sheet,.phone.sec-roadside .sheet{transition:max-height .3s cubic-bezier(.22,.61,.36,1)}
+.phone.sec-passenger .sheet.collapsed,.phone.sec-roadside .sheet.collapsed{max-height:190px}
 .scroll-area{overflow-y:auto;flex:1;min-height:0;padding-bottom:16px}
 .scroll-area::-webkit-scrollbar{display:none}
-.map-fab{position:absolute;right:16px;top:-64px;width:48px;height:48px;border-radius:9999px;background:#fff;border:none;box-shadow:0 4px 16px rgba(0,0,0,.14);display:none;align-items:center;justify-content:center;color:#21201F;cursor:pointer;transition:transform .12s}
+.map-fab{position:absolute;right:16px;top:-64px;width:48px;height:48px;border-radius:9999px;background:#fff;border:none;box-shadow:0 4px 16px rgba(0,0,0,.14);display:none;align-items:center;justify-content:center;color:#0B2A5B;cursor:pointer;transition:transform .12s}
 .map-fab:active{transform:scale(.92)}
 .map-fab .ic{width:22px;height:22px}
 .phone.sec-passenger .map-fab,.phone.sec-roadside .map-fab{display:flex}
-.login-banner{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:var(--yellow-soft);margin-bottom:12px;flex-shrink:0}
-.login-banner .ic{width:20px;height:20px;color:#21201F;flex-shrink:0}
-.login-banner .txt{flex:1;font-size:13px;font-weight:500;color:#21201F;line-height:1.4}
+.login-banner{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:var(--accent-soft);margin-bottom:12px;flex-shrink:0}
+.login-banner .ic{width:20px;height:20px;color:#0B2A5B;flex-shrink:0}
+.login-banner .txt{flex:1;font-size:13px;font-weight:500;color:#0B2A5B;line-height:1.4}
 /* ---------- tabs / toggles / chips ---------- */
 .pill-tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;flex-shrink:0}
 .pill-tabs::-webkit-scrollbar{display:none}
-.ptab{flex-shrink:0;padding:10px 16px;border-radius:9999px;background:var(--field);font-size:14px;font-weight:600;color:#21201F;cursor:pointer;transition:all .2s;white-space:nowrap}
-.ptab.active{background:#21201F;color:#fff}
+.ptab{flex-shrink:0;padding:10px 16px;border-radius:9999px;background:var(--field);font-size:14px;font-weight:600;color:#0B2A5B;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ptab.active{background:#0B2A5B;color:#fff}
 .mode-toggle{display:flex;background:var(--field);border-radius:14px;padding:3px;position:relative;margin-bottom:14px;flex-shrink:0}
 .mode-bg{position:absolute;top:3px;bottom:3px;width:calc(50% - 3px);border-radius:11px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.10);transition:transform .3s cubic-bezier(.22,.61,.36,1)}
 .mode-toggle.b .mode-bg{transform:translateX(100%)}
 .mode-opt{flex:1;position:relative;z-index:1;padding:10px 8px;text-align:center;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:color .3s}
-.mode-opt.sel{color:#21201F}
+.mode-opt.sel{color:#0B2A5B}
 .mode-opt .dot{display:none}
 .chip-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;flex-wrap:wrap}
 .chip-row::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:9px 14px;border-radius:9999px;background:var(--field);font-size:14px;font-weight:500;color:#21201F;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.chip.active{background:#21201F;color:#fff}
+.chip{flex-shrink:0;padding:9px 14px;border-radius:9999px;background:var(--field);font-size:14px;font-weight:500;color:#0B2A5B;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.chip.active{background:#0B2A5B;color:#fff}
 .chip .dot{width:8px;height:8px;border-radius:9999px}
 /* tariff cards (Yandex Go style) */
 .tariff-row{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px 4px}
 .tariff-row::-webkit-scrollbar{display:none}
 .tariff{flex:1 0 128px;position:relative;border-radius:18px;padding:12px 12px 14px;background:var(--field);cursor:pointer;transition:all .2s;border:2px solid transparent}
-.tariff.active{background:#fff;border-color:var(--yellow);box-shadow:0 6px 18px rgba(0,0,0,.08)}
-.tariff-ic{width:44px;height:30px;display:flex;align-items:center;margin-bottom:8px;color:#21201F}
+.tariff.active{background:#fff;border-color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.tariff-ic{width:44px;height:30px;display:flex;align-items:center;margin-bottom:8px;color:#0B2A5B}
 .tariff-ic .ic{width:30px;height:30px}
-.tariff.active .tariff-ic{color:#21201F}
-.tariff-name{font-size:15px;font-weight:700;color:#21201F}
+.tariff.active .tariff-ic{color:#0B2A5B}
+.tariff-name{font-size:15px;font-weight:700;color:#0B2A5B}
 .tariff-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
 /* categories */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .cat-cell{border-radius:18px;padding:14px 6px 12px;background:var(--field);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:all .2s}
-.cat-cell.active{background:var(--yellow)}
-.cat-ic{width:40px;height:40px;border-radius:9999px;background:#fff;color:#21201F;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.cat-cell.active .cat-ic{background:rgba(255,255,255,.7)}
+.cat-cell.active{background:var(--accent)}
+.cat-ic{width:40px;height:40px;border-radius:9999px;background:#fff;color:#0B2A5B;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cat-cell.active .cat-ic{background:#fff}
 .cat-ic .ic{width:20px;height:20px}
-.cat-label{font-size:12.5px;font-weight:600;color:#21201F;text-align:center;line-height:1.2}
-.cat-cell.active .cat-label{color:#21201F}
+.cat-label{font-size:12.5px;font-weight:600;color:#0B2A5B;text-align:center;line-height:1.2}
+.cat-cell.active .cat-label{color:#fff}
 /* ---------- form fields ---------- */
 .field{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:8px;display:block}
-.field-input,.field-select,textarea.field-input{width:100%;height:52px;padding:0 16px;border-radius:14px;background:var(--field);border:2px solid transparent;color:#21201F;font-size:16px;font-weight:500;font-family:inherit;outline:none;transition:border-color .15s,background .15s}
-.field-input:focus,.field-select:focus{border-color:var(--yellow);background:#fff}
+.field-input,.field-select,textarea.field-input{width:100%;height:52px;padding:0 16px;border-radius:14px;background:var(--field);border:2px solid transparent;color:#0B2A5B;font-size:16px;font-weight:500;font-family:inherit;outline:none;transition:border-color .15s,background .15s}
+.field-input:focus,.field-select:focus{border-color:var(--accent);background:#fff}
 textarea.field-input{resize:none;height:84px;padding:14px 16px;line-height:1.4}
 .field-select{-webkit-appearance:none;appearance:none;padding-right:40px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238A8784' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
 .field-input::placeholder{color:var(--silver);font-weight:400}
@@ -120,9 +123,9 @@ textarea.field-input{resize:none;height:84px;padding:14px 16px;line-height:1.4}
 .route-box .field-row .field-select{background-color:#fff}
 .route-inner{display:flex;gap:0}
 .route-rail{display:flex;flex-direction:column;align-items:center;padding:22px 0 0 16px}
-.dot-a{width:12px;height:12px;border-radius:9999px;background:#fff;border:4px solid #21201F}
-.rail{width:2px;flex:1;min-height:28px;margin:6px 0;background:repeating-linear-gradient(180deg,#C9C6C2 0 3px,transparent 3px 6px)}
-.dot-b{width:12px;height:12px;border-radius:3px;background:var(--yellow);border:3px solid #21201F;margin-bottom:22px}
+.dot-a{width:12px;height:12px;border-radius:9999px;background:#fff;border:4px solid #0B2A5B}
+.rail{width:2px;flex:1;min-height:28px;margin:6px 0;background:repeating-linear-gradient(180deg,#CBD5E1 0 3px,transparent 3px 6px)}
+.dot-b{width:12px;height:12px;border-radius:3px;background:var(--accent);border:3px solid #0B2A5B;margin-bottom:22px}
 .route-fields{flex:1;min-width:0;display:flex;flex-direction:column}
 .route-fields .field-select{background-color:transparent;border:none;border-radius:0;height:56px;font-size:17px;font-weight:600;padding-left:12px}
 .route-fields .field-select:focus{background-color:transparent}
@@ -131,57 +134,57 @@ textarea.field-input{resize:none;height:84px;padding:14px 16px;line-height:1.4}
 /* ---------- stats / sections / lists ---------- */
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
 .stat-box{background:var(--field);border-radius:18px;padding:14px 8px;text-align:center}
-.stat-num{font-size:20px;font-weight:800;color:#21201F;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat-num{font-size:20px;font-weight:800;color:#0B2A5B;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .stat-label{font-size:12px;color:var(--muted);margin-top:4px;font-weight:500}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:22px}
 .sec-head:first-child{margin-top:4px}
-.sec-title{font-size:19px;font-weight:800;color:#21201F;letter-spacing:-.02em}
+.sec-title{font-size:19px;font-weight:800;color:#0B2A5B;letter-spacing:-.02em}
 .sec-action{font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
 .card-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--field);margin-bottom:8px}
 .card-row .ic-box{flex-shrink:0;width:44px;height:44px;border-radius:9999px;display:flex;align-items:center;justify-content:center}
 .card-row .ic-box .ic{width:20px;height:20px}
 .card-row .tx{flex:1;min-width:0}
-.card-row .nm{font-size:15px;font-weight:600;color:#21201F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-row .nm{font-size:15px;font-weight:600;color:#0B2A5B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card-row .sub{font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card-row .side{flex-shrink:0;text-align:right}
-.card-row .side .num{font-size:15px;font-weight:700;color:#21201F;font-variant-numeric:tabular-nums}
+.card-row .side .num{font-size:15px;font-weight:700;color:#0B2A5B;font-variant-numeric:tabular-nums}
 .card-row .side .unit{font-size:12px;color:var(--muted);font-weight:500}
 .empty-note{text-align:center;padding:28px 10px;color:var(--muted);font-size:14px;font-weight:500}
 /* ---------- profile / driver ---------- */
 .profile-card{border-radius:22px;padding:16px;margin-bottom:14px;background:var(--field)}
 .profile-row{display:flex;align-items:center;gap:14px}
-.profile-av{position:relative;flex-shrink:0;width:56px;height:56px;border-radius:9999px;background:var(--yellow);display:flex;align-items:center;justify-content:center;color:#21201F;font-size:19px;font-weight:800}
-.profile-crown{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:9999px;background:#21201F;border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:var(--yellow)}
+.profile-av{position:relative;flex-shrink:0;width:56px;height:56px;border-radius:9999px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:800}
+.profile-crown{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:9999px;background:#0B2A5B;border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:var(--amber)}
 .profile-crown .ic{width:11px;height:11px}
 .profile-info{flex:1;min-width:0}
-.profile-name{font-size:18px;font-weight:800;color:#21201F;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-name{font-size:18px;font-weight:800;color:#0B2A5B;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .profile-sub{font-size:14px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .status-toggle{margin-top:14px;display:flex;background:#fff;border-radius:14px;padding:3px;position:relative}
-.status-toggle-bg{position:absolute;top:3px;bottom:3px;width:calc(50% - 3px);border-radius:11px;background:var(--yellow);transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+.status-toggle-bg{position:absolute;top:3px;bottom:3px;width:calc(50% - 3px);border-radius:11px;background:var(--accent);transition:transform .3s cubic-bezier(.22,.61,.36,1)}
 .status-toggle.on .status-toggle-bg{transform:translateX(100%)}
 .status-opt{flex:1;position:relative;z-index:1;padding:11px 8px;text-align:center;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
-.status-opt.sel{color:#21201F}
-.sub-card{border-radius:22px;padding:16px;background:linear-gradient(135deg,#FFF3A3 0%,#FCE000 100%)}
-.sub-card .ctrl-desc{color:rgba(33,32,31,.72)}
-.sub-card .btn-sm.ghost{background:#21201F;color:#fff}
+.status-opt.sel{color:#fff}
+.sub-card{border-radius:22px;padding:16px;background:linear-gradient(135deg,#0B2A5B 0%,#1A3B7A 100%)}
+.sub-card .ctrl-desc{color:rgba(255,255,255,.75)}
+.sub-card .btn-sm.ghost{background:#fff;color:#0B2A5B}
 .sub-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.sub-title{font-size:16px;font-weight:800;color:#21201F;display:flex;align-items:center;gap:6px}
-.sub-title .ic{width:16px;height:16px;color:#21201F}
+.sub-title{font-size:16px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.sub-title .ic{width:16px;height:16px;color:#fff}
 .badge{font-size:12px;font-weight:700;padding:5px 10px;border-radius:9999px;white-space:nowrap;flex-shrink:0}
-.badge.on{background:var(--green-soft);color:#138A38}
+.badge.on{background:var(--green-soft);color:#1B8A5A}
 .badge.off{background:var(--red-soft);color:var(--red)}
-.sub-card .badge.on{background:#21201F;color:var(--yellow)}
-.sub-card .badge.off{background:rgba(33,32,31,.1);color:#21201F}
+.sub-card .badge.on{background:#fff;color:#0B2A5B}
+.sub-card .badge.off{background:rgba(255,255,255,.15);color:#fff}
 .ctrl-card{border-radius:22px;padding:16px;background:var(--field);margin-bottom:10px}
 .ctrl-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.ctrl-title{font-size:15px;font-weight:700;color:#21201F;display:flex;align-items:center;gap:10px}
+.ctrl-title{font-size:15px;font-weight:700;color:#0B2A5B;display:flex;align-items:center;gap:10px}
 .ctrl-ic{width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ctrl-ic .ic{width:16px;height:16px}
 .ctrl-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin:8px 0 12px}
 /* ---------- buttons ---------- */
 .btn-sm{width:100%;height:46px;padding:0 12px;border-radius:14px;border:none;font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;transition:transform .12s,opacity .12s;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-sm:active{transform:scale(.97);opacity:.85}
-.btn-sm.ghost{background:#fff;color:#21201F;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.btn-sm.ghost{background:#fff;color:#0B2A5B;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 .btn-sm.danger{background:var(--red-soft);color:var(--red)}
 .btn-sm .ic{width:16px;height:16px}
 .modal-actions .btn-sm.ghost{background:var(--field);box-shadow:none;height:56px;border-radius:16px;font-size:16px}
@@ -191,59 +194,73 @@ textarea.field-input{resize:none;height:84px;padding:14px 16px;line-height:1.4}
 .log-item:last-child{border-bottom:none}
 .log-dot{width:8px;height:8px;border-radius:9999px;margin-top:5px;flex-shrink:0}
 .log-tx{flex:1;min-width:0}
-.log-action{font-size:14px;font-weight:600;color:#21201F}
+.log-action{font-size:14px;font-weight:600;color:#0B2A5B}
 .log-detail{font-size:13px;color:var(--muted);margin-top:2px}
 .log-time{font-size:11px;color:var(--silver);margin-top:3px;font-variant-numeric:tabular-nums}
-.loc-pill{display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;border-radius:14px;background:var(--field);color:#21201F;font-size:15px;font-weight:600;cursor:pointer}
+.loc-pill{display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;border-radius:14px;background:var(--field);color:#0B2A5B;font-size:15px;font-weight:600;cursor:pointer}
 .loc-pill .ic{width:20px;height:20px}
 .price-band{display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:18px;background:var(--field);margin:4px 0 14px}
 .price-band .lbl{font-size:14px;color:var(--muted);font-weight:500}
-.price-band .val{font-size:20px;font-weight:800;color:#21201F;letter-spacing:-.02em}
-.cta{position:relative;width:100%;height:56px;padding:0 16px;border-radius:16px;background:var(--yellow);border:none;color:#21201F;font-family:inherit;font-size:16.5px;font-weight:700;cursor:pointer;overflow:hidden;transition:transform .12s,background .15s;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0}
-.cta:active{transform:scale(.98);background:var(--yellow-2)}
+.price-band .val{font-size:20px;font-weight:800;color:#0B2A5B;letter-spacing:-.02em}
+.cta{position:relative;width:100%;height:56px;padding:0 16px;border-radius:16px;background:var(--accent);border:none;color:#fff;font-family:inherit;font-size:16.5px;font-weight:700;cursor:pointer;overflow:hidden;transition:transform .12s,background .15s;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0}
+.cta:active{transform:scale(.98);background:var(--accent-2)}
 .cta .ic{width:20px;height:20px}
 .cta:disabled{opacity:.45;pointer-events:none}
 .cta.red{background:var(--red);color:#fff}
 .pending-card{border-radius:22px;padding:22px 16px;background:var(--field);text-align:center}
-.pending-ic{width:56px;height:56px;border-radius:9999px;background:var(--yellow);color:#21201F;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.pending-ic{width:56px;height:56px;border-radius:9999px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
 .pending-ic .ic{width:24px;height:24px}
-.pending-title{font-size:18px;font-weight:800;color:#21201F}
+.pending-title{font-size:18px;font-weight:800;color:#0B2A5B}
 .pending-desc{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5}
 .err-msg{font-size:14px;color:var(--red);font-weight:600;margin:10px 0 4px;text-align:center}
 /* ---------- bottom nav ---------- */
 .bottom-nav{position:relative;z-index:25;flex-shrink:0;background:#fff;border-top:1px solid var(--hair);padding:6px 6px calc(6px + env(safe-area-inset-bottom));display:flex;justify-content:space-around}
 .nav-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:transparent;border:none;cursor:pointer;font-family:inherit}
-.nav-item .ic{width:24px;height:24px;color:#B3B0AC;transition:color .2s}
-.nav-item.active .ic{color:#21201F}
-.nav-item::before{content:"";position:absolute;top:2px;left:50%;width:36px;height:30px;margin-left:-18px;border-radius:9999px;background:var(--yellow);transform:scale(.4);opacity:0;transition:all .25s cubic-bezier(.22,.61,.36,1);z-index:-1}
+.nav-item .ic{width:24px;height:24px;color:#A8B2BF;transition:color .2s}
+.nav-item.active .ic{color:#0B2A5B}
+.nav-item::before{content:"";position:absolute;top:2px;left:50%;width:36px;height:30px;margin-left:-18px;border-radius:9999px;background:var(--navy-soft);transform:scale(.4);opacity:0;transition:all .25s cubic-bezier(.22,.61,.36,1);z-index:-1}
 .nav-item.active::before{transform:scale(1);opacity:1}
 .nav-item{z-index:0}
-.nav-label{font-size:11px;font-weight:600;color:#8A8784;transition:color .2s;white-space:nowrap}
-.nav-item.active .nav-label{color:#21201F}
+.nav-label{font-size:11px;font-weight:600;color:#7C8AA0;transition:color .2s;white-space:nowrap}
+.nav-item.active .nav-label{color:#0B2A5B}
 /* ---------- modal / toast ---------- */
 .modal-overlay{position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}
 .modal-overlay.show{display:flex}
 .modal-box{width:100%;background:#fff;border-radius:28px 28px 0 0;padding:24px 16px calc(16px + env(safe-area-inset-bottom));animation:modalIn .3s cubic-bezier(.22,.61,.36,1)}
 .modal-ic{width:56px;height:56px;border-radius:9999px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
 .modal-ic .ic{width:24px;height:24px}
-.modal-title{font-size:20px;font-weight:800;color:#21201F;margin-bottom:6px;letter-spacing:-.02em}
+.modal-title{font-size:20px;font-weight:800;color:#0B2A5B;margin-bottom:6px;letter-spacing:-.02em}
 .modal-desc{font-size:15px;color:var(--muted);line-height:1.5;margin-bottom:22px}
 .modal-actions{display:flex;gap:8px}
 .modal-actions button{flex:1}
-.toast{position:absolute;left:16px;right:16px;bottom:92px;z-index:60;background:#21201F;color:#fff;padding:14px 16px;border-radius:16px;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 12px 32px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;transform:translateY(8px)}
+.toast{position:absolute;left:16px;right:16px;bottom:92px;z-index:60;background:#0B2A5B;color:#fff;padding:14px 16px;border-radius:16px;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 12px 32px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;transform:translateY(8px)}
 .toast.show{opacity:1;transform:translateY(0)}
-.toast .ic{width:18px;height:18px;color:var(--yellow);flex-shrink:0}
+.toast .ic{width:18px;height:18px;color:var(--green);flex-shrink:0}
 .tg-badge{position:fixed;bottom:8px;left:8px;z-index:100;font-size:9px;color:var(--silver);background:rgba(255,255,255,.6);padding:3px 7px;border-radius:6px;opacity:.7;pointer-events:none}
 #tgLoginWrap{display:flex;justify-content:center;padding:8px 0}
-#rsMap{height:320px;border-radius:20px;overflow:hidden;margin-bottom:14px;position:relative;flex-shrink:0}
+/* xarita rejimi: belgilar asosiy xaritada, panel ixcham */
+.phone.rs-map .cat-grid{display:flex;overflow-x:auto;gap:8px;margin:0 -16px 12px;padding:0 16px}
+.phone.rs-map .cat-grid::-webkit-scrollbar{display:none}
+.phone.rs-map .cat-cell{flex:0 0 auto;flex-direction:row;gap:8px;padding:6px 14px 6px 6px;border-radius:9999px}
+.phone.rs-map .cat-ic{width:30px;height:30px}
+.phone.rs-map .cat-ic .ic{width:16px;height:16px}
+.phone.rs-map .sec-head{margin-top:0}
+.rs-pt{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(11,42,91,.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;box-sizing:border-box}
 .vtab-row{display:flex;gap:0;margin-bottom:12px;flex-shrink:0;background:var(--field);border-radius:14px;padding:3px}
 .vtab{flex:1;padding:9px;border-radius:11px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .2s}
-.vtab.active{background:#fff;color:#21201F;box-shadow:0 2px 8px rgba(0,0,0,.10)}
-.me-dot{position:relative;width:22px;height:22px;border-radius:9999px;background:#21201F;border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.me-dot::after{content:"";position:absolute;inset:-4px;border-radius:9999px;background:rgba(33,32,31,.35);animation:pulse 2s ease-out infinite;z-index:-1}
+.vtab.active{background:#fff;color:#0B2A5B;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.me-dot{position:relative;width:22px;height:22px;border-radius:9999px;background:#0B2A5B;border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.me-dot::after{content:"";position:absolute;inset:-4px;border-radius:9999px;background:rgba(11,42,91,.35);animation:pulse 2s ease-out infinite;z-index:-1}
 .leaflet-popup-content-wrapper{border-radius:16px!important;box-shadow:0 8px 24px rgba(0,0,0,.18)!important}
 .leaflet-popup-content{margin:12px 14px!important;font-family:'Inter',system-ui,sans-serif;font-size:13px;line-height:1.5}
 .leaflet-bar{border:none!important;box-shadow:0 4px 12px rgba(0,0,0,.15)!important;border-radius:12px!important;overflow:hidden}
+.rt-pt{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);box-sizing:border-box}
+.rt-pt.a{background:var(--green);color:#fff}
+.rt-pt.b{background:#0B2A5B;color:#fff}
+.route-info{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin:0 0 12px;padding:0 4px}
+.route-info b{color:#0B2A5B}
+.route-info .ic{width:16px;height:16px;color:#0B2A5B}
+.route-info .spinner{width:14px;height:14px;border-width:2px}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -534,6 +551,8 @@ function render(){
   else if(S.section==='roadside') renderRoadside();
   else if(S.section==='profile') renderProfile();
   else if(S.section==='admin') renderAdmin();
+  if(S.section!=='passenger') clearRoute();
+  if(S.section!=='roadside') clearRoadsideMarkers();
 }
 
 /* ============================================================= */
@@ -582,6 +601,7 @@ function renderPassenger(){
     </div>`;
   }
   html += `</div>
+    <div id="psgRouteInfo"></div>
     <div class="tariff-row">
       <div class="tariff ${PS.service==='passenger'?'active':''}" data-svc="passenger"><div class="tariff-ic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-car"/></svg></div><div class="tariff-name">Yo'lovchi</div><div class="tariff-sub">Odam tashish</div></div>
       <div class="tariff ${PS.service==='cargo'?'active':''}" data-svc="cargo"><div class="tariff-ic"><svg class="ic" viewBox="0 0 24 24"><use href="#i-box"/></svg></div><div class="tariff-name">Pochta / Yuk</div><div class="tariff-sub">Yuk va jo'natma</div></div>
@@ -607,6 +627,7 @@ function renderPassenger(){
   document.querySelectorAll('[data-svc]').forEach(c=> c.addEventListener('click', ()=>{ WT.select(); PS.service=c.dataset.svc; renderPassenger(); }));
   $('searchBtn').addEventListener('click', passengerSearch);
   renderPassengerResults();
+  updateRoute();
 }
 function passengerLocs(){
   const fromLoc = PS.scope==='local' ? (PS.fromR&&PS.fromD?`${PS.fromR}, ${PS.fromD}`:"") : (PS.fromR==="Toshkent shahri"?PS.fromR:(PS.fromR&&PS.fromD?`${PS.fromR}, ${PS.fromD}`:PS.fromR));
@@ -783,7 +804,7 @@ function renderDriverRegister(){
 /* SECTION: ROADSIDE + HEAVY EQUIPMENT + ADS                        */
 /* ============================================================= */
 const RS = {mode:'search', cat:'gas', fuel:'', items:[], view:'list', coords:null};
-let _rsMap = null;
+let _rsLayer = null;
 function renderRoadside(){
   clearPillTabs();
   $('content').innerHTML = `
@@ -793,7 +814,7 @@ function renderRoadside(){
     </div>
     <div id="rsBody"></div>`;
   $('rsMode').querySelectorAll('.mode-opt').forEach(o=> o.addEventListener('click', ()=>{ WT.select(); RS.mode=o.dataset.m; renderRoadside(); }));
-  if(RS.mode==='search') renderRoadsideSearch(); else renderRoadsidePost();
+  if(RS.mode==='search') renderRoadsideSearch(); else { clearRoadsideMarkers(); renderRoadsidePost(); }
 }
 function renderRoadsideSearch(){
   const body = $('rsBody');
@@ -805,7 +826,7 @@ function renderRoadsideSearch(){
     <div id="rsResults"><div class="empty-note">Yuklanmoqda...</div></div>`;
   $('catGrid').addEventListener('click', e=>{ const c=e.target.closest('.cat-cell'); if(!c) return; WT.select(); RS.cat=c.dataset.c; RS.fuel=''; renderRoadsideSearch(); loadRoadside(); });
   $('fuelChips') && $('fuelChips').addEventListener('click', e=>{ const c=e.target.closest('.chip'); if(!c) return; WT.select(); RS.fuel=c.dataset.f; renderRoadsideSearch(); loadRoadside(); });
-  $('vtabList').addEventListener('click', ()=>{ if(RS.view==='list') return; RS.view='list'; if(_rsMap){_rsMap.remove();_rsMap=null;} $('vtabList').classList.add('active'); $('vtabMap').classList.remove('active'); renderRoadsideListView(RS.items); });
+  $('vtabList').addEventListener('click', ()=>{ if(RS.view==='list') return; RS.view='list'; $('vtabList').classList.add('active'); $('vtabMap').classList.remove('active'); renderRoadsideListView(RS.items); });
   $('vtabMap').addEventListener('click', ()=>{ if(RS.view==='map') return; RS.view='map'; $('vtabMap').classList.add('active'); $('vtabList').classList.remove('active'); renderRoadsideMapView(RS.items); });
   loadRoadside();
 }
@@ -830,33 +851,39 @@ async function loadRoadside(){
 }
 function renderRoadsideListView(items){
   const box = $('rsResults'); if(!box) return;
-  if(_rsMap){_rsMap.remove();_rsMap=null;}
+  clearRoadsideMarkers();
   box.innerHTML = items.length ? items.map(i=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy)"><svg class="ic" viewBox="0 0 24 24"><use href="#${SERVICE_TYPES.find(s=>s.key===RS.cat).icon}"/></svg></div><div class="tx"><div class="nm">${esc(i.name)}</div><div class="sub">${esc(i.description||i.phone)}</div></div>${typeof i.distance==='number'?`<div class="side"><div class="num">${i.distance.toFixed(1)}</div><div class="unit">km</div></div>`:''}</div>`).join('') : '<div class="empty-note">Bu filtr bo\'yicha xizmat topilmadi.</div>';
 }
+function clearRoadsideMarkers(){
+  if(_rsLayer){ _rsLayer.remove(); _rsLayer = null; }
+  $('phone').classList.remove('rs-map');
+}
+// xarita rejimi: alohida ramkali xarita emas — belgilar fon xaritasiga chiqadi
 function renderRoadsideMapView(items){
   const box = $('rsResults'); if(!box) return;
-  if(_rsMap){_rsMap.remove();_rsMap=null;}
-  box.innerHTML = '<div id="rsMap"></div>';
-  if(typeof L === 'undefined'){ box.innerHTML = '<div class="empty-note">Xarita yuklanmadi. Internetni tekshiring.</div>'; return; }
-  const center = RS.coords ? [RS.coords.lat, RS.coords.lon] : [41.2995, 69.2401];
-  _rsMap = L.map('rsMap',{zoomControl:true,attributionControl:false}).setView(center,13);
-  L.tileLayer(MAP_TILES,{maxZoom:19,subdomains:'abcd'}).addTo(_rsMap);
-  if(RS.coords){
-    L.circleMarker([RS.coords.lat,RS.coords.lon],{radius:9,fillColor:'#21201F',fillOpacity:1,color:'#fff',weight:3}).addTo(_rsMap).bindPopup('<b>Siz bu yerdasiz</b>');
+  clearRoadsideMarkers();
+  if(!_bgMap){ box.innerHTML = '<div class="empty-note">Xarita yuklanmadi. Internetni tekshiring.</div>'; return; }
+  $('phone').classList.add('rs-map');
+  const ST_COLORS = {gas:'#22A06B', food:'#E8A500', hotel:'#0B2A5B', service:'#C2560B', autosalon:'#1A3B7A', heavy:'#7C8AA0'};
+  const color = ST_COLORS[RS.cat] || '#22A06B';
+  const valid = items.filter(i=> i.latitude!=null && i.longitude!=null);
+  _rsLayer = L.layerGroup().addTo(_bgMap);
+  if(RS.coords && !_meMarker){
+    L.marker([RS.coords.lat, RS.coords.lon], {icon: L.divIcon({className:'', html:'<div class="me-dot"></div>', iconSize:[22,22], iconAnchor:[11,11]})}).addTo(_rsLayer).bindPopup('<b>Siz bu yerdasiz</b>');
   }
-  const ST_COLORS={gas:'#1FAF4B',food:'#F5A300',hotel:'#21201F',service:'#E26A1B',autosalon:'#3B3A38',heavy:'#8A8784'};
-  const color=ST_COLORS[RS.cat]||'#22A06B';
-  const validItems=items.filter(i=>i.latitude!=null&&i.longitude!=null);
-  validItems.forEach((item,idx)=>{
-    const icon=L.divIcon({className:'',html:`<div style="background:${color};width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-family:Inter,sans-serif;font-size:11px;font-weight:800">${idx+1}</div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-18]});
-    L.marker([item.latitude,item.longitude],{icon}).addTo(_rsMap).bindPopup(`<div style="min-width:130px"><b>${esc(item.name)}</b><br><span style="color:#8A8784;font-size:12px">${esc(item.phone||'')}</span>${typeof item.distance==='number'?`<br><span style="color:${color};font-weight:700">${item.distance.toFixed(1)} km</span>`:''}</div>`);
+  valid.forEach((item, idx)=>{
+    const icon = L.divIcon({className:'', html:`<div class="rs-pt" style="background:${color}">${idx+1}</div>`, iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-18]});
+    L.marker([item.latitude, item.longitude], {icon}).addTo(_rsLayer).bindPopup(`<div style="min-width:130px"><b>${esc(item.name)}</b><br><span style="color:#7C8AA0;font-size:12px">${esc(item.phone||'')}</span>${typeof item.distance==='number'?`<br><span style="color:${color};font-weight:700">${item.distance.toFixed(1)} km</span>`:''}</div>`);
   });
-  if(validItems.length>0){
-    const pts=validItems.map(i=>[i.latitude,i.longitude]);
-    if(RS.coords) pts.push([RS.coords.lat,RS.coords.lon]);
-    if(pts.length>1) _rsMap.fitBounds(L.latLngBounds(pts),{padding:[24,24],maxZoom:14});
-  }
-  setTimeout(()=>_rsMap&&_rsMap.invalidateSize(),150);
+  _rsLayer.pts = valid.map(i=> [i.latitude, i.longitude]);
+  if(RS.coords) _rsLayer.pts.push([RS.coords.lat, RS.coords.lon]);
+  box.innerHTML = valid.length ? '' : '<div class="empty-note">Xaritada ko\'rsatiladigan xizmat topilmadi.</div>';
+  setTimeout(fitRoadside, 60);   // panel ixchamlashgandan keyin
+}
+function fitRoadside(){
+  if(!_rsLayer || !_rsLayer.pts.length) return;
+  if(_rsLayer.pts.length === 1) setViewVisible(_rsLayer.pts[0], 14);
+  else fitVisible(L.latLngBounds(_rsLayer.pts), 14);
 }
 function renderRoadsidePost(){
   if(!S.me){ $('rsBody').innerHTML = '<div class="empty-note">E\'lon joylashtirish uchun tizimga kiring.</div>'; return; }
@@ -1094,6 +1121,9 @@ function initBgMap(){
   if(typeof L === 'undefined') return;   // SVG fon qoladi
   _bgMap = L.map('bgMap',{zoomControl:false,attributionControl:false}).setView([41.3111, 69.2797], 13);
   L.tileLayer(MAP_TILES,{maxZoom:19,subdomains:'abcd'}).addTo(_bgMap);
+  // pastki panel balandligi o'zgarsa yo'nalish / belgilarni ko'rinadigan qismga moslaymiz
+  let _rsz = null;
+  window.ResizeObserver && new ResizeObserver(()=>{ clearTimeout(_rsz); _rsz = setTimeout(()=>{ if(RT.shown) fitRoute(); else if(_rsLayer) fitRoadside(); }, 200); }).observe(document.querySelector('.sheet'));
   // ruxsat oldin berilgan bo'lsa, so'ramasdan joylashuvni ko'rsatamiz
   navigator.permissions && navigator.permissions.query({name:'geolocation'}).then(r=>{ if(r.state==='granted') locateMe(false); }).catch(()=>{});
 }
@@ -1104,10 +1134,130 @@ function locateMe(explicit){
     if(!_bgMap) return;
     const icon = L.divIcon({className:'', html:'<div class="me-dot"></div>', iconSize:[22,22], iconAnchor:[11,11]});
     if(_meMarker) _meMarker.setLatLng(ll); else _meMarker = L.marker(ll,{icon}).addTo(_bgMap);
-    _bgMap.setView(ll, 15, {animate:true});
+    setViewVisible(ll, 16);
   }, ()=>{ explicit && toast('Joylashuvga ruxsat berilmadi'); }, {timeout:8000});
 }
+
+/* ---- xaritaning pastki panel bilan yopilmagan (ko'rinadigan) qismi ---- */
+const _geoCache = new Map();
+const NOMINATIM = 'https://nominatim.openstreetmap.org';
+function visiblePad(){
+  const s = _bgMap.getSize(), sh = document.querySelector('.sheet');
+  return {top: $('topbar').offsetHeight, bottom: Math.max(0, s.y - sh.offsetTop)};
+}
+function setViewVisible(ll, zoom){
+  const z = zoom ?? _bgMap.getZoom(), s = _bgMap.getSize(), v = visiblePad();
+  const y = Math.round((v.top + s.y - v.bottom) / 2);
+  const c = _bgMap.project(ll, z).add([0, s.y/2 - y]);
+  _bgMap.setView(_bgMap.unproject(c, z), z, {animate:true});
+}
+function fitVisible(bounds, maxZoom){
+  const v = visiblePad();
+  _bgMap.fitBounds(bounds, {paddingTopLeft:[40, v.top + 30], paddingBottomRight:[40, v.bottom + 30], maxZoom, animate:true});
+}
+
+/* ---- A -> B yo'nalish chizig'i (OSRM) ---- */
+const RT = {shown:false, layer:null, bounds:null, key:'', seq:0, info:null};
+function routeEnds(){
+  const {fromLoc, toLoc} = passengerLocs();
+  if(!fromLoc || !toLoc || fromLoc===toLoc) return null;
+  const city = r => r==='Toshkent shahri' ? '' : null;
+  return {
+    key: fromLoc + '|' + toLoc,
+    a: [PS.fromR, city(PS.fromR) ?? PS.fromD],
+    b: PS.scope==='local' ? [PS.fromR, PS.toD] : [PS.toR, city(PS.toR) ?? PS.toD]
+  };
+}
+async function geocodePlace(region, district){
+  const reg = region.replace(/Resp\.$/, 'Respublikasi');
+  const queries = district ? [`${district.replace(/\s*sh\.$/, '')}, ${reg}`, reg] : [reg];
+  for(const q of queries){
+    const key = 'q:' + q;
+    if(!_geoCache.has(key)){
+      const r = await fetch(`${NOMINATIM}/search?format=jsonv2&limit=1&countrycodes=uz&accept-language=uz&q=${encodeURIComponent(q)}`);
+      const j = r.ok ? await r.json() : [];
+      _geoCache.set(key, j[0] ? [+j[0].lat, +j[0].lon] : null);
+    }
+    if(_geoCache.get(key)) return _geoCache.get(key);
+  }
+  return null;
+}
+function haversine(a, b){
+  const R = 6371, rad = x=> x*Math.PI/180, dLat = rad(b[0]-a[0]), dLon = rad(b[1]-a[1]);
+  const h = Math.sin(dLat/2)**2 + Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+async function updateRoute(){
+  const ends = _bgMap && S.section==='passenger' ? routeEnds() : null;
+  if(!ends){ clearRoute(); return; }
+  if(ends.key === RT.key && RT.shown){ showRouteInfo(); fitRoute(); return; }
+  const seq = ++RT.seq; RT.key = ends.key;
+  showRouteInfo('loading');
+  try{
+    const A = await geocodePlace(...ends.a);
+    const B = await geocodePlace(...ends.b);
+    if(seq !== RT.seq) return;
+    if(!A || !B){ clearRoute(); return; }
+    let coords = [A, B], dist = haversine(A, B), dur = null, exact = false;
+    try{
+      const r = await fetch(`https://router.project-osrm.org/route/v1/driving/${A[1]},${A[0]};${B[1]},${B[0]}?overview=full&geometries=geojson`);
+      const j = await r.json();
+      if(j.routes && j.routes[0]){
+        coords = j.routes[0].geometry.coordinates.map(c=> [c[1], c[0]]);
+        dist = j.routes[0].distance/1000; dur = j.routes[0].duration/60; exact = true;
+      }
+    }catch(e){}   // marshrut serveri ishlamasa, to'g'ri chiziq chizamiz
+    if(seq !== RT.seq) return;
+    drawRoute(A, B, coords, exact);
+    RT.info = {dist, dur};
+    showRouteInfo(); fitRoute();
+  }catch(e){ if(seq === RT.seq) clearRoute(); }
+}
+function drawRoute(A, B, coords, exact){
+  if(RT.layer) RT.layer.remove();
+  const pt = (ll, t)=> L.marker(ll, {icon: L.divIcon({className:'', html:`<div class="rt-pt ${t}">${t.toUpperCase()}</div>`, iconSize:[28,28], iconAnchor:[14,14]})});
+  RT.layer = L.layerGroup([
+    L.polyline(coords, {color:'#fff', weight:9, lineCap:'round', lineJoin:'round'}),
+    L.polyline(coords, {color:'#0B2A5B', weight:5, opacity:.9, lineCap:'round', lineJoin:'round', dashArray: exact ? null : '2 10'}),
+    pt(A, 'a'), pt(B, 'b')
+  ]).addTo(_bgMap);
+  RT.bounds = L.latLngBounds(coords);
+  RT.shown = true;
+}
+function fitRoute(){
+  if(!RT.shown || !RT.bounds) return;
+  fitVisible(RT.bounds, 15);
+}
+function clearRoute(){
+  RT.seq++; RT.key = ''; RT.info = null; RT.bounds = null;
+  if(RT.layer){ RT.layer.remove(); RT.layer = null; }
+  RT.shown = false;
+  showRouteInfo();
+}
+function fmtDur(m){
+  m = Math.round(m);
+  return m < 60 ? `${m} daq` : `${Math.floor(m/60)} soat${m%60 ? ` ${m%60} daq` : ''}`;
+}
+function showRouteInfo(state){
+  const box = $('psgRouteInfo'); if(!box) return;
+  if(state === 'loading'){ box.innerHTML = '<div class="route-info"><div class="spinner"></div><span>Yo\'nalish hisoblanmoqda...</span></div>'; return; }
+  if(!RT.shown || !RT.info){ box.innerHTML = ''; return; }
+  const {dist, dur} = RT.info;
+  box.innerHTML = `<div class="route-info"><svg class="ic" viewBox="0 0 24 24"><use href="#i-route"/></svg><b>${dist < 10 ? dist.toFixed(1) : Math.round(dist)} km</b><span>·</span><span>${dur ? '≈ ' + fmtDur(dur) : 'to\'g\'ri chiziq bo\'yicha'}</span></div>`;
+}
 $('locateFab').addEventListener('click', ()=>{ WT.tap(); locateMe(true); });
+// pastki panel: tutqichni bosish yoki surish orqali yig'iladi / ochiladi — xarita to'liq ko'rinadi
+(function(){
+  const sheet = document.querySelector('.sheet'), handle = sheet.querySelector('.handle');
+  let y0 = null;
+  handle.addEventListener('click', ()=>{ WT.tap(); sheet.classList.toggle('collapsed'); });
+  handle.addEventListener('touchstart', e=>{ y0 = e.touches[0].clientY; }, {passive:true});
+  handle.addEventListener('touchend', e=>{
+    if(y0 === null) return;
+    const dy = e.changedTouches[0].clientY - y0; y0 = null;
+    if(dy > 30) sheet.classList.add('collapsed'); else if(dy < -30) sheet.classList.remove('collapsed');
+  });
+})();
 if(inTelegram){ try{ tg.setHeaderColor && tg.setHeaderColor('#FFFFFF'); tg.setBackgroundColor && tg.setBackgroundColor('#FFFFFF'); }catch(e){} }
 
 /* ============================================================= */
