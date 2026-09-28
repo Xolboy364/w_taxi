@@ -263,7 +263,10 @@ textarea.field-input{resize:none;height:84px;padding:14px 16px;line-height:1.4}
 .route-info .spinner{width:14px;height:14px;border-width:2px}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
 </head>
 <body>
 
@@ -1132,12 +1135,16 @@ async function renderAdminSettings(){
 /* ============================================================= */
 /* BACKGROUND MAP (Yandex Go uslubida)                              */
 /* ============================================================= */
-const MAP_TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+// Carto bepul tile'lari 2026 dan API key talab qiladi, shu sabab OpenFreeMap
+// (bepul, key'siz, limitsiz vektor xarita) ishlatiladi.
+const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
+const OSM_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 let _bgMap = null, _meMarker = null;
 function initBgMap(){
   if(typeof L === 'undefined') return;   // SVG fon qoladi
   _bgMap = L.map('bgMap',{zoomControl:false,attributionControl:false}).setView([41.3111, 69.2797], 13);
-  L.tileLayer(MAP_TILES,{maxZoom:19,subdomains:'abcd'}).addTo(_bgMap);
+  if(L.maplibreGL) L.maplibreGL({style: MAP_STYLE}).addTo(_bgMap);
+  else L.tileLayer(OSM_TILES,{maxZoom:19}).addTo(_bgMap);
   // pastki panel balandligi o'zgarsa yo'nalish / belgilarni ko'rinadigan qismga moslaymiz
   let _rsz = null;
   window.ResizeObserver && new ResizeObserver(()=>{ clearTimeout(_rsz); _rsz = setTimeout(()=>{ if(RT.shown) fitRoute(); else if(_rsLayer) fitRoadside(); }, 200); }).observe(document.querySelector('.sheet'));
