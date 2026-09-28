@@ -439,7 +439,7 @@ const apiDelete = p => api(p,{method:"DELETE"});
 /* STATE                                                           */
 /* ============================================================= */
 const $ = id => document.getElementById(id);
-const S = { me:null, section:"passenger", subTab:{driver:"cabinet", roadside:"search", admin:"overview", profile:"orders"}, driverData:null };
+const S = { me:null, phone:"", section:"passenger", subTab:{driver:"cabinet", roadside:"search", admin:"overview", profile:"orders"}, driverData:null };
 let toastTimer;
 function toast(msg){ WT.success(); $('toastTxt').textContent = msg; $('toast').classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=>$('toast').classList.remove('show'), 2000); }
 function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -465,6 +465,10 @@ function confirmAction({icon, iconBg, iconColor, title, desc, danger, onConfirm}
 async function loadMe(){
   try{ S.me = await apiGet('/api/me'); }
   catch(e){ S.me = null; }
+  if(S.me){
+    // saqlangan telefonni bir marta yuklab olamiz — formalar qayta so'ramaydi
+    try{ const r = await apiGet('/api/me/settings'); S.phone = r.phone || ""; if(!PS.phone) PS.phone = S.phone; }catch(e){}
+  }
   updateAuthUI();
 }
 function updateAuthUI(){
@@ -669,6 +673,7 @@ function renderPassengerResults(){
     const {fromLoc, toLoc} = passengerLocs();
     try{
       const data = await apiPost('/api/orders', {from_loc:fromLoc, to_loc:toLoc, service_type:PS.service, phone:PS.phone.trim(), full_name:(S.me&&S.me.first_name)||"Veb foydalanuvchi"});
+      S.phone = PS.phone.trim();
       PS.dispatch = data; renderPassengerResults();
     }catch(e){ toast(e.message); }
   });
@@ -785,7 +790,7 @@ function renderDriverRegister(){
     <div class="field"><span class="field-label">Xizmat turi</span><div class="chip-row" id="rgSvc"><div class="chip ${serviceType==='passenger'?'active':''}" data-s="passenger">Odam tashish</div><div class="chip ${serviceType==='cargo'?'active':''}" data-s="cargo">Yuk / Pochta</div></div></div>
     <div class="field"><span class="field-label">Avtomobil modeli</span><select class="field-select" id="rgCar"></select></div>
     <div class="field"><span class="field-label">Davlat raqami</span><input class="field-input" id="rgPlate" value="${esc(ex?ex.car_number:'')}" placeholder="01 A 777 AA"></div>
-    <div class="field" style="margin-bottom:16px"><span class="field-label">Telefon raqam</span><input class="field-input" id="rgPhone" value="${esc(ex?ex.phone:'')}" placeholder="+998 90 123 45 67"></div>
+    <div class="field" style="margin-bottom:16px"><span class="field-label">Telefon raqam</span><input class="field-input" id="rgPhone" value="${esc(ex?ex.phone:(S.phone||''))}" placeholder="+998 90 123 45 67"></div>
     <div id="rgErr"></div>
     <button class="cta" id="rgSubmit"><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg><span>${ex?"Ma'lumotlarni yangilash":"Ro'yxatdan o'tish — 30 kun VIP sovg'a"}</span></button>`;
   function carOptions(){ return serviceType==='passenger' ? ["Cobalt","Gentra","Nexia 3","Damas","Tracker","Captiva"] : ["Labo","Porter","Isuzu","Gazel","Fura"]; }
@@ -892,7 +897,7 @@ function renderRoadsidePost(){
     <div class="field"><span class="field-label">Xizmat / texnika turi</span><div class="chip-row" id="ptypeChips">${SERVICE_TYPES.map(s=>`<div class="chip ${s.key==='gas'?'active':''}" data-t="${s.key}">${s.label}</div>`).join('')}</div></div>
     <div class="field" id="pfuelField"><span class="field-label">Mavjud yoqilg'i turlari</span><div class="chip-row" id="pfuelChips">${FUEL_TYPES.map(f=>`<div class="chip" data-f="${f.key}"><span class="dot" style="background:${f.c}"></span>${f.label}</div>`).join('')}</div></div>
     <div class="field"><span class="field-label">Nomi</span><input class="field-input" id="pName" placeholder="Masalan: Chorraha AGZS"></div>
-    <div class="field"><span class="field-label">Telefon</span><input class="field-input" id="pPhone" placeholder="+998 90 123 45 67"></div>
+    <div class="field"><span class="field-label">Telefon</span><input class="field-input" id="pPhone" value="${esc(S.phone||'')}" placeholder="+998 90 123 45 67"></div>
     <div class="field"><span class="field-label">Tavsif</span><textarea class="field-input" id="pDesc" placeholder="Qisqacha tavsif"></textarea></div>
     <div class="field"><span class="field-label">Joylashuv</span><div class="loc-pill" id="pLocBtn"><svg class="ic" viewBox="0 0 24 24"><use href="#i-locate"/></svg><span id="pLocTxt">Joriy joylashuvni olish</span></div></div>
     <div class="price-band"><span class="lbl">To'lov (30 kun)</span><span class="val mono" id="pPrice">50 000 so'm</span></div>
@@ -921,9 +926,13 @@ function renderRoadsidePost(){
 /* ============================================================= */
 function renderProfile(){
   if(!S.me){ clearPillTabs(); $('content').innerHTML = '<div class="empty-note">Profilni ko\'rish uchun tizimga kiring.</div>'; return; }
-  pillTabs([{key:'orders',label:'Buyurtmalarim'},{key:'ads',label:"E'lonlarim"},{key:'settings',label:'Sozlamalar'}], S.subTab.profile, k=>{ S.subTab.profile=k; renderProfile(); });
+  const tabs = [{key:'orders',label:'Buyurtmalarim'},{key:'ads',label:"E'lonlarim"}];
+  if(S.me.has_driver_profile) tabs.push({key:'routes',label:'Marshrutlarim'});
+  tabs.push({key:'settings',label:'Sozlamalar'});
+  pillTabs(tabs, S.subTab.profile, k=>{ S.subTab.profile=k; renderProfile(); });
   if(S.subTab.profile==='orders') renderProfileOrders();
   else if(S.subTab.profile==='ads') renderProfileAds();
+  else if(S.subTab.profile==='routes') renderProfileRoutes();
   else renderProfileSettings();
 }
 async function renderProfileOrders(){
@@ -954,6 +963,14 @@ async function renderProfileAds(){
     }).join('') : '<div class="empty-note">Hali e\'lon joylashtirmagansiz.</div>';
   }catch(e){ $('myAdsList').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
 }
+async function renderProfileRoutes(){
+  $('content').innerHTML = `<div class="sec-head"><span class="sec-title">Mening marshrutlarim</span></div><div id="myRoutesList"><div class="empty-note">Yuklanmoqda...</div></div>`;
+  try{
+    const routes = await apiGet('/api/driver/routes');
+    const box = $('myRoutesList');
+    box.innerHTML = routes.length ? routes.map(r=> `<div class="card-row"><div class="ic-box" style="background:var(--navy-soft);color:var(--navy)"><svg class="ic" viewBox="0 0 24 24"><use href="#i-route"/></svg></div><div class="tx"><div class="nm">${esc(r.from_loc)} → ${esc(r.to_loc)}</div><div class="sub">${r.route_category==='local'?'Shahar ichi':'Shaharlararo'}</div></div></div>`).join('') : '<div class="empty-note">Hali marshrut qo\'shmagansiz.</div>';
+  }catch(e){ $('myRoutesList').innerHTML = '<div class="empty-note">'+esc(e.message)+'</div>'; }
+}
 async function renderProfileSettings(){
   $('content').innerHTML = `<div class="sec-head"><span class="sec-title">Aloqa ma'lumotlari</span></div>
     <div class="field"><span class="field-label">Telefon raqam</span><input class="field-input" id="mySettPhone" placeholder="+998 90 123 45 67"></div>
@@ -963,7 +980,7 @@ async function renderProfileSettings(){
   $('mySettSave').addEventListener('click', async ()=>{
     const phone = $('mySettPhone').value.trim();
     if(!phone){ $('mySettErr').innerHTML='<div class="err-msg">Telefon raqamini kiriting</div>'; return; }
-    try{ await apiPost('/api/me/settings', {phone}); toast('Saqlandi'); }
+    try{ await apiPost('/api/me/settings', {phone}); S.phone = phone; PS.phone = phone; toast('Saqlandi'); }
     catch(e){ $('mySettErr').innerHTML='<div class="err-msg">'+esc(e.message)+'</div>'; }
   });
 }

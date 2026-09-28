@@ -379,6 +379,20 @@ async def driver_clear_routes(request: web.Request):
 
 
 @require_auth
+async def driver_routes_list(request: web.Request):
+    """database.py da marshrutlar ro'yxatini qaytaruvchi funksiya yo'q
+    (faqat count bor), shuning uchun shu yerda faqat o'qish so'rovi."""
+    uid = request["user"]["id"]
+    async with db.pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT id, from_loc, to_loc, route_category
+            FROM driver_routes WHERE telegram_id = $1
+            ORDER BY id DESC LIMIT 50
+        """, uid)
+    return web.json_response(row_list(rows))
+
+
+@require_auth
 async def driver_orders(request: web.Request):
     uid = request["user"]["id"]
     rows = await db.get_passenger_orders_for_driver(uid)
@@ -744,6 +758,7 @@ def register_webapp_routes(app: web.Application, bot):
     app.router.add_post("/api/driver/routes", driver_add_routes)
     app.router.add_delete("/api/driver/routes", driver_clear_routes)
     app.router.add_get("/api/driver/orders", driver_orders)
+    app.router.add_get("/api/driver/routes", driver_routes_list)
     app.router.add_post("/api/ads", submit_ad)
     app.router.add_get("/api/me/orders", my_orders)
     app.router.add_get("/api/me/ads", my_ads)
